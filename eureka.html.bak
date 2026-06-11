@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eureka! — liceo scientifico archimede, messina</title>
+<meta name="description" content="eureka! — la lista di rappresentanza del liceo scientifico archimede di messina.">
+
+<!-- segna che il JS è abilitato: gate per la reveal CSS (senza JS i contenuti restano visibili) -->
+<script>document.documentElement.classList.add('js');</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* palette "notte stellata" — van gogh */
+  --bg:         #0a1632;     /* blu notte profondo (sfondo) */
+  --bg-soft:    #112045;     /* blu medio-scuro */
+  --bg-2:       #1a2d5e;     /* blu cobalto/swirl */
+  --bg-3:       #243f7a;     /* mid swirl */
+
+  --gold:       #f5cd47;     /* giallo cadmio delle stelle */
+  --gold-bright:#ffe07a;     /* lume più caldo */
+  --gold-dim:   #c9a531;
+  --beige:      #ede0b8;     /* testo principale (crema caldo) */
+  --beige-dim:  #b8a988;     /* testo secondario */
+  --cream:      #f7eed5;     /* highlight testo */
+  --muted:      #6a7da8;     /* blu-grigio per microcopy, leggibile su blu notte */
+  --line:       rgba(237, 224, 184, 0.10);
+
+  --grain-opacity: 0.05;
+  --display: "DM Sans", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(36, 63, 122, 0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 30%, rgba(74, 109, 181, 0.18) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--beige);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  text-transform: lowercase;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+@media (hover: none) {
+  body { cursor: auto; }
+  .cursor { display: none; }
+}
+
+::selection { background: var(--gold); color: var(--bg); }
+
+/* ===== GRAIN ===== */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ===== STARFIELD (sfondo fisso, attivo su tutto il sito) ===== */
+.starfield {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  /* fade ai bordi alto/basso → integrazione morbida con nav e footer */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 8%, #000 92%, rgba(0,0,0,0.6) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 8%, #000 92%, rgba(0,0,0,0.6) 100%);
+}
+
+/* tutte le section devono stare SOPRA lo starfield */
+section, footer, nav, .marquee { position: relative; z-index: 1; }
+
+/* ===== CURSOR ===== */
+.cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  transition: width 0.25s ease, height 0.25s ease;
+}
+.cursor.hover {
+  width: 56px; height: 56px;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1.1rem 2rem;
+  background: rgba(12, 10, 7, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+nav .brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  text-decoration: none;
+  text-shadow:
+    0 0 4px  rgba(245, 205, 71, 0.55),
+    0 0 12px rgba(245, 205, 71, 0.35),
+    0 0 22px rgba(247, 238, 213, 0.18);
+}
+nav .brand .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0 6px  rgba(255, 224, 122, 0.85),
+    0 0 16px rgba(245, 205, 71, 0.55);
+}
+nav ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+nav ul a {
+  color: var(--beige-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+nav ul a:hover { color: var(--gold); }
+nav .right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+nav .ig {
+  color: var(--cream);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: 0.55rem 1rem;
+  border-radius: 100px;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+nav .ig:hover {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+@media (max-width: 800px) {
+  nav { grid-template-columns: 1fr 1fr; padding: 0.9rem 1rem; }
+  nav ul { display: none; }
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 7rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* glow di sfondo dietro la lampadina (sopra lo shader, sotto la lampadina) */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 60vw;
+  max-width: 720px;
+  aspect-ratio: 1;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(245, 205, 71, 0.14) 0%, rgba(245, 205, 71, 0.04) 30%, transparent 60%);
+  filter: blur(40px);
+  z-index: 1;
+  animation: heroGlow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 0.9; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* canvas dello shader hero — sotto a tutto */
+.hero-shader {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  /* fade-out sul bordo basso → transizione morbida verso il marquee dorato */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+}
+
+.hero-inner { position: relative; z-index: 2; }
+
+.hero-wordmark h1 {
+  font-weight: 700;
+  font-size: clamp(3.5rem, 16vw, 14rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--cream);
+  margin-bottom: 1.2rem;
+  /* alone dorato: 4 layer tight, blur contenuti → niente banding del browser */
+  text-shadow:
+    0 0  3px  rgba(247, 238, 213, 0.85),
+    0 0  10px rgba(255, 224, 122, 0.70),
+    0 0  28px rgba(245, 205, 71, 0.55),
+    0 0  64px rgba(245, 205, 71, 0.30);
+}
+.hero-wordmark h1 .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0  4px  rgba(255, 224, 122, 0.95),
+    0 0  14px rgba(245, 205, 71, 0.80),
+    0 0  36px rgba(255, 224, 122, 0.50),
+    0 0  80px rgba(245, 205, 71, 0.30);
+}
+.hero-wordmark h1 span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+  animation: charIn 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.hero-wordmark h1 span:nth-child(1){animation-delay:0.05s}
+.hero-wordmark h1 span:nth-child(2){animation-delay:0.13s}
+.hero-wordmark h1 span:nth-child(3){animation-delay:0.21s}
+.hero-wordmark h1 span:nth-child(4){animation-delay:0.29s}
+.hero-wordmark h1 span:nth-child(5){animation-delay:0.37s}
+.hero-wordmark h1 span:nth-child(6){animation-delay:0.45s}
+.hero-wordmark h1 span:nth-child(7){animation-delay:0.53s}
+@keyframes charIn { to { opacity: 1; transform: translateY(0); } }
+
+.hero-tagline {
+  max-width: 540px;
+  margin: 1.4rem auto 0;
+  font-size: clamp(1rem, 1.3vw, 1.1rem);
+  line-height: 1.55;
+  color: var(--beige-dim);
+  font-weight: 400;
+  opacity: 0;
+  animation: fadeUp 0.9s ease 0.9s forwards;
+}
+.hero-tagline em {
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 700;
+  text-shadow:
+    0 0 4px  rgba(255, 224, 122, 0.7),
+    0 0 12px rgba(245, 205, 71, 0.4),
+    0 0 22px rgba(245, 205, 71, 0.2);
+}
+
+/* utility: scritte 'eureka!' di piccola taglia (nav, footer, microcopy) */
+.glow-mini {
+  color: var(--cream);
+  text-shadow:
+    0 0 4px  rgba(245, 205, 71, 0.5),
+    0 0 10px rgba(245, 205, 71, 0.3);
+}
+.glow-mini .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0 5px  rgba(255, 224, 122, 0.85),
+    0 0 14px rgba(245, 205, 71, 0.55);
+}
+
+.hero-cta {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.9s ease 1.1s forwards;
+}
+.btn {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 0.95rem 1.8rem;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid;
+  cursor: none;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+.btn-primary:hover {
+  background: var(--cream);
+  border-color: var(--cream);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--beige);
+  border-color: var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--beige);
+  background: rgba(235, 217, 182, 0.05);
+  transform: translateY(-2px);
+}
+.btn .arrow { transition: transform 0.3s ease; }
+.btn:hover .arrow { transform: translateX(4px); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== LAMPADINA 3D ===== */
+.bulb-stage {
+  position: relative;
+  width: clamp(260px, 42vw, 520px);
+  aspect-ratio: 1;
+  margin: 0 auto 1.5rem;
+  cursor: none;
+  touch-action: none;       /* drag verticale non deve scrollare la pagina */
+}
+@media (hover: none) {
+  .bulb-stage { cursor: auto; }
+}
+.bulb-stage canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  /* mask radiale: il centro tiene la lampadina visibile, i bordi sfumano
+     verso lo shader animato dietro → niente più "quadrato" sull'hero */
+  -webkit-mask-image: radial-gradient(ellipse 62% 78% at center, #000 45%, rgba(0,0,0,0.85) 60%, transparent 95%);
+          mask-image: radial-gradient(ellipse 62% 78% at center, #000 45%, rgba(0,0,0,0.85) 60%, transparent 95%);
+}
+/* alone caldo dietro la lampadina, intensità guidata da --ignition,
+   flicker da --flicker (-1..1) → realismo elettrico */
+.bulb-stage::before {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 220, 130, 0.55) 0%, rgba(255, 200, 110, 0.14) 30%, transparent 65%);
+  opacity: calc(var(--ignition, 0) * (1 + var(--flicker, 0) * 0.18));
+  transform: scale(calc(1 + var(--flicker, 0) * 0.025));
+  filter: blur(35px);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.08s linear;
+}
+
+/* ===== UI EDITORIALE LAMPADINA (W · K · power state) ===== */
+.bulb-ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--beige-dim);
+  opacity: 0;
+  animation: bulbUiFadeIn 0.9s ease 1.4s forwards;
+}
+@keyframes bulbUiFadeIn { to { opacity: 1; } }
+
+.bulb-ui-label {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.bulb-ui-label .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow:
+    0 0 6px rgba(255, 224, 122, 0.9),
+    0 0 14px rgba(245, 205, 71, 0.55);
+}
+.bulb-ui-label .dot.live {
+  /* pulse legato al flicker; in idle un battito lento */
+  opacity: calc(0.6 + var(--flicker-abs, 0) * 0.4);
+  transition: opacity 0.08s linear;
+  animation: bulbDotPulse 2.4s ease-in-out infinite;
+}
+@keyframes bulbDotPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+.bulb-ui-label.tl { top: 6%;    left: 4%;  }
+.bulb-ui-label.tr { top: 6%;    right: 4%; }
+.bulb-ui-label.bl { bottom: 6%; left: 4%;  }
+.bulb-ui-label.br { bottom: 6%; right: 4%; }
+.bulb-ui-label .v {
+  color: var(--cream);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-shadow:
+    0 0 6px rgba(245, 205, 71, 0.35),
+    0 0 14px rgba(245, 205, 71, 0.18);
+}
+.bulb-ui-label .pwr {
+  color: var(--gold);
+  text-shadow:
+    0 0 4px rgba(255, 224, 122, 0.85),
+    0 0 12px rgba(245, 205, 71, 0.5);
+}
+.bulb-ui-label .pwr.off { color: var(--muted); text-shadow: none; }
+
+/* mirini editoriali agli angoli del riquadro lampadina */
+.bulb-crh {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: var(--line);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+.bulb-crh.tl { top: 0;    left: 0;    border-top-width: 1px;    border-left-width: 1px;  }
+.bulb-crh.tr { top: 0;    right: 0;   border-top-width: 1px;    border-right-width: 1px; }
+.bulb-crh.bl { bottom: 0; left: 0;    border-bottom-width: 1px; border-left-width: 1px;  }
+.bulb-crh.br { bottom: 0; right: 0;   border-bottom-width: 1px; border-right-width: 1px; }
+
+@media (max-width: 600px) {
+  .bulb-ui { font-size: 9px; letter-spacing: 0.14em; }
+  .bulb-ui-label.tr, .bulb-ui-label.bl { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb-ui-label .dot.live { animation: none; }
+}
+
+/* ===== MARQUEE ===== */
+.marquee {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--gold);
+  color: var(--bg);
+  overflow: hidden;
+  padding: 1.3rem 0;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  gap: 3rem;
+  animation: scroll 40s linear infinite;
+  font-size: clamp(1.3rem, 2.8vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.marquee-track span { display: inline-flex; align-items: center; gap: 3rem; }
+.marquee-track span::after {
+  content: '◆';
+  color: var(--bg);
+  font-size: 0.7em;
+}
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ===== SECTION COMMONS ===== */
+section { padding: 7rem 2rem; position: relative; }
+.container { max-width: 1280px; margin: 0 auto; }
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.section-label::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.h2 {
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.2rem;
+  color: var(--cream);
+}
+.h2 em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+/* ===== PROGETTI ===== */
+.progetti {
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(10, 22, 50, 0.55) 0%, rgba(17, 32, 69, 0.65) 100%);
+}
+.progetti .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+}
+.progetti .head .h2 { max-width: 720px; }
+.progetti .head .note {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--beige-dim);
+  text-align: right;
+  max-width: 280px;
+  line-height: 1.7;
+}
+.progetti .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+@media (max-width: 1000px) { .progetti .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .progetti .grid { grid-template-columns: 1fr; } }
+
+.card {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 2.4rem 1.9rem 2.1rem;
+  transition: background 0.4s ease;
+  cursor: none;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { background: rgba(17, 32, 69, 0.85); }
+.card .num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card .num .arrow {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.35s ease;
+}
+.card:hover .num .arrow { opacity: 1; transform: translateX(0); }
+.card h3 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.9rem;
+  color: var(--cream);
+}
+.card h3 em {
+  color: var(--gold);
+  font-style: normal;
+}
+.card p {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--beige-dim);
+  margin-top: auto;
+}
+
+/* ===== EVENTI ===== */
+.eventi {
+  border-top: 1px solid var(--line);
+  background: rgba(10, 22, 50, 0.45);
+}
+.eventi .head { margin-bottom: 3rem; max-width: 800px; }
+.eventi .timeline {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+.event {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 2rem;
+  align-items: baseline;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s ease;
+  cursor: none;
+}
+.event:hover { background: rgba(17, 32, 69, 0.85); padding-left: 1rem; padding-right: 1rem; }
+.event .date {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+.event .body h3 {
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  margin-bottom: 0.4rem;
+}
+.event .body p {
+  color: var(--beige-dim);
+  font-size: 0.98rem;
+}
+.event .tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 0.3rem 0.7rem;
+  border-radius: 100px;
+}
+@media (max-width: 800px) {
+  .event { grid-template-columns: 1fr; gap: 0.6rem; }
+  .event:hover { padding-left: 0; padding-right: 0; }
+  .event .tag { justify-self: start; }
+}
+
+/* ===== CANDIDATI ===== */
+.candidati {
+  border-top: 1px solid var(--line);
+  background: rgba(17, 32, 69, 0.55);
+}
+.candidati .head { margin-bottom: 3rem; max-width: 800px; }
+.candidati .head p {
+  color: var(--beige-dim);
+  margin-top: 0.8rem;
+  font-size: 1.05rem;
+  max-width: 620px;
+}
+
+.organo { margin-bottom: 4.5rem; }
+.organo:last-child { margin-bottom: 0; }
+.organo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.organo-name {
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+}
+.organo-name em { color: var(--gold); font-style: normal; }
+.organo-count {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+
+.roster {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+@media (max-width: 1000px) { .roster { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .roster { grid-template-columns: 1fr; } }
+
+.roster.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 320px));
+  justify-content: start;
+}
+@media (max-width: 600px) { .roster.cols-2 { grid-template-columns: 1fr; } }
+
+.member {
+  background: rgba(10, 22, 50, 0.7);
+  border: 1px solid var(--line);
+  padding: 1.1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  transition: all 0.35s ease;
+}
+.member:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.member .photo {
+  position: relative;
+  aspect-ratio: 4 / 5;          /* il vincolo di forma sta solo sulla foto */
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(245, 205, 71, 0.07) 8px, rgba(245, 205, 71, 0.07) 16px),
+    var(--bg-soft);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 3rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+.member .photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 2px;
+  z-index: 1;
+}
+.member .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.member .info .name {
+  font-size: clamp(0.9rem, 1.05vw, 1.05rem);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+.member .info .role {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--beige-dim);
+}
+.member .tag {
+  position: absolute;
+  top: 0.9rem; right: 0.9rem;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  background: rgba(12, 10, 7, 0.85);
+  padding: 0.3rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid var(--gold);
+}
+
+/* ===== STORIA ===== */
+.storia {
+  border-top: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at center top, rgba(245, 205, 71, 0.10) 0%, transparent 60%),
+    rgba(10, 22, 50, 0.45);
+}
+.storia .grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 5rem;
+  align-items: start;
+  margin-top: 3rem;
+}
+.storia .lede p {
+  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--beige);
+  margin-bottom: 1.1rem;
+}
+.storia .lede p.first {
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+}
+.storia .lede p.first em {
+  color: var(--gold);
+  font-style: normal;
+}
+.storia .stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.storia .stat-cell {
+  background: rgba(10, 22, 50, 0.7);
+  padding: 2rem 1.6rem;
+}
+.storia .stat-cell .big {
+  font-size: clamp(2.3rem, 4.4vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--cream);
+}
+.storia .stat-cell .big em {
+  color: var(--gold);
+  font-style: normal;
+}
+.storia .stat-cell .label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--beige-dim);
+  margin-top: 0.9rem;
+}
+@media (max-width: 900px) {
+  .storia .grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+/* ===== ILLUMINATED HERO (sezione transizione) ===== */
+.illuminated {
+  position: relative;
+  border-top: 1px solid var(--line);
+  min-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  text-align: center;
+  background: rgba(10, 22, 50, 0.45);
+  padding: 6rem 2rem;
+}
+.illuminated-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.illuminated-bg .glow-top,
+.illuminated-bg .glow-bot {
+  position: absolute;
+  width: 100%;
+  max-width: 44em;
+  height: 100%;
+  border-radius: 100em;
+  filter: blur(50px);
+  opacity: 0;
+  scale: 1.2;
+}
+.illuminated-bg .glow-top {
+  background: radial-gradient(ellipse at center, rgba(245, 205, 71, 0.55) 0%, rgba(245, 205, 71, 0.10) 35%, transparent 60%);
+  translate: 0 -70%;
+}
+.illuminated-bg .glow-bot {
+  background: radial-gradient(ellipse at center, rgba(247, 238, 213, 0.45) 0%, rgba(245, 205, 71, 0.08) 40%, transparent 65%);
+  translate: 0 70%;
+}
+.illuminated.in .glow-top { animation: illumGlowTop 1.4s ease-in-out forwards; }
+.illuminated.in .glow-bot { animation: illumGlowBot 1.4s ease-in-out forwards; }
+@keyframes illumGlowTop {
+  0%   { translate: 0 -70%; opacity: 0; }
+  100% { translate: 0 -64%; opacity: 0.85; }
+}
+@keyframes illumGlowBot {
+  0%   { translate: 0  70%; opacity: 0; }
+  100% { translate: 0  64%; opacity: 0.85; }
+}
+
+.illuminated-content {
+  position: relative;
+  z-index: 1;
+  max-width: 60em;
+}
+.illuminated-content h2 {
+  font-size: clamp(2.4rem, 6vw, 5.4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 2rem;
+}
+.illuminated-content h2 br + .glow-text { display: inline-block; }
+.glow-text {
+  position: relative;
+  display: inline-block;
+  /* base: oro cadmio → emette il bagliore tramite il filtro svg */
+  background: linear-gradient(0deg, #c9a531 0%, #f5cd47 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: url(#glow-eureka);
+}
+.glow-text::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  /* overlay: cream chiaro, sale in opacità → il "core" leggibile sopra il bagliore */
+  background: linear-gradient(0deg, #ede0b8 0%, #f7eed5 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+.illuminated.in .glow-text::before {
+  animation: illumOnload 1.2s ease-out forwards;
+}
+@keyframes illumOnload {
+  24% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.illuminated-content p {
+  font-size: clamp(0.98rem, 1.25vw, 1.18rem);
+  line-height: 1.55;
+  color: var(--beige-dim);
+  max-width: 30em;
+  margin: 0 auto;
+  background: linear-gradient(to top, #6a7da8, #b8a988);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+.illuminated-content p .emphasis {
+  font-weight: 900;
+  color: var(--cream);
+  -webkit-text-fill-color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illuminated-bg .glow-top { translate: 0 -64%; opacity: 0.85; animation: none; }
+  .illuminated-bg .glow-bot { translate: 0  64%; opacity: 0.85; animation: none; }
+  .illuminated.in .glow-text::before { opacity: 1; animation: none; }
+}
+
+/* ===== CTA ===== */
+.cta {
+  border-top: 1px solid var(--line);
+  padding: 7rem 2rem 4rem;
+  text-align: center;
+  background: rgba(10, 22, 50, 0.35);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cta-shader {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cta-shader canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cta-shader::after {
+  /* vignette sul bordo per far respirare il testo */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 70% at center, transparent 25%, rgba(10, 22, 50, 0.65) 95%);
+  pointer-events: none;
+}
+.cta-content { position: relative; z-index: 1; }
+.cta .super {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.cta h2 {
+  font-weight: 700;
+  font-size: clamp(3rem, 11vw, 11rem);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  color: var(--cream);
+  margin-bottom: 1.8rem;
+  text-shadow:
+    0 0  3px  rgba(247, 238, 213, 0.85),
+    0 0  10px rgba(255, 224, 122, 0.70),
+    0 0  26px rgba(245, 205, 71, 0.55),
+    0 0  60px rgba(245, 205, 71, 0.30);
+}
+.cta h2 .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0  4px  rgba(255, 224, 122, 0.95),
+    0 0  14px rgba(245, 205, 71, 0.80),
+    0 0  34px rgba(255, 224, 122, 0.50),
+    0 0  74px rgba(245, 205, 71, 0.30);
+}
+.cta a.ig-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: clamp(1.3rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.4rem;
+  transition: all 0.3s ease;
+}
+.cta a.ig-big:hover {
+  color: var(--gold);
+  letter-spacing: 0.01em;
+}
+.cta a.ig-big::before {
+  content: '↳';
+  color: var(--gold);
+  font-size: 1.1em;
+}
+
+footer {
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--line);
+  background: rgba(10, 22, 50, 0.7);
+}
+footer .row {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  gap: 2rem;
+}
+footer .row .center { display: flex; gap: 1.4rem; }
+footer a {
+  color: var(--beige-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+footer a:hover { color: var(--gold); }
+footer .right { text-align: right; }
+@media (max-width: 700px) {
+  footer .row { grid-template-columns: 1fr; text-align: center; }
+  footer .right, footer .center { justify-content: center; text-align: center; }
+}
+
+/* ===== REVEAL =====
+   gate dietro html.js: senza JS gli elementi restano visibili (niente nascondino). */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html.js .reveal.in { opacity: 1; transform: translateY(0); }
+
+/* fallback paranoico: se reduced-motion o l'IO non scatta, mostra comunque tutto */
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor" id="cursor"></div>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a href="#top" class="brand">eureka<span class="bang">!</span></a>
+  <ul>
+    <li><a href="#progetti">progetti</a></li>
+    <li><a href="#eventi">eventi</a></li>
+    <li><a href="#candidati">candidati</a></li>
+    <li><a href="#storia">storia</a></li>
+  </ul>
+  <div class="right">
+    <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="ig">@eureka.archimede</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <!-- shader animato di fondo (notte stellata, fbm/clouds + glints dorati) -->
+  <canvas class="hero-shader" id="hero-shader-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+
+    <!-- LAMPADINA 3D (three.js, vetro lucido con transmission) -->
+    <div class="bulb-stage" id="bulb-stage" data-hover aria-hidden="true">
+      <canvas id="bulb-canvas"></canvas>
+      <div class="bulb-ui">
+        <span class="bulb-crh tl"></span>
+        <span class="bulb-crh tr"></span>
+        <span class="bulb-crh bl"></span>
+        <span class="bulb-crh br"></span>
+
+        <div class="bulb-ui-label tl">
+          <span class="dot live"></span>
+          <span><span class="v" id="bulb-watt">60</span>W · E27</span>
+        </div>
+        <div class="bulb-ui-label tr">
+          A19 · TUNGSTEN
+        </div>
+        <div class="bulb-ui-label bl">
+          <span class="v" id="bulb-kelvin">2700</span>K · WARM
+        </div>
+        <div class="bulb-ui-label br">
+          PWR <span class="pwr" id="bulb-pwr">OFF</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-wordmark">
+      <h1 aria-label="eureka!">
+        <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
+      </h1>
+      <p class="hero-tagline">
+        un'idea. un'aula. un istituto. <em>eureka!</em> è la lista del liceo archimede di messina.
+      </p>
+      <div class="hero-cta">
+        <a href="#progetti" class="btn btn-primary" data-hover>i progetti <span class="arrow">→</span></a>
+        <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="btn btn-ghost" data-hover>seguici</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span><span>lista studentesca</span>
+    <span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span><span>lista studentesca</span>
+  </div>
+</div>
+
+<!-- ============ PROGETTI ============ -->
+<section class="progetti" id="progetti">
+  <div class="container">
+    <div class="head reveal">
+      <div>
+        <div class="section-label">01 / progetti</div>
+        <h2 class="h2">cose <em>fatte</em>. cose da <em>fare</em>.</h2>
+      </div>
+      <div class="note">
+        ogni progetto nasce in classe. cresce nei corridoi. arriva in consiglio d'istituto.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card reveal" data-hover>
+        <div class="num"><span>01 — spazi</span><span class="arrow">→</span></div>
+        <h3>aule studio <em>aperte</em>. anche di pomeriggio.</h3>
+        <p>spazi liberi. per ripassare. per recuperare. per stare. apertura fino alle 17.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>02 — cultura</span><span class="arrow">→</span></div>
+        <h3>cineforum. dibattiti. <em>autori</em>.</h3>
+        <p>un calendario fisso. ogni mese un appuntamento. cinema. ospiti. parole vere.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>03 — sport</span><span class="arrow">→</span></div>
+        <h3>tornei <em>veri</em>. non simbolici.</h3>
+        <p>calcetto. basket. pallavolo. scacchi. classifiche pubbliche. finali in palestra.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>04 — ascolto</span><span class="arrow">→</span></div>
+        <h3>sportello <em>accessibile</em>. senza fila.</h3>
+        <p>ascolto vero. nessun giudizio. un orario chiaro. un posto dove andare.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>05 — trasparenza</span><span class="arrow">→</span></div>
+        <h3>verbali <em>leggibili</em>. in 7 giorni.</h3>
+        <p>ogni consiglio. un riassunto chiaro. cosa si è detto. cosa si è deciso.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>06 — eventi</span><span class="arrow">→</span></div>
+        <h3>una festa <em>d'istituto</em>. che vale.</h3>
+        <p>fine anno. musica. food. la scuola fuori dalla scuola. organizzata da noi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EVENTI ============ -->
+<section class="eventi" id="eventi">
+  <div class="container">
+    <div class="head reveal">
+      <div class="section-label">02 / eventi</div>
+      <h2 class="h2">il calendario. <em>acceso</em>.</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="event reveal" data-hover>
+        <div class="date">ottobre 2025</div>
+        <div class="body">
+          <h3>assemblea d'apertura.</h3>
+          <p>presentazione della lista. domande aperte. risposte vere.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">novembre 2025</div>
+        <div class="body">
+          <h3>cineforum n° 01. visioni di scuola.</h3>
+          <p>un film. due ore. una discussione. in aula magna.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">dicembre 2025</div>
+        <div class="body">
+          <h3>torneo invernale. archimede cup.</h3>
+          <p>calcetto e pallavolo. tutte le classi. una sola palestra.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">marzo 2026</div>
+        <div class="body">
+          <h3>incontro con l'autore.</h3>
+          <p>uno scrittore. un'ora. domande senza copione.</p>
+        </div>
+        <div class="tag">in corso</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">maggio 2026</div>
+        <div class="body">
+          <h3>festa d'istituto. eureka day.</h3>
+          <p>musica. food truck. stand. il cortile come non l'avete mai visto.</p>
+        </div>
+        <div class="tag">in arrivo</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">giugno 2026</div>
+        <div class="body">
+          <h3>chiusura. assemblea finale.</h3>
+          <p>cosa abbiamo fatto. cosa non abbiamo fatto. cosa lasciamo.</p>
+        </div>
+        <div class="tag">in arrivo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CANDIDATI ============ -->
+<section class="candidati" id="candidati">
+  <div class="container">
+    <div class="head reveal">
+      <div class="section-label">03 / candidati</div>
+      <h2 class="h2">le persone <em>dietro</em> la lista.</h2>
+      <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
+    </div>
+
+    <!-- ===== consiglio d'istituto ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">consiglio <em>d'istituto</em>.</div>
+        <div class="organo-count">8 candidati</div>
+      </div>
+      <div class="roster">
+        <div class="member reveal" data-hover>
+          <div class="tag">5a</div>
+          <div class="photo"><img src="foto/christian-bucalo.jpg" alt="christian bucalo" onerror="this.remove()">c</div>
+          <div class="info">
+            <div class="name">christian bucalo</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4e</div>
+          <div class="photo"><img src="foto/giacomo-warm.jpg" alt="giacomo warm" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giacomo warm</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4b</div>
+          <div class="photo"><img src="foto/giulia-perri.jpg" alt="giulia perri" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giulia perri</div>
+            <div class="role">n° 03</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4d</div>
+          <div class="photo"><img src="foto/tania-spinella.jpg" alt="tania spinella" onerror="this.remove()">t</div>
+          <div class="info">
+            <div class="name">tania spinella</div>
+            <div class="role">n° 04</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">5i</div>
+          <div class="photo"><img src="foto/giovanni-lo-nostro.jpg" alt="giovanni lo nostro" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giovanni lo nostro</div>
+            <div class="role">n° 05</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3c</div>
+          <div class="photo"><img src="foto/gabriele-picciolo.jpg" alt="gabriele picciolo" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">gabriele picciolo</div>
+            <div class="role">n° 06</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">2c</div>
+          <div class="photo"><img src="foto/federico-de-salvo.jpg" alt="federico de salvo" onerror="this.remove()">f</div>
+          <div class="info">
+            <div class="name">federico de salvo</div>
+            <div class="role">n° 07</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3n</div>
+          <div class="photo"><img src="foto/marco-cangelosi.jpg" alt="marco cangelosi" onerror="this.remove()">m</div>
+          <div class="info">
+            <div class="name">marco cangelosi</div>
+            <div class="role">n° 08</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== consulta provinciale ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">consulta <em>provinciale</em>.</div>
+        <div class="organo-count">4 candidati</div>
+      </div>
+      <div class="roster">
+        <div class="member reveal" data-hover>
+          <div class="tag">4m</div>
+          <div class="photo"><img src="foto/paolo-arigo.jpg" alt="paolo arigo" onerror="this.remove()">p</div>
+          <div class="info">
+            <div class="name">paolo arigo</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3e</div>
+          <div class="photo"><img src="foto/alberto-di-cagno.jpg" alt="alberto di cagno" onerror="this.remove()">a</div>
+          <div class="info">
+            <div class="name">alberto di cagno</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4c</div>
+          <div class="photo"><img src="foto/giorgio-bensaia.jpg" alt="giorgio bensaia" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giorgio bensaia</div>
+            <div class="role">n° 03</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">5c</div>
+          <div class="photo"><img src="foto/giorgia-curro.jpg" alt="giorgia currò" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giorgia currò</div>
+            <div class="role">n° 04</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== organo di garanzia ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">organo di <em>garanzia</em>.</div>
+        <div class="organo-count">2 candidati</div>
+      </div>
+      <div class="roster cols-2">
+        <div class="member reveal" data-hover>
+          <div class="tag">5a</div>
+          <div class="photo"><img src="foto/nino-sutera.jpg" alt="nino sutera" onerror="this.remove()">n</div>
+          <div class="info">
+            <div class="name">nino sutera</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4e</div>
+          <div class="photo"><img src="foto/nethma.jpg" alt="nethma" onerror="this.remove()">n</div>
+          <div class="info">
+            <div class="name">nethma</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORIA ============ -->
+<section class="storia" id="storia">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">04 / storia</div>
+      <h2 class="h2">dal 2018. ancora <em>accesi</em>.</h2>
+    </div>
+
+    <div class="grid">
+      <div class="lede reveal">
+        <p class="first">
+          <em>eureka</em> è la parola di archimede. è la parola che si grida quando si trova qualcosa.
+        </p>
+        <p>
+          la lista nasce nel 2018. dentro un liceo da 1.500 studenti. con un'idea semplice. la rappresentanza si fa. non si recita.
+        </p>
+        <p>
+          da allora cambiamo. ogni anno. cambiano le facce. cambiano le classi. resta il metodo.
+        </p>
+        <p>
+          ascoltare. proporre. fare. e poi raccontarlo.
+        </p>
+      </div>
+
+      <aside class="stats reveal">
+        <div class="stat-cell">
+          <div class="big">1.<em>500</em></div>
+          <div class="label">studenti dell'archimede</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big"><em>2018</em></div>
+          <div class="label">anno di fondazione</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big">06</div>
+          <div class="label">progetti attivi</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big">0<em>0</em></div>
+          <div class="label">promesse vuote</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ILLUMINATED (transizione) ============ -->
+<section class="illuminated reveal" aria-label="momento illuminato">
+  <div class="illuminated-bg" aria-hidden="true">
+    <div class="glow-top"></div>
+    <div class="glow-bot"></div>
+  </div>
+  <div class="illuminated-content">
+    <h2>
+      un'idea.<br>
+      <span class="glow-text" data-text="accesa.">accesa.</span><br>
+      da quattordici.
+    </h2>
+    <p>
+      una lista. tre organi. una sola direzione.
+      <span class="emphasis">accendere</span> il liceo archimede,
+      una proposta concreta alla volta.
+    </p>
+  </div>
+</section>
+
+<!-- filtro svg per il glow text (notte stellata: oro cadmio + ombre blu) -->
+<svg class="glow-defs" width="0" height="0" aria-hidden="true" style="position:absolute;width:0;height:0">
+  <defs>
+    <filter id="glow-eureka" color-interpolation-filters="sRGB"
+            x="-50%" y="-200%" width="200%" height="500%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"  result="blur4"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="19" result="blur19"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="9"  result="blur9"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="30" result="blur30"/>
+
+      <!-- layer 0 — cream highlight close (#f7eed5) -->
+      <feColorMatrix in="blur4" result="color-0-blur" type="matrix"
+        values="0.969 0 0 0 0
+                0 0.929 0 0 0
+                0 0 0.836 0 0
+                0 0 0 0.85 0"/>
+      <feOffset in="color-0-blur" result="layer-0-offsetted" dx="0" dy="0"/>
+
+      <!-- layer 1 — gold cadmium mid (#f5cd47) -->
+      <feColorMatrix in="blur19" result="color-1-blur" type="matrix"
+        values="0.961 0 0 0 0
+                0 0.804 0 0 0
+                0 0 0.278 0 0
+                0 0 0 1 0"/>
+      <feOffset in="color-1-blur" result="layer-1-offsetted" dx="0" dy="2"/>
+
+      <!-- layer 2 — bright gold (#ffe07a) -->
+      <feColorMatrix in="blur9" result="color-2-blur" type="matrix"
+        values="1 0 0 0 0
+                0 0.878 0 0 0
+                0 0 0.478 0 0
+                0 0 0 0.7 0"/>
+      <feOffset in="color-2-blur" result="layer-2-offsetted" dx="0" dy="2"/>
+
+      <!-- layer 3 — gold far diffusion (#f5cd47) -->
+      <feColorMatrix in="blur30" result="color-3-blur" type="matrix"
+        values="0.961 0 0 0 0
+                0 0.804 0 0 0
+                0 0 0.278 0 0
+                0 0 0 1 0"/>
+      <feOffset in="color-3-blur" result="layer-3-offsetted" dx="0" dy="2"/>
+
+      <!-- layer 4 — deep gold/amber bottom shadow (#c9a531) -->
+      <feColorMatrix in="blur30" result="color-4-blur" type="matrix"
+        values="0.788 0 0 0 0
+                0 0.647 0 0 0
+                0 0 0.192 0 0
+                0 0 0 1 0"/>
+      <feOffset in="color-4-blur" result="layer-4-offsetted" dx="0" dy="16"/>
+
+      <!-- layer 5 — blue cobalt shadow (#1a2d5e) -->
+      <feColorMatrix in="blur30" result="color-5-blur" type="matrix"
+        values="0.102 0 0 0 0
+                0 0.176 0 0 0
+                0 0 0.369 0 0
+                0 0 0 1 0"/>
+      <feOffset in="color-5-blur" result="layer-5-offsetted" dx="0" dy="64"/>
+
+      <!-- layer 6 — deep night blue (#112045) -->
+      <feColorMatrix in="blur30" result="color-6-blur" type="matrix"
+        values="0.067 0 0 0 0
+                0 0.125 0 0 0
+                0 0 0.271 0 0
+                0 0 0 1 0"/>
+      <feOffset in="color-6-blur" result="layer-6-offsetted" dx="0" dy="64"/>
+
+      <!-- layer 7 — alpha shadow soft -->
+      <feColorMatrix in="blur30" result="color-7-blur" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.65 0"/>
+      <feOffset in="color-7-blur" result="layer-7-offsetted" dx="0" dy="64"/>
+
+      <feMerge>
+        <feMergeNode in="layer-0-offsetted"/>
+        <feMergeNode in="layer-1-offsetted"/>
+        <feMergeNode in="layer-2-offsetted"/>
+        <feMergeNode in="layer-3-offsetted"/>
+        <feMergeNode in="layer-4-offsetted"/>
+        <feMergeNode in="layer-5-offsetted"/>
+        <feMergeNode in="layer-6-offsetted"/>
+        <feMergeNode in="layer-7-offsetted"/>
+        <feMergeNode in="layer-0-offsetted"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="contatti">
+  <div class="cta-shader" aria-hidden="true">
+    <canvas id="shader-canvas"></canvas>
+  </div>
+  <div class="cta-content">
+    <div class="super">● vota. condividi. accendi.</div>
+    <h2>vota eureka<span class="bang">!</span></h2>
+    <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>
+      @eureka.archimede su instagram
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div>© <span id="year"></span> <span class="glow-mini">eureka<span class="bang">!</span></span></div>
+    <div class="center">
+      <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram</a>
+      <a href="#progetti">progetti</a>
+      <a href="#eventi">eventi</a>
+      <a href="#candidati">candidati</a>
+      <a href="#storia">storia</a>
+    </div>
+    <div class="right">liceo scientifico archimede · messina, it</div>
+  </div>
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script>
+// ===== entra sempre dall'alto (no scroll restoration del browser) =====
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+// se la url ha un hash residuo da un giro precedente, lo puliamo
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+window.scrollTo(0, 0);
+window.addEventListener('load', () => window.scrollTo(0, 0));
+
+// ===== year =====
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ===== custom cursor =====
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+
+window.addEventListener('mousemove', (e) => {
+  mx = e.clientX; my = e.clientY;
+});
+
+function cursorLoop() {
+  cx += (mx - cx) * 0.18;
+  cy += (my - cy) * 0.18;
+  cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+  requestAnimationFrame(cursorLoop);
+}
+cursorLoop();
+
+document.querySelectorAll('a, button, [data-hover]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+
+// ===== reveal on scroll =====
+const reveals = document.querySelectorAll('.reveal');
+
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => io.observe(el));
+
+  // safety net: dopo 4s se qualcosa è ancora nascosto, lo mostriamo lo stesso
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+  }, 4000);
+} else {
+  // niente IO disponibile: mostra tutto subito
+  reveals.forEach(el => el.classList.add('in'));
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+RectAreaLightUniformsLib.init();
+
+const canvas = document.getElementById('bulb-canvas');
+const stage = canvas.parentElement;
+
+// ===== renderer =====
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance'
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.setClearColor(0x000000, 0);     // canvas davvero trasparente → niente quadrato
+if ('transmissionResolutionScale' in renderer) renderer.transmissionResolutionScale = 0.6;
+
+// ===== scene + camera =====
+const scene = new THREE.Scene();
+// niente background: la canvas è trasparente e lascia vedere starfield + shader hero
+scene.background = null;
+const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 1000);
+camera.position.set(0, 0, 380);
+
+// ===== environment (riflessi reali sul vetro lucido) =====
+const pmrem = new THREE.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+// blur più alto = riflessi morbidi, non bianchi e netti
+const envTex = pmrem.fromScene(new RoomEnvironment(), 0.5).texture;
+scene.environment = envTex;
+
+// ===== bulb group =====
+const bulb = new THREE.Group();
+scene.add(bulb);
+
+// ----- profilo del vetro (a19, in mm * scala) -----
+const glassProfile = [
+  [0.5, 70],
+  [12,  69],
+  [24,  66],
+  [34,  60],
+  [42,  52],
+  [47,  42],
+  [50,  30],
+  [51,  18],
+  [50,  6],
+  [47, -6],
+  [42, -18],
+  [34, -28],
+  [24, -36],
+  [17, -42],
+  [15, -48]
+].map(p => new THREE.Vector2(p[0], p[1]));
+
+const glassGeo = new THREE.LatheGeometry(glassProfile, 192);
+glassGeo.computeVertexNormals();
+const glassMat = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  transmission: 1.0,
+  roughness: 0.0,             // perfettamente liscio
+  metalness: 0,
+  ior: 1.5,
+  thickness: 0.5,
+  attenuationColor: new THREE.Color(0xffffff),
+  attenuationDistance: Infinity,
+  clearcoat: 0,
+  iridescence: 0,
+  envMapIntensity: 0.0,       // niente env diffuso → vetro non più "lattiginoso"
+  specularIntensity: 1,
+  specularColor: new THREE.Color(0xffffff),
+  transparent: true,
+  opacity: 1,
+  side: THREE.FrontSide
+});
+const glass = new THREE.Mesh(glassGeo, glassMat);
+bulb.add(glass);
+
+// ----- "press" del vetro interno (base piatta dei fili) -----
+const pressGeo = new THREE.CylinderGeometry(7, 9, 18, 24);
+const pressMat = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  transmission: 0.85,
+  roughness: 0.15,
+  ior: 1.5,
+  thickness: 2,
+  envMapIntensity: 1.0,
+  transparent: true
+});
+const press = new THREE.Mesh(pressGeo, pressMat);
+press.position.y = -32;
+bulb.add(press);
+
+// ----- stelo del vuoto (tubo centrale dietro al filamento) -----
+const stemGeo = new THREE.CylinderGeometry(1.6, 1.6, 30, 16);
+const stemMat = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  transmission: 0.7,
+  roughness: 0.18,
+  thickness: 1.5,
+  ior: 1.5,
+  envMapIntensity: 1.0,
+  transparent: true
+});
+const stem = new THREE.Mesh(stemGeo, stemMat);
+stem.position.y = -8;
+bulb.add(stem);
+
+// ----- supporti del filamento (fili di nichel) -----
+const wireMat = new THREE.MeshStandardMaterial({
+  color: 0x9a8550, metalness: 0.85, roughness: 0.3, envMapIntensity: 1.4
+});
+function makeWire(x) {
+  const g = new THREE.CylinderGeometry(0.45, 0.45, 28, 12);
+  const m = new THREE.Mesh(g, wireMat);
+  m.position.set(x, 4, 0);
+  return m;
+}
+bulb.add(makeWire(-9));
+bulb.add(makeWire(9));
+
+// ----- FILAMENTO COILED COIL (curva elicoidale orizzontale) -----
+const filPoints = [];
+const filLength = 18;        // lunghezza orizzontale
+const filRadius = 1.0;       // raggio della spirale
+const filTurns  = 14;        // n° di spire
+for (let i = 0; i <= 220; i++) {
+  const t = i / 220;
+  const x = -filLength + t * filLength * 2;
+  const angle = t * Math.PI * 2 * filTurns;
+  const y = Math.sin(angle) * filRadius;
+  const z = Math.cos(angle) * filRadius;
+  filPoints.push(new THREE.Vector3(x, y, z));
+}
+const filCurve = new THREE.CatmullRomCurve3(filPoints);
+const filGeo   = new THREE.TubeGeometry(filCurve, 600, 0.11, 6, false);  // più sottile
+const filMat   = new THREE.MeshStandardMaterial({
+  color: 0x0a0805,
+  emissive: 0x000000,
+  emissiveIntensity: 0,
+  metalness: 0.5,
+  roughness: 0.5,
+  envMapIntensity: 0.8
+});
+const filament = new THREE.Mesh(filGeo, filMat);
+filament.position.y = 18;
+bulb.add(filament);
+
+// ----- piccoli ganci sui supporti -----
+const hookGeo = new THREE.SphereGeometry(0.7, 12, 8);
+const hook1 = new THREE.Mesh(hookGeo, wireMat); hook1.position.set(-9, 18, 0); bulb.add(hook1);
+const hook2 = new THREE.Mesh(hookGeo, wireMat); hook2.position.set( 9, 18, 0); bulb.add(hook2);
+
+// ----- SCINTILLE: piccoli punti caldi distribuiti lungo la spirale -----
+const sparkGroup = new THREE.Group();
+sparkGroup.position.y = 18;
+bulb.add(sparkGroup);
+const sparks = [];
+for (let i = 0; i < 22; i++) {
+  // colore tra arancio caldo e ambra
+  const hue = 0.07 + Math.random() * 0.04;
+  const sat = 1.0;
+  const lit = 0.55 + Math.random() * 0.2;
+  const c = new THREE.Color().setHSL(hue, sat, lit);
+  const m = new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0 });
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 8), m);
+  // distribuzione lungo l'asse del filamento, con offset radiale random
+  const ux = -filLength + Math.random() * filLength * 2;
+  const ang = Math.random() * Math.PI * 2;
+  const r = filRadius * (0.6 + Math.random() * 0.6);
+  s.position.set(ux, Math.sin(ang) * r, Math.cos(ang) * r);
+  s.userData.phase = Math.random() * 6.28;
+  s.userData.freq  = 8 + Math.random() * 14;     // frequenza di flicker individuale
+  s.userData.size  = 0.7 + Math.random() * 1.6;
+  sparks.push(s);
+  sparkGroup.add(s);
+}
+
+// ----- LUCE INTERNA AMBRATA (point light che si accende) -----
+const innerLight = new THREE.PointLight(0xffa040, 0, 260, 2);
+innerLight.position.set(0, 18, 0);
+bulb.add(innerLight);
+
+// ----- attacco E27: lathe in metallo argentato (nichel/alluminio) -----
+const baseProfile = [
+  [15, -48],
+  [17, -50],
+  [19, -54],
+  [20, -58],
+  [20, -82],
+  [18, -86],
+  [13, -90]
+].map(p => new THREE.Vector2(p[0], p[1]));
+const baseGeo = new THREE.LatheGeometry(baseProfile, 64);
+const baseMetal = new THREE.MeshStandardMaterial({
+  color: 0xb8bcc0,
+  metalness: 0.95,
+  roughness: 0.22,
+  envMapIntensity: 1.4
+});
+const base = new THREE.Mesh(baseGeo, baseMetal);
+bulb.add(base);
+
+// ----- filettatura: spirale continua come nel reference -----
+const threadPts = [];
+{
+  const turns = 5;
+  const segments = 320;
+  const r = 20.5;
+  const yStart = -56;
+  const yEnd   = -82;
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const angle = t * Math.PI * 2 * turns;
+    const y = yStart + (yEnd - yStart) * t;
+    threadPts.push(new THREE.Vector3(Math.cos(angle) * r, y, Math.sin(angle) * r));
+  }
+}
+const threadCurve = new THREE.CatmullRomCurve3(threadPts);
+const threadGeo = new THREE.TubeGeometry(threadCurve, 800, 1.0, 10, false);
+const threadMat = new THREE.MeshStandardMaterial({
+  color: 0xacb0b4,
+  metalness: 0.95,
+  roughness: 0.28,
+  envMapIntensity: 1.4
+});
+const thread = new THREE.Mesh(threadGeo, threadMat);
+bulb.add(thread);
+
+// ----- raccordo nero (mastice) -----
+const collarGeo = new THREE.CylinderGeometry(15.6, 15, 3, 32);
+const collarMat = new THREE.MeshStandardMaterial({
+  color: 0x0a0805, roughness: 0.7, metalness: 0.1
+});
+const collar = new THREE.Mesh(collarGeo, collarMat);
+collar.position.y = -49;
+bulb.add(collar);
+
+// ----- isolante nero conico -----
+const insGeo = new THREE.CylinderGeometry(13, 9, 8, 32);
+const insMat = new THREE.MeshStandardMaterial({
+  color: 0x080604, roughness: 0.92, metalness: 0.0
+});
+const insulator = new THREE.Mesh(insGeo, insMat);
+insulator.position.y = -90;
+bulb.add(insulator);
+
+// ----- contatto centrale (eyelet) in nichel scuro -----
+const padGeo = new THREE.SphereGeometry(6, 24, 16, 0, Math.PI * 2, 0, Math.PI/2);
+const padMat = new THREE.MeshStandardMaterial({
+  color: 0x6a6e72, metalness: 0.92, roughness: 0.32, envMapIntensity: 1.2
+});
+const pad = new THREE.Mesh(padGeo, padMat);
+pad.scale.y = 0.6;
+pad.rotation.x = Math.PI;
+pad.position.y = -94;
+bulb.add(pad);
+
+// ===== luci di scena =====
+scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+const key = new THREE.DirectionalLight(0xffffff, 0.5);
+key.position.set(4, 6, 8);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xfff3c0, 0.35);
+rim.position.set(-3, -2, -8);
+scene.add(rim);
+
+// ===== "finestre" RectAreaLight: riflessi netti sul vetro come nel reference =====
+const win1 = new THREE.RectAreaLight(0xffffff, 8, 90, 160);
+win1.position.set(70, 30, 110);
+win1.lookAt(0, 0, 0);
+scene.add(win1);
+
+const win2 = new THREE.RectAreaLight(0xffffff, 5, 70, 130);
+win2.position.set(-80, 20, 90);
+win2.lookAt(0, 0, 0);
+scene.add(win2);
+
+const win3 = new THREE.RectAreaLight(0xffffff, 4, 50, 110);
+win3.position.set(0, 80, 100);
+win3.lookAt(0, 0, 0);
+scene.add(win3);
+
+// ===== post-processing: bloom (rende il filamento davvero incandescente) =====
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(1, 1),
+  0.85,    // strength
+  0.55,    // radius
+  0.78     // threshold (solo i pixel sopra questa luminosità contribuiscono al bloom)
+);
+const outputPass = new OutputPass();
+composer.addPass(renderPass);
+composer.addPass(bloomPass);
+composer.addPass(outputPass);
+
+// ===== resize =====
+function resize() {
+  const w = stage.clientWidth;
+  const h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  bloomPass.resolution.set(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+// ===== animazione realistica =====
+//   rotazione lenta di idle + parallasse al cursore + drag con inerzia.
+//   filamento segue la curva del corpo nero del tungsteno: 1500K→2000K→2500K→2700K
+//   con flicker elettrico realistico (low-freq drift + alta-freq chatter + dip rari).
+const IDLE_YAW_SPEED   = 0.35;   // rad/s — drift lento, quasi statico
+const IDLE_YAW_WOBBLE  = 0.04;   // rad — wobble sinusoidale
+const PARALLAX_AMP_X   = 0.35;   // rad — yaw guidato dal cursore
+const PARALLAX_AMP_Y   = 0.22;   // rad — pitch guidato dal cursore
+const PARALLAX_LERP    = 4.0;    // velocità di inseguimento del target
+const DRAG_SENS        = 0.012;  // rad per pixel
+const DRAG_FRICTION    = 4.5;    // decay della velocità angolare al rilascio
+const SPARK_START    = 1.5;
+const SPARK_PEAK     = 4.5;
+const HEAT_START     = 2.0;
+const HEAT_FULL      = 9.5;
+const SPARK_FADE_END = 9.0;
+const STARTUP_STUTTER_END = 4.0;  // sbalzi di accensione dopo HEAT_START
+
+// curva blackbody del tungsteno (kelvin → rgb sRGB approssimato)
+//   1500K  #ff5c0c — primo bagliore rosso scuro
+//   2000K  #ff7d22 — arancione
+//   2500K  #ff9d3f — ambra
+//   2700K  #ffb556 — incandescente standard (lampadina reale)
+//   3000K  #ffc888 — più caldo se overdriven
+const COLOR_COLD = new THREE.Color(0x140d07);     // tungsteno freddo, quasi nero
+const COLOR_K1500 = new THREE.Color(0xff5c0c);
+const COLOR_K2000 = new THREE.Color(0xff7d22);
+const COLOR_K2500 = new THREE.Color(0xff9d3f);
+const COLOR_K2700 = new THREE.Color(0xffb556);
+
+let startTime = performance.now() * 0.001;
+let lastTime  = startTime;
+const haloEl = stage;
+
+function smoothstep(k) { return k * k * (3 - 2 * k); }
+function clamp(v, a, b){ return v < a ? a : v > b ? b : v; }
+const tmpColor = new THREE.Color();
+
+// ===== INTERAZIONE: parallasse cursore + drag con inerzia =====
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let targetYaw   = 0;   // contributo cursore/drag su yaw
+let targetPitch = 0;
+let curYaw      = 0;   // valori interpolati realmente applicati
+let curPitch    = 0;
+let dragVelYaw   = 0;  // inerzia post-drag
+let dragVelPitch = 0;
+
+let isDragging = false;
+let pointerId  = null;
+let lastPx = 0, lastPy = 0;
+let dragMoved = 0;     // somma deltas — distingue tap da drag
+let pointerInside = false;
+
+function onMove(ev){
+  const r = stage.getBoundingClientRect();
+  const nx = ((ev.clientX - r.left) / r.width)  * 2 - 1;
+  const ny = ((ev.clientY - r.top)  / r.height) * 2 - 1;
+
+  if (isDragging){
+    const dx = ev.clientX - lastPx;
+    const dy = ev.clientY - lastPy;
+    targetYaw   += dx * DRAG_SENS;
+    targetPitch += dy * DRAG_SENS;
+    targetPitch = clamp(targetPitch, -0.6, 0.6);
+    dragVelYaw   = dx * DRAG_SENS * 60;   // px/frame → rad/s approx
+    dragVelPitch = dy * DRAG_SENS * 60;
+    dragMoved += Math.abs(dx) + Math.abs(dy);
+    lastPx = ev.clientX;
+    lastPy = ev.clientY;
+  } else if (pointerInside){
+    targetYaw   = nx *  PARALLAX_AMP_X;
+    targetPitch = ny *  PARALLAX_AMP_Y;
+  }
+}
+function onDown(ev){
+  isDragging = true;
+  dragMoved = 0;
+  pointerId = ev.pointerId;
+  lastPx = ev.clientX; lastPy = ev.clientY;
+  stage.classList.add('dragging');
+  if (stage.setPointerCapture) stage.setPointerCapture(ev.pointerId);
+}
+function onUp(){
+  if (!isDragging) return;
+  isDragging = false;
+  const wasTap = dragMoved < 6;     // soglia: sotto 6px è un click, non un drag
+  stage.classList.remove('dragging');
+  if (pointerId != null && stage.releasePointerCapture){
+    try { stage.releasePointerCapture(pointerId); } catch(_){}
+  }
+  pointerId = null;
+  if (wasTap){
+    userOverride = true;
+    powerOn = !powerOn;
+    // piccolo "kick" di flicker realistico al toggle
+    flickerKickEndsAt = (performance.now() * 0.001) + 0.6;
+  }
+}
+function onEnter(){ pointerInside = true; }
+function onLeave(){
+  pointerInside = false;
+  // ritorna a target idle (nullo)
+  targetYaw = 0; targetPitch = 0;
+}
+
+stage.addEventListener('pointermove',  onMove);
+stage.addEventListener('pointerdown',  onDown);
+stage.addEventListener('pointerup',    onUp);
+stage.addEventListener('pointercancel',onUp);
+stage.addEventListener('pointerenter', onEnter);
+stage.addEventListener('pointerleave', () => { onLeave(); onUp(); });
+
+// ===== UI editoriale: aggiorna kelvin + watt + power state =====
+const kelvinEl = document.getElementById('bulb-kelvin');
+const wattEl   = document.getElementById('bulb-watt');
+const pwrEl    = document.getElementById('bulb-pwr');
+const dotEl    = stage.querySelector('.bulb-ui-label .dot.live');
+
+// curva watt percepiti: da 0 a 60W con il riscaldamento
+function kelvinFromHeat(h){
+  if (h <= 0)   return 0;
+  if (h < 0.25) return Math.round(800 + (1500-800) * (h/0.25));
+  if (h < 0.55) return Math.round(1500 + (2000-1500) * ((h-0.25)/0.30));
+  if (h < 0.80) return Math.round(2000 + (2500-2000) * ((h-0.55)/0.25));
+  return Math.round(2500 + (2700-2500) * ((h-0.80)/0.20));
+}
+
+// ===== FLICKER realistico (multi-octave + dip rari) =====
+//   somma di sinusoidi non commensurabili → segnale pseudo-random
+//   fascia ±0.06 in idle, dip occasionali fino a -0.4 nei primi 4s
+function flickerSignal(t, heat){
+  const slow = Math.sin(t*1.8 + 0.3) * Math.sin(t*0.7 + 1.1);
+  const mid  = Math.sin(t*7.3 + 2.1) * 0.55;
+  const fast = Math.sin(t*23.1 + 0.4) * 0.35;
+  let f = (slow*0.5 + mid + fast) / 2.0;   // ~ -1..1
+  // dip casuali nei primi secondi (startup stutter)
+  if (t < STARTUP_STUTTER_END){
+    const stutter = Math.sin(t*40.0) * Math.sin(t*9.7);
+    if (stutter > 0.65) f -= (stutter - 0.65) * 2.4;
+  }
+  // ampiezza: piccola da spento (no senso), max in transitorio, ridotta a regime
+  const amp = heat < 0.05 ? 0.02
+            : heat < 0.85 ? (0.06 + 0.18 * (1 - heat))
+                          : 0.045;
+  return f * amp;
+}
+
+// lerp tungsten color attraverso 4 stop (heat 0..1)
+function tungstenColor(heat, out) {
+  if (heat <= 0)        { out.copy(COLOR_COLD); return; }
+  if (heat >= 1)        { out.copy(COLOR_K2700); return; }
+  if (heat < 0.25) {
+    out.copy(COLOR_COLD).lerp(COLOR_K1500, heat / 0.25);
+  } else if (heat < 0.55) {
+    out.copy(COLOR_K1500).lerp(COLOR_K2000, (heat - 0.25) / 0.30);
+  } else if (heat < 0.80) {
+    out.copy(COLOR_K2000).lerp(COLOR_K2500, (heat - 0.55) / 0.25);
+  } else {
+    out.copy(COLOR_K2500).lerp(COLOR_K2700, (heat - 0.80) / 0.20);
+  }
+}
+
+// throttle UI DOM writes (kelvin/watt/pwr) a ~10 Hz
+let lastUiWrite = 0;
+let lastKelvin  = -1, lastWatt = -1, lastPwr = '';
+let baseYaw     = 0;     // accumulator del drift idle (yaw assoluto)
+
+// ===== power state (tap per toggle) =====
+let powerOn          = true;     // utente vuole accesa
+let userOverride     = false;    // dopo il primo tap: ignora la curva di startup
+let displayHeat      = 0;        // heat realmente animato (lerp verso target)
+let flickerKickEndsAt = 0;       // burst di flicker al toggle
+
+// ===== pausa composer quando il bulb è fuori dal viewport =====
+let bulbVisible = true;
+const bulbIO = new IntersectionObserver(
+  (es) => { bulbVisible = es[0].isIntersecting; },
+  { threshold: 0, rootMargin: '120px' }
+);
+bulbIO.observe(stage);
+
+function tick() {
+  const now = performance.now() * 0.001;
+  const dt  = Math.min(now - lastTime, 0.05);
+  const t   = now - startTime;
+  lastTime  = now;
+
+  // pausa rendering quando bulb è fuori dal viewport (risparmia GPU)
+  if (!bulbVisible){
+    requestAnimationFrame(tick);
+    return;
+  }
+
+  // ----- rotazione idle + parallasse cursore + inerzia drag -----
+  if (!isDragging){
+    // drift continua solo quando non si trascina
+    baseYaw += IDLE_YAW_SPEED * dt;
+    // inerzia post-drag: la velocità rimasta entra nel target e decade con friction
+    targetYaw   += dragVelYaw   * dt;
+    targetPitch += dragVelPitch * dt;
+    const dec = Math.exp(-DRAG_FRICTION * dt);
+    dragVelYaw   *= dec;
+    dragVelPitch *= dec;
+    if (Math.abs(dragVelYaw)   < 0.001) dragVelYaw   = 0;
+    if (Math.abs(dragVelPitch) < 0.001) dragVelPitch = 0;
+    targetPitch = clamp(targetPitch, -0.6, 0.6);
+  }
+
+  // lerp morbido del contributo "cursore/drag"
+  const k = 1 - Math.exp(-PARALLAX_LERP * dt);
+  curYaw   += (targetYaw   - curYaw)   * k;
+  curPitch += (targetPitch - curPitch) * k;
+
+  // micro-wobble idle (pendolo) + leggero swing laterale → niente robot
+  const wobble = Math.sin(now * 0.6) * IDLE_YAW_WOBBLE;
+  bulb.rotation.y = baseYaw + curYaw;
+  bulb.rotation.x = curPitch + wobble;
+  bulb.rotation.z = Math.sin(now * 0.4) * 0.012;
+
+  // ----- heat: target dipende dal power state, lerp morbido verso displayHeat -----
+  let targetHeat;
+  if (userOverride){
+    targetHeat = powerOn ? 1 : 0;
+  } else {
+    // sequenza di accensione automatica al primo caricamento
+    if (t < HEAT_START)      targetHeat = 0;
+    else if (t < HEAT_FULL)  targetHeat = smoothstep((t - HEAT_START) / (HEAT_FULL - HEAT_START));
+    else                     targetHeat = 1;
+  }
+  // tempi diversi per accensione vs spegnimento (filamento incandescente vero)
+  const heatLerp = (targetHeat > displayHeat) ? 2.2 : 6.5;
+  displayHeat += (targetHeat - displayHeat) * (1 - Math.exp(-heatLerp * dt));
+  const heat = displayHeat;
+
+  // ----- flicker realistico (additivo, può scendere sotto 0 nei dip) -----
+  let flicker = reduceMotion ? 0 : flickerSignal(now, heat);
+  // burst extra al toggle (interruttore meccanico → contatto instabile per ~0.6s)
+  if (now < flickerKickEndsAt){
+    const kickAmt = (flickerKickEndsAt - now) / 0.6;
+    flicker += Math.sin(now * 38) * 0.25 * kickAmt;
+  }
+  const heatFx  = clamp(heat + flicker, 0, 1.05);
+
+  // ----- filamento incandescente (blackbody curve + bloom amplifies) -----
+  tungstenColor(clamp(heatFx, 0, 1), tmpColor);
+  filMat.emissive.copy(tmpColor);
+  filMat.emissiveIntensity = Math.pow(clamp(heatFx, 0, 1.05), 1.3) * 18.0;  // alto: il bloom dilata
+  // base color sale leggermente per non avere punti neri all'interno del coil
+  filMat.color.setRGB(0.05 + heatFx * 0.25, 0.03 + heatFx * 0.18, 0.02 + heatFx * 0.10);
+
+  // ----- luce interna (illumina vetro + supporti dall'interno) -----
+  innerLight.color.copy(tmpColor);
+  innerLight.intensity = Math.pow(clamp(heatFx, 0, 1.05), 1.5) * 6.5;
+
+  // alone css esterno + flicker → CSS variables (per UI editoriale)
+  haloEl.style.setProperty('--ignition', (heatFx * 0.95).toFixed(3));
+  haloEl.style.setProperty('--flicker', flicker.toFixed(3));
+  haloEl.style.setProperty('--flicker-abs', Math.abs(flicker).toFixed(3));
+
+  // ----- scintille: subtle → intensify → fade dentro il glow -----
+  let sparkEnvelope;
+  if (t < SPARK_START || t > SPARK_FADE_END) sparkEnvelope = 0;
+  else {
+    const s = (t - SPARK_START) / (SPARK_FADE_END - SPARK_START);
+    const peakNorm = (SPARK_PEAK - SPARK_START) / (SPARK_FADE_END - SPARK_START);
+    if (s < peakNorm) sparkEnvelope = smoothstep(s / peakNorm);
+    else              sparkEnvelope = 1 - smoothstep((s - peakNorm) / (1 - peakNorm));
+  }
+
+  sparks.forEach((s) => {
+    const f = 0.5 + 0.5 * Math.sin(now * s.userData.freq + s.userData.phase);
+    const lit = Math.pow(f, 2) * sparkEnvelope;
+    s.material.opacity = lit;
+    s.scale.setScalar(s.userData.size * (0.4 + lit * 1.6));
+  });
+
+  // ----- UI editoriale: kelvin + watt + power (throttled) -----
+  if (now - lastUiWrite > 0.1){
+    lastUiWrite = now;
+    const kev = kelvinFromHeat(clamp(heatFx, 0, 1));
+    const wat = Math.round(clamp(heatFx, 0, 1) * 60);
+    const pwr = heat < 0.04 ? 'OFF' : (heat < 0.92 ? 'WARM' : 'ON');
+    if (kev !== lastKelvin && kelvinEl){ kelvinEl.textContent = kev; lastKelvin = kev; }
+    if (wat !== lastWatt   && wattEl)  { wattEl.textContent   = wat; lastWatt   = wat; }
+    if (pwr !== lastPwr    && pwrEl){
+      pwrEl.textContent = pwr;
+      pwrEl.classList.toggle('off', pwr === 'OFF');
+      lastPwr = pwr;
+    }
+  }
+
+  composer.render();    // post-processing pass (renderPass + bloom + output)
+  requestAnimationFrame(tick);
+}
+tick();
+
+// =====================================================================
+// ===== SHADER ANIMATION (background sezione cta) =====================
+// =====================================================================
+// fragment shader radial-line da 21st.dev, ricolorato sulla palette
+// "notte stellata": blu notte → blu cobalto → giallo cadmio → cream.
+const shaderCanvas = document.getElementById('shader-canvas');
+if (shaderCanvas) {
+  const sRenderer = new THREE.WebGLRenderer({
+    canvas: shaderCanvas,
+    antialias: true,
+    alpha: false
+  });
+  sRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  sRenderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const sCamera = new THREE.Camera();
+  sCamera.position.z = 1;
+  const sScene = new THREE.Scene();
+
+  const sUniforms = {
+    time:       { value: 1.0 },
+    resolution: { value: new THREE.Vector2() }
+  };
+
+  const sVertex = /* glsl */`
+    void main() { gl_Position = vec4(position, 1.0); }
+  `;
+
+  // palette starry-night come uniform-free constants (più veloce)
+  const sFragment = /* glsl */`
+    precision highp float;
+    uniform vec2  resolution;
+    uniform float time;
+
+    void main(void) {
+      vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+      float t = time * 0.05;
+      float lineWidth = 0.002;
+
+      // 3 accumulatori sfasati nel tempo (RGB chromatic aberration originale)
+      float iR = 0.0, iG = 0.0, iB = 0.0;
+      for (int i = 0; i < 5; i++) {
+        float fi = float(i);
+        iR += lineWidth * fi*fi / abs(fract(t - 0.01 + fi * 0.01) * 5.0 - length(uv) + mod(uv.x + uv.y, 0.2));
+        iG += lineWidth * fi*fi / abs(fract(t        + fi * 0.01) * 5.0 - length(uv) + mod(uv.x + uv.y, 0.2));
+        iB += lineWidth * fi*fi / abs(fract(t + 0.01 + fi * 0.01) * 5.0 - length(uv) + mod(uv.x + uv.y, 0.2));
+      }
+      float intensity = (iR + iG + iB) / 3.0;
+
+      // ramp 4-stop sulla palette notte stellata
+      vec3 cBg    = vec3(0.039, 0.086, 0.196);   // #0a1632 blu notte
+      vec3 cMid   = vec3(0.141, 0.247, 0.478);   // #243f7a swirl cobalto
+      vec3 cGold  = vec3(0.961, 0.804, 0.278);   // #f5cd47 oro cadmio
+      vec3 cCream = vec3(0.969, 0.929, 0.836);   // #f7eed5 highlight
+
+      vec3 col = mix(cBg,   cMid,   smoothstep(0.05, 0.55, intensity));
+      col      = mix(col,   cGold,  smoothstep(0.55, 1.40, intensity));
+      col      = mix(col,   cCream, smoothstep(1.60, 3.20, intensity));
+
+      // micro-shift cromatico per vibrazione
+      col.r += (iR - intensity) * 0.18;
+      col.b += (iB - intensity) * 0.18;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  const sMat = new THREE.ShaderMaterial({
+    uniforms: sUniforms,
+    vertexShader: sVertex,
+    fragmentShader: sFragment
+  });
+  sScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), sMat));
+
+  function shaderResize() {
+    const w = shaderCanvas.clientWidth;
+    const h = shaderCanvas.clientHeight;
+    sRenderer.setSize(w, h, false);
+    sUniforms.resolution.value.set(shaderCanvas.width, shaderCanvas.height);
+  }
+  new ResizeObserver(shaderResize).observe(shaderCanvas);
+  shaderResize();
+
+  // pausa automatica fuori viewport per non sprecare gpu
+  let shaderActive = false;
+  let shaderRAF = 0;
+  function shaderTick() {
+    sUniforms.time.value += 0.05;
+    sRenderer.render(sScene, sCamera);
+    shaderRAF = requestAnimationFrame(shaderTick);
+  }
+  const shaderObs = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting && !shaderActive) {
+        shaderActive = true;
+        shaderTick();
+      } else if (!e.isIntersecting && shaderActive) {
+        shaderActive = false;
+        if (shaderRAF) cancelAnimationFrame(shaderRAF);
+      }
+    }
+  }, { threshold: 0.05 });
+  shaderObs.observe(shaderCanvas);
+
+  // rispetta prefers-reduced-motion: render statico singolo
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    shaderObs.disconnect();
+    if (shaderRAF) cancelAnimationFrame(shaderRAF);
+    sRenderer.render(sScene, sCamera);
+  }
+}
+</script>
+
+<script>
+// =====================================================================
+// ===== HERO SHADER — notte stellata animata (fbm + clouds + glints) ==
+// =====================================================================
+// adattato da @atzedent (registry: ravikatiyar162/animated-shader-hero)
+// ricolorato sulla palette starry-night: blu notte → cobalto + glints
+// oro cadmio/cream. webgl2 puro, niente three.js.
+(() => {
+  const canvas = document.getElementById('hero-shader-canvas');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const VS = `#version 300 es
+precision highp float;
+in vec4 position;
+void main(){ gl_Position = position; }`;
+
+  const FS = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform vec2  resolution;
+uniform float time;
+#define FC gl_FragCoord.xy
+#define T  time
+#define R  resolution
+#define MN min(R.x, R.y)
+
+float rnd(vec2 p){
+  p = fract(p * vec2(12.9898, 78.233));
+  p += dot(p, p + 34.56);
+  return fract(p.x * p.y);
+}
+float noise(in vec2 p){
+  vec2 i = floor(p), f = fract(p), u = f*f*(3.0 - 2.0*f);
+  float a = rnd(i),
+        b = rnd(i + vec2(1,0)),
+        c = rnd(i + vec2(0,1)),
+        d = rnd(i + 1.0);
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+float fbm(vec2 p){
+  float t = 0.0, a = 1.0;
+  mat2 m = mat2(1.0, -0.5, 0.2, 1.2);
+  for (int i = 0; i < 6; i++){           // +1 ottava → dettaglio più fine
+    t += a * noise(p);
+    p *= 2.0 * m;
+    a *= 0.55;                           // amplitude decay più morbido → swirl più definiti
+  }
+  return t;
+}
+float clouds(vec2 p){
+  float d = 1.0, t = 0.0;
+  for (float i = 0.0; i < 4.0; i++){     // 3 → 4 octave
+    float a = d * fbm(i*10.0 + p.x*0.2 + 0.2*(1.0 + i)*p.y + d + i*i + p);
+    t = mix(t, d, a);
+    d = a;
+    p *= 2.0 / (i + 1.0);
+  }
+  // contrast curve → nubi più nitide, vortici più definiti
+  t = clamp((t - 0.18) * 1.55, 0.0, 1.0);
+  t = smoothstep(0.0, 1.0, t);
+  return t;
+}
+
+void main(void){
+  vec2 uv = (FC - 0.5*R) / MN;
+  vec2 st = uv * vec2(2.0, 1.0);
+
+  // base: blu notte profondo — stesso colore di --bg (#0a1632)
+  vec3 col = vec3(0.039, 0.086, 0.196);
+
+  // strato di "nuvole" (swirl van gogh) modulato lentamente
+  float bg = clouds(vec2(st.x + T*0.18, -st.y));
+
+  uv *= 1.0 - 0.25 * (sin(T*0.18) * 0.5 + 0.5);
+
+  for (float i = 1.0; i < 18.0; i++){
+    uv += 0.10 * cos(i*vec2(0.10 + 0.01*i, 0.8) + i*i + T*0.30 + 0.10*uv.x);
+    vec2 p = uv;
+    float d = length(p);
+
+    // glints: stelle in oro cadmio ↔ cream (variano con l'indice)
+    vec3 starGold  = vec3(0.961, 0.804, 0.278);   // #f5cd47
+    vec3 starCream = vec3(0.969, 0.929, 0.836);   // #f7eed5
+    vec3 glint = mix(starGold, starCream, 0.5 + 0.5*sin(i*1.7));
+    col += 0.0019 / d * glint;
+
+    // contributo strutturale (riga di luce sottile)
+    float b = noise(i + p + bg*1.731);
+    col += 0.0024 * b / length(max(p, vec2(b*p.x*0.02, p.y))) * starGold;
+
+    // tint verso swirl cobalto in funzione della distanza/clouds
+    vec3 swirl = mix(
+      vec3(0.039, 0.086, 0.196),  // night
+      vec3(0.141, 0.247, 0.478),  // #243f7a swirl cobalto
+      bg
+    );
+    col = mix(col, swirl, d * 0.8);
+  }
+
+  O = vec4(col, 1.0);
+}`;
+
+  function compile(type, src){
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
+      console.warn('hero-shader compile:', gl.getShaderInfoLog(sh));
+      gl.deleteShader(sh);
+      return null;
+    }
+    return sh;
+  }
+
+  const vs = compile(gl.VERTEX_SHADER, VS);
+  const fs = compile(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) return;
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+    console.warn('hero-shader link:', gl.getProgramInfoLog(prog));
+    return;
+  }
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(prog, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes  = gl.getUniformLocation(prog, 'resolution');
+  const uTime = gl.getUniformLocation(prog, 'time');
+
+  // dpr cap a 1.5 → costa molto meno e sul retina è invisibile la differenza
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width  = Math.max(1, Math.floor(w * dpr));
+    canvas.height = Math.max(1, Math.floor(h * dpr));
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  // pause shader quando la sezione esce dal viewport (risparmia GPU sul resto del sito)
+  let visible = true;
+  const heroSection = canvas.closest('.hero');
+  if (heroSection){
+    const io = new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { threshold: 0 });
+    io.observe(heroSection);
+  }
+
+  let raf;
+  function frame(now){
+    if (visible){
+      gl.useProgram(prog);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, reduceMotion ? 0.0 : now * 0.001);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    if (reduceMotion) return; // un frame solo, niente loop
+    raf = requestAnimationFrame(frame);
+  }
+  frame(0);
+})();
+</script>
+
+<script>
+// =====================================================================
+// ===== STARFIELD GLOBALE + STELLE CADENTI ============================
+// =====================================================================
+// Canvas position:fixed dietro a tutti i contenuti. Strategia performance:
+//  – Strato statico (stelle deboli, ~85%): pre-renderizzato UNA volta su
+//    canvas offscreen, ridisegnato come immagine ogni frame (cheap blit).
+//  – Strato dinamico (stelle luminose ~15% + meteore): aggiornato ogni
+//    frame con twinkle/scia.
+//  – Throttle a ~30 FPS per scaricare la CPU senza perdere fluidità visiva.
+//  – Pausa quando la pagina non è visibile (visibilitychange).
+(() => {
+  const canvas = document.getElementById('starfield');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // dpr cap a 1.5 → metà dei pixel rispetto a 2.0 con perdita visiva minima
+  let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  let w = 0, h = 0;
+
+  // strato statico (stelle deboli) pre-renderizzato
+  const offscreen = document.createElement('canvas');
+  const offCtx = offscreen.getContext('2d');
+
+  // stelle luminose (animate)
+  let brightStars = [];
+
+  // stelle cadenti attive
+  const meteors = [];
+  let nextMeteorAt = 0;
+
+  function rand(a, b){ return a + Math.random() * (b - a); }
+
+  function rebuild(){
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width  = Math.max(1, Math.floor(w * dpr));
+    canvas.height = Math.max(1, Math.floor(h * dpr));
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // densità totale: ~1 stella ogni 1100 px²  →  ~840 stelle a 1280×720
+    const total = Math.floor((w * h) / 1100);
+    const dimCount    = Math.floor(total * 0.85);
+    const brightCount = total - dimCount;
+
+    // ---- pre-render strato statico (deboli) ----
+    offscreen.width  = canvas.width;
+    offscreen.height = canvas.height;
+    offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    offCtx.clearRect(0, 0, w, h);
+    offCtx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < dimCount; i++){
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const r = rand(0.3, 0.85);
+      const a = rand(0.45, 0.9);
+      const gold = Math.random() < 0.18;
+      offCtx.fillStyle = gold
+        ? `rgba(255, 230, 150, ${a})`
+        : `rgba(252, 246, 226, ${a})`;
+      offCtx.beginPath();
+      offCtx.arc(x, y, r, 0, Math.PI * 2);
+      offCtx.fill();
+    }
+    offCtx.globalCompositeOperation = 'source-over';
+
+    // ---- stelle luminose dinamiche ----
+    brightStars = new Array(brightCount);
+    for (let i = 0; i < brightCount; i++){
+      const huge = Math.random() < 0.12;   // ~1.8% del totale
+      brightStars[i] = {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: huge ? rand(1.6, 2.6) : rand(0.9, 1.6),
+        bright: huge ? 1.0 : rand(0.8, 1.0),
+        tw: Math.random() * Math.PI * 2,
+        tws: rand(0.5, 2.0),
+        gold: Math.random() < 0.22,
+        huge,
+      };
+    }
+  }
+
+  // ---- spawn di una stella cadente ----
+  function spawnMeteor(now){
+    // partenza fuori schermo, dall'alto/sinistra, traiettoria diagonale verso il basso/destra
+    const startEdge = Math.random();
+    let x, y;
+    if (startEdge < 0.5){
+      x = rand(-100, w * 0.4);
+      y = rand(-80, -10);
+    } else {
+      x = rand(-100, -20);
+      y = rand(0, h * 0.5);
+    }
+    // angolo: -10° a 35° dall'orizzontale (verso il basso a destra)
+    const angle = rand(0.18, 0.78);
+    const speed = rand(900, 1500);   // px/s
+    const len   = rand(110, 220);
+    meteors.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      len,
+      life: 0,
+      ttl: rand(0.55, 1.2),
+      gold: Math.random() < 0.35,
+      born: now,
+    });
+  }
+
+  // ---- frame loop, throttled ~30 FPS ----
+  let lastFrame = 0;
+  let raf;
+  let pausedByVisibility = false;
+
+  function frame(now){
+    raf = requestAnimationFrame(frame);
+    if (pausedByVisibility) return;
+    if (now - lastFrame < 33) return;        // ~30 fps
+    const dt = Math.min((now - lastFrame) / 1000, 0.05);
+    lastFrame = now;
+    const t = now * 0.001;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // strato statico (blit cheap)
+    ctx.drawImage(offscreen, 0, 0, w, h);
+
+    // strato dinamico — additive
+    ctx.globalCompositeOperation = 'lighter';
+
+    // 1) stelle luminose con twinkle + glow
+    for (let i = 0, n = brightStars.length; i < n; i++){
+      const s = brightStars[i];
+      const tw = reduceMotion ? 1.0 : (0.6 + 0.4 * Math.sin(s.tw + t * s.tws));
+      const a = s.bright * tw;
+
+      // glow halo (solo per huge → costo contenuto)
+      if (s.huge){
+        const radius = s.r * 7;
+        const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, radius);
+        if (s.gold){
+          grad.addColorStop(0,    `rgba(255, 224, 122, ${0.6 * a})`);
+          grad.addColorStop(0.35, `rgba(245, 205, 71,  ${0.20 * a})`);
+        } else {
+          grad.addColorStop(0,    `rgba(247, 238, 213, ${0.6 * a})`);
+          grad.addColorStop(0.35, `rgba(237, 224, 184, ${0.18 * a})`);
+        }
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(s.x - radius, s.y - radius, radius*2, radius*2);
+
+        // crocetta van gogh
+        const len = s.r * 6 * (0.7 + 0.3*tw);
+        ctx.strokeStyle = s.gold
+          ? `rgba(255, 224, 122, ${0.5 * a})`
+          : `rgba(247, 238, 213, ${0.45 * a})`;
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(s.x - len, s.y); ctx.lineTo(s.x + len, s.y);
+        ctx.moveTo(s.x, s.y - len); ctx.lineTo(s.x, s.y + len);
+        ctx.stroke();
+      }
+
+      // core
+      ctx.fillStyle = s.gold
+        ? `rgba(255, 230, 150, ${a})`
+        : `rgba(252, 246, 226, ${a})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 2) stelle cadenti — spawn molto frequente per la richiesta "molte di più"
+    if (!reduceMotion){
+      if (t > nextMeteorAt){
+        // 1–3 meteore burst per spawn
+        const burst = 1 + (Math.random() < 0.45 ? 1 : 0) + (Math.random() < 0.18 ? 1 : 0);
+        for (let i = 0; i < burst; i++) spawnMeteor(t);
+        // intervallo medio: 0.6–1.6 s → quasi sempre ce n'è almeno una in volo
+        nextMeteorAt = t + rand(0.6, 1.6);
+      }
+
+      for (let i = meteors.length - 1; i >= 0; i--){
+        const m = meteors[i];
+        m.life += dt;
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+
+        // fade in/out (envelope)
+        const k = m.life / m.ttl;
+        const env = k < 0.15 ? (k / 0.15)
+                  : k > 0.75 ? (1 - (k - 0.75) / 0.25)
+                             : 1;
+
+        // scia (gradient lineare dietro la testa)
+        const norm = Math.hypot(m.vx, m.vy) || 1;
+        const ux = m.vx / norm, uy = m.vy / norm;
+        const tailX = m.x - ux * m.len;
+        const tailY = m.y - uy * m.len;
+        const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+        const headColor = m.gold
+          ? `rgba(255, 230, 150, ${0.95 * env})`
+          : `rgba(252, 246, 226, ${0.95 * env})`;
+        const midColor  = m.gold
+          ? `rgba(255, 200, 100, ${0.45 * env})`
+          : `rgba(220, 220, 240, ${0.45 * env})`;
+        grad.addColorStop(0,    headColor);
+        grad.addColorStop(0.35, midColor);
+        grad.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(m.x, m.y);
+        ctx.stroke();
+
+        // testa luminosa
+        const headRad = 6 * env;
+        if (headRad > 0.3){
+          const hg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, headRad);
+          hg.addColorStop(0, headColor);
+          hg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = hg;
+          ctx.fillRect(m.x - headRad, m.y - headRad, headRad*2, headRad*2);
+        }
+
+        // rimuovi se finita o troppo lontana
+        if (m.life > m.ttl || m.x > w + 200 || m.y > h + 200){
+          meteors.splice(i, 1);
+        }
+      }
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      rebuild();
+    }, 150);
+  });
+
+  // pausa quando il tab non è visibile
+  document.addEventListener('visibilitychange', () => {
+    pausedByVisibility = document.hidden;
+    lastFrame = performance.now();   // evita salti di dt al rientro
+  });
+
+  rebuild();
+  if (reduceMotion){
+    // un frame solo: drawImage + stelle luminose statiche, niente meteore
+    ctx.drawImage(offscreen, 0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+    for (const s of brightStars){
+      ctx.fillStyle = s.gold
+        ? `rgba(255, 230, 150, ${s.bright})`
+        : `rgba(252, 246, 226, ${s.bright})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  } else {
+    raf = requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+</body>
+</html>

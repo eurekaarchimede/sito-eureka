@@ -1,0 +1,4074 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eureka! — liceo scientifico archimede, messina</title>
+<meta name="description" content="eureka! — la lista di rappresentanza del liceo scientifico archimede di messina.">
+
+<!-- open graph / social -->
+<meta property="og:title" content="eureka! — liceo scientifico archimede, messina">
+<meta property="og:description" content="la lista di rappresentanza del liceo archimede. progetti, eventi, candidati. dal 2018.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0a1632">
+
+<!-- favicon: lampadina su blu notte -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a1632'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23f5cd47' font-family='sans-serif' font-weight='bold'%3E!%3C/text%3E%3C/svg%3E">
+
+<!-- segna che il JS è abilitato: gate per la reveal CSS (senza JS i contenuti restano visibili) -->
+<script>document.documentElement.classList.add('js');</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* palette "notte stellata" — van gogh */
+  --bg:         #0a1632;     /* blu notte profondo (sfondo) */
+  --bg-soft:    #112045;     /* blu medio-scuro */
+  --bg-2:       #1a2d5e;     /* blu cobalto/swirl */
+  --bg-3:       #243f7a;     /* mid swirl */
+
+  --gold:       #f5cd47;     /* giallo cadmio delle stelle */
+  --gold-bright:#ffe07a;     /* lume più caldo */
+  --gold-dim:   #c9a531;
+  --beige:      #ede0b8;     /* testo principale (crema caldo) */
+  --beige-dim:  #b8a988;     /* testo secondario */
+  --cream:      #f7eed5;     /* highlight testo */
+  --muted:      #6a7da8;     /* blu-grigio per microcopy, leggibile su blu notte */
+  --line:       rgba(237, 224, 184, 0.10);
+
+  --grain-opacity: 0.05;
+  --display: "DM Sans", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* disabilita selezione testo su elementi decorativi */
+h1, h2, h3, nav, .marquee, .hero-tagline, .hero-cta, footer, .label, .stat-number, .stat-desc {
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* selezione personalizzata (allineata: oro pieno, testo blu notte) */
+::-moz-selection { background: var(--gold); color: var(--bg); }
+
+body {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(36, 63, 122, 0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 30%, rgba(74, 109, 181, 0.18) 0%, transparent 60%),
+    var(--bg);
+  color: var(--beige);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  text-transform: lowercase;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--gold); color: var(--bg); }
+
+/* grain rimosso per performance */
+
+/* ===== INTERACTIVE LIGHT ===== */
+#lamp {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  height: 10px;
+  width: 10px;
+  background: #ffe890;
+  border-radius: 50%;
+  top: 0; left: 0;
+  opacity: 0;
+  transition: box-shadow 0.12s ease-out, opacity 0.4s ease, filter 0.9s ease;
+  will-change: transform, box-shadow;
+}
+@media (hover: none) { #lamp { display: none; } }
+@media (prefers-reduced-motion: reduce) { #lamp { display: none; } }
+
+/* ===== STARFIELD (sfondo fisso, attivo su tutto il sito) ===== */
+.starfield {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  /* fade ai bordi alto/basso → integrazione morbida con nav e footer */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 8%, #000 92%, rgba(0,0,0,0.6) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 8%, #000 92%, rgba(0,0,0,0.6) 100%);
+}
+
+/* tutte le section devono stare SOPRA lo starfield */
+section, footer, nav, .marquee { position: relative; z-index: 1; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1.1rem 2rem;
+  background: rgba(10, 18, 42, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  /* transition (transform + filter) dichiarata nel blocco lights-out più sotto */
+}
+nav.nav-hidden { transform: translateY(-100%); }
+
+/* ===== FILO DI CORRENTE (scroll progress) ===== */
+.wire {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 110;
+  transform-origin: left center;
+  transform: scaleX(var(--scroll, 0));
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold) 70%, var(--gold-bright));
+  box-shadow: 0 0 10px rgba(245, 205, 71, 0.85), 0 0 26px rgba(245, 205, 71, 0.35);
+  pointer-events: none;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 11px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--bg-3), var(--gold-dim));
+  border-radius: 100px;
+  border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+html { scrollbar-color: var(--gold-dim) var(--bg); scrollbar-width: thin; }
+nav .brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  text-decoration: none;
+  text-shadow:
+    0 0 4px  rgba(245, 205, 71, 0.55),
+    0 0 12px rgba(245, 205, 71, 0.35),
+    0 0 22px rgba(247, 238, 213, 0.18);
+}
+nav .brand .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0 6px  rgba(255, 224, 122, 0.85),
+    0 0 16px rgba(245, 205, 71, 0.55);
+}
+nav ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+nav ul a {
+  color: var(--beige-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+nav ul a:hover { color: var(--gold); }
+nav .right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+nav .ig {
+  color: var(--cream);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: 0.55rem 1rem;
+  border-radius: 100px;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+nav .ig:hover {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+/* hamburger button (solo mobile) */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--cream);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* mobile menu overlay */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(10, 18, 42, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-menu.open { opacity: 1; pointer-events: auto; }
+.mobile-menu a {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cream);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  transition: color 0.2s ease;
+}
+.mobile-menu a:hover { color: var(--gold); }
+.mobile-menu a.mobile-ig {
+  font-size: 1rem;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 0.7rem 1.4rem;
+  border-radius: 100px;
+  margin-top: 1rem;
+}
+
+@media (max-width: 800px) {
+  nav { grid-template-columns: 1fr 1fr; padding: 0.9rem 1rem; }
+  nav ul { display: none; }
+  nav .ig { display: none; }
+  .nav-toggle { display: flex; }
+}
+
+/* ===== HERO WARP STARFIELD ===== */
+#hero-starfield {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 7rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* glow statico dietro hero (no blur, no animation → leggero) */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 50vw;
+  max-width: 500px;
+  aspect-ratio: 1;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(245, 205, 71, 0.12) 0%, rgba(245, 205, 71, 0.03) 35%, transparent 60%);
+  z-index: 1;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 2; }
+
+.hero-wordmark h1 {
+  font-weight: 700;
+  font-size: clamp(3.5rem, 16vw, 14rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--cream);
+  margin-bottom: 1.2rem;
+  text-shadow:
+    0 0  6px  rgba(247, 238, 213, 0.7),
+    0 0  20px rgba(245, 205, 71, 0.4);
+}
+.hero-wordmark h1 .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0  8px  rgba(255, 224, 122, 0.85),
+    0 0  22px rgba(245, 205, 71, 0.45);
+}
+/* accensione "insegna al neon": ogni lettera sfarfalla prima di stabilizzarsi */
+.hero-wordmark h1 span {
+  display: inline-block;
+  opacity: 0;
+  animation: neonOn 1.5s linear forwards;
+}
+.hero-wordmark h1 span:nth-child(1){animation-delay:0.10s}
+.hero-wordmark h1 span:nth-child(2){animation-delay:0.22s}
+.hero-wordmark h1 span:nth-child(3){animation-delay:0.34s}
+.hero-wordmark h1 span:nth-child(4){animation-delay:0.46s}
+.hero-wordmark h1 span:nth-child(5){animation-delay:0.58s}
+.hero-wordmark h1 span:nth-child(6){animation-delay:0.70s}
+.hero-wordmark h1 span:nth-child(7){animation-delay:0.95s}
+@keyframes neonOn {
+  0%   { opacity: 0;    filter: blur(8px) brightness(2); transform: translateY(0.35em) scale(0.97); }
+  6%   { opacity: 0.55; filter: blur(3px) brightness(2.4); }
+  10%  { opacity: 0.05; }
+  16%  { opacity: 0.75; filter: blur(1px) brightness(1.8); transform: translateY(0.1em) scale(0.99); }
+  21%  { opacity: 0.10; }
+  28%  { opacity: 1;    filter: blur(0) brightness(1.45); transform: translateY(0) scale(1); }
+  34%  { opacity: 0.35; }
+  40%  { opacity: 1;    filter: brightness(1.2); }
+  100% { opacity: 1;    filter: blur(0) brightness(1); transform: translateY(0) scale(1); }
+}
+/* il "!" : flicker più lungo + respiro perenne da insegna */
+.hero-wordmark h1 span.bang {
+  cursor: pointer;
+  pointer-events: auto;
+  animation: neonOn 1.9s linear 0.95s forwards, bangBreath 4.5s ease-in-out 3s infinite;
+}
+@keyframes bangBreath {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.35) drop-shadow(0 0 18px rgba(245, 205, 71, 0.55)); }
+}
+/* scintille al click sul "!" */
+.spark {
+  position: fixed;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 8px 2px rgba(245, 205, 71, 0.8);
+  pointer-events: none;
+  z-index: 300;
+}
+
+.hero-tagline {
+  max-width: 540px;
+  margin: 1.4rem auto 0;
+  font-size: clamp(1rem, 1.3vw, 1.1rem);
+  line-height: 1.55;
+  color: var(--beige-dim);
+  font-weight: 400;
+  opacity: 0;
+  animation: fadeUp 0.9s ease 0.9s forwards;
+}
+.hero-tagline em {
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 700;
+  text-shadow:
+    0 0 4px  rgba(255, 224, 122, 0.7),
+    0 0 12px rgba(245, 205, 71, 0.4),
+    0 0 22px rgba(245, 205, 71, 0.2);
+}
+
+/* utility: scritte 'eureka!' di piccola taglia (nav, footer, microcopy) */
+.glow-mini {
+  color: var(--cream);
+  text-shadow:
+    0 0 4px  rgba(245, 205, 71, 0.5),
+    0 0 10px rgba(245, 205, 71, 0.3);
+}
+.glow-mini .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0 5px  rgba(255, 224, 122, 0.85),
+    0 0 14px rgba(245, 205, 71, 0.55);
+}
+
+.hero-cta {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.9s ease 1.1s forwards;
+}
+.btn {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 0.95rem 1.8rem;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+.btn-primary:hover {
+  background: var(--cream);
+  border-color: var(--cream);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--beige);
+  border-color: var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--beige);
+  background: rgba(235, 217, 182, 0.05);
+  transform: translateY(-2px);
+}
+.btn .arrow { transition: transform 0.3s ease; }
+.btn:hover .arrow { transform: translateX(4px); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MARQUEE ===== */
+.marquee {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--gold);
+  color: var(--bg);
+  overflow: hidden;
+  padding: 1.3rem 0;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  gap: 3rem;
+  animation: scroll 40s linear infinite;
+  font-size: clamp(1.3rem, 2.8vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+/* con JS attivo guida il driver velocity-aware (accelera con lo scroll) */
+html.js .marquee-track { animation: none; will-change: transform; }
+.marquee-track span, .marquee-track a.marquee-link { display: inline-flex; align-items: center; gap: 3rem; }
+.marquee-link { color: inherit; text-decoration: none; cursor: pointer; }
+.marquee-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.school-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
+.school-link:hover { opacity: 1; }
+/* fix: parent usa background-clip:text → link eredita color:transparent → riapplica gradient */
+.illuminated-content p .school-link {
+  background: linear-gradient(to top, #6a7da8, #b8a988);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.marquee-track span::after {
+  content: '◆';
+  color: var(--bg);
+  font-size: 0.7em;
+}
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ===== SECTION COMMONS ===== */
+section { padding: 7rem 2rem; position: relative; }
+.container { max-width: 1280px; margin: 0 auto; }
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.section-label::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.h2 {
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.2rem;
+  color: var(--cream);
+}
+.h2 em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+/* ===== PROGETTI ===== */
+.progetti {
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(10, 22, 50, 0.55) 0%, rgba(17, 32, 69, 0.65) 100%);
+}
+.progetti .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+}
+.progetti .head .h2 { max-width: 720px; }
+.progetti .head .note {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--beige-dim);
+  text-align: right;
+  max-width: 280px;
+  line-height: 1.7;
+}
+.progetti .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+@media (max-width: 1000px) { .progetti .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .progetti .grid { grid-template-columns: 1fr; } }
+
+.card {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 2.4rem 1.9rem 2.1rem;
+  transition: background 0.4s ease;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover { background: rgba(17, 32, 69, 0.85); }
+
+/* glare oro che segue il mouse (--mx/--my settate da JS) */
+@media (hover: hover) {
+  .card::after, .proj-card::after, .member::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(245, 205, 71, 0.13), transparent 45%);
+    transition: opacity 0.35s ease;
+  }
+  .card:hover::after, .proj-card:hover::after, .member:hover::after { opacity: 1; }
+  .tilt { transform-style: preserve-3d; will-change: transform; }
+}
+.card .num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card .num .arrow {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.35s ease;
+}
+.card:hover .num .arrow { opacity: 1; transform: translateX(0); }
+.card h3 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.9rem;
+  color: var(--cream);
+}
+.card h3 em {
+  color: var(--gold);
+  font-style: normal;
+}
+.card p {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--beige-dim);
+  margin-top: auto;
+}
+
+/* ===== PROJ GALLERY (JS-driven) ===== */
+.proj-gallery {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--line);
+}
+.proj-gallery-head { margin-bottom: 2.5rem; }
+.proj-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 1000px) { .proj-gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .proj-gallery-grid { grid-template-columns: 1fr; } }
+
+.proj-card {
+  background: rgba(17, 32, 69, 0.45);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.proj-card .proj-card-img { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.proj-card:hover .proj-card-img { transform: scale(1.045); }
+.proj-card:hover {
+  background: rgba(17, 32, 69, 0.85);
+  transform: translateY(-3px);
+}
+.proj-card-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--line);
+}
+.proj-card-body { padding: 1.4rem 1.3rem; }
+.proj-card-date {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+.proj-card-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 0.6rem;
+}
+.proj-card-desc {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--beige-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.proj-editions {
+  padding: 0.8rem 1.3rem 1.2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.proj-editions-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.proj-editions a {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--beige-dim);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+  transition: color 0.2s;
+}
+.proj-editions a:hover { color: var(--gold); border-color: var(--gold); }
+.proj-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+.proj-empty a {
+  color: var(--gold);
+  text-decoration: none;
+  font-style: normal;
+  font-weight: 600;
+}
+/* le card del feed sono <a>: stesso look delle vecchie card */
+a.proj-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.proj-ig-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-decoration: none;
+}
+.proj-ig-link #proj-ig-followers {
+  color: var(--beige-dim);
+  font-weight: 500;
+}
+.proj-card-type {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 21px;
+  height: 21px;
+  color: var(--cream);
+  filter: drop-shadow(0 1px 4px rgba(3, 7, 18, 0.7));
+  pointer-events: none;
+}
+.proj-card-type svg { width: 100%; height: 100%; display: block; }
+.proj-more {
+  display: block;
+  margin: 2.5rem auto 0;
+  padding: 0.85em 2.2em;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--gold);
+  background: rgba(17, 32, 69, 0.45);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.proj-more:hover {
+  background: rgba(17, 32, 69, 0.9);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* ===== EVENTI ===== */
+.eventi {
+  border-top: 1px solid var(--line);
+  background: rgba(10, 22, 50, 0.45);
+}
+.eventi .head { margin-bottom: 3rem; max-width: 800px; }
+.eventi .timeline {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  position: relative;
+  padding-left: 2.2rem;
+}
+/* binario spento */
+.eventi .timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+/* corrente che sale con lo scroll (--tl-progress da JS) */
+.eventi .timeline::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 2px;
+  height: 100%;
+  transform-origin: top center;
+  transform: scaleY(var(--tl-progress, 0));
+  background: linear-gradient(180deg, var(--gold-dim), var(--gold));
+  box-shadow: 0 0 12px rgba(245, 205, 71, 0.7);
+}
+/* scintilla viaggiante sulla punta */
+.tl-spark {
+  position: absolute;
+  left: 1px; top: 0;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 10px 3px rgba(245, 205, 71, 0.9), 0 0 30px 8px rgba(245, 205, 71, 0.35);
+  transform: translate(-50%, calc(var(--tl-progress, 0) * var(--tl-h, 100px) - 4px));
+  pointer-events: none;
+}
+@media (max-width: 800px) {
+  .eventi .timeline { padding-left: 1.4rem; }
+}
+.event {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 2rem;
+  align-items: baseline;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s ease;
+}
+.event:hover { background: rgba(17, 32, 69, 0.85); padding-left: 1rem; padding-right: 1rem; }
+.event .date {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+.event .body h3 {
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  margin-bottom: 0.4rem;
+}
+.event .body p {
+  color: var(--beige-dim);
+  font-size: 0.98rem;
+}
+.event .tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 0.3rem 0.7rem;
+  border-radius: 100px;
+}
+@media (max-width: 800px) {
+  .event { grid-template-columns: 1fr; gap: 0.6rem; }
+  .event:hover { padding-left: 0; padding-right: 0; }
+  .event .tag { justify-self: start; }
+}
+
+/* ===== CANDIDATI ===== */
+.candidati {
+  border-top: 1px solid var(--line);
+  background: rgba(17, 32, 69, 0.55);
+}
+.candidati .head { margin-bottom: 3rem; max-width: 800px; }
+.candidati .head p {
+  color: var(--beige-dim);
+  margin-top: 0.8rem;
+  font-size: 1.05rem;
+  max-width: 620px;
+}
+
+.organo { margin-bottom: 4.5rem; }
+.organo:last-child { margin-bottom: 0; }
+.organo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.organo-name {
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+}
+.organo-name em { color: var(--gold); font-style: normal; }
+.organo-count {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+
+.roster {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+@media (max-width: 1000px) { .roster { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .roster { grid-template-columns: 1fr; } }
+
+.roster.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 320px));
+  justify-content: start;
+}
+@media (max-width: 600px) { .roster.cols-2 { grid-template-columns: 1fr; } }
+
+.member {
+  background: rgba(10, 22, 50, 0.7);
+  border: 1px solid var(--line);
+  padding: 1.1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  transition: all 0.35s ease;
+}
+.member:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.member .photo {
+  position: relative;
+  aspect-ratio: 4 / 5;          /* il vincolo di forma sta solo sulla foto */
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(245, 205, 71, 0.07) 8px, rgba(245, 205, 71, 0.07) 16px),
+    var(--bg-soft);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 3rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+.member .photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 2px;
+  z-index: 1;
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.55s ease;
+}
+.member:hover .photo img { transform: scale(1.06); filter: saturate(1.15) brightness(1.06); }
+.member .photo { overflow: hidden; }
+.member .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.member .info .name {
+  font-size: clamp(0.9rem, 1.05vw, 1.05rem);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+.member .info .role {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--beige-dim);
+}
+.member .tag {
+  position: absolute;
+  top: 0.9rem; right: 0.9rem;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  background: rgba(12, 10, 7, 0.85);
+  padding: 0.3rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid var(--gold);
+}
+
+/* ===== STORIA ===== */
+.storia {
+  border-top: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at center top, rgba(245, 205, 71, 0.10) 0%, transparent 60%),
+    rgba(10, 22, 50, 0.45);
+}
+.storia .grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 5rem;
+  align-items: start;
+  margin-top: 3rem;
+}
+.storia .lede p {
+  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--beige);
+  margin-bottom: 1.1rem;
+}
+.storia .lede p.first {
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+}
+.storia .lede p.first em {
+  color: var(--gold);
+  font-style: normal;
+}
+.storia .stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.storia .stat-cell {
+  background: rgba(10, 22, 50, 0.7);
+  padding: 2rem 1.6rem;
+}
+.storia .stat-cell .big {
+  font-size: clamp(2.3rem, 4.4vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--cream);
+}
+.storia .stat-cell .big em {
+  color: var(--gold);
+  font-style: normal;
+}
+.storia .stat-cell .label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--beige-dim);
+  margin-top: 0.9rem;
+}
+@media (max-width: 900px) {
+  .storia .grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+/* ===== ILLUMINATED HERO (sezione transizione) ===== */
+.illuminated {
+  position: relative;
+  border-top: 1px solid var(--line);
+  min-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  text-align: center;
+  background: rgba(10, 22, 50, 0.45);
+  padding: 6rem 2rem;
+}
+.illuminated-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.illuminated-bg .glow-top,
+.illuminated-bg .glow-bot {
+  position: absolute;
+  width: 100%;
+  max-width: 44em;
+  height: 100%;
+  border-radius: 100em;
+  opacity: 0;
+  scale: 1.2;
+}
+.illuminated-bg .glow-top {
+  background: radial-gradient(ellipse at center, rgba(245, 205, 71, 0.55) 0%, rgba(245, 205, 71, 0.10) 35%, transparent 60%);
+  translate: 0 -70%;
+}
+.illuminated-bg .glow-bot {
+  background: radial-gradient(ellipse at center, rgba(247, 238, 213, 0.45) 0%, rgba(245, 205, 71, 0.08) 40%, transparent 65%);
+  translate: 0 70%;
+}
+.illuminated.in .glow-top { animation: illumGlowTop 1.4s ease-in-out forwards; }
+.illuminated.in .glow-bot { animation: illumGlowBot 1.4s ease-in-out forwards; }
+@keyframes illumGlowTop {
+  0%   { translate: 0 -70%; opacity: 0; }
+  100% { translate: 0 -64%; opacity: 0.85; }
+}
+@keyframes illumGlowBot {
+  0%   { translate: 0  70%; opacity: 0; }
+  100% { translate: 0  64%; opacity: 0.85; }
+}
+
+.illuminated-content {
+  position: relative;
+  z-index: 1;
+  max-width: 60em;
+}
+.illuminated-content h2 {
+  font-size: clamp(2.4rem, 6vw, 5.4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 2rem;
+}
+.illuminated-content h2 br + .glow-text { display: inline-block; }
+.glow-text {
+  position: relative;
+  display: inline-block;
+  color: var(--gold);
+  text-shadow:
+    0 0 8px rgba(255, 224, 122, 0.8),
+    0 0 24px rgba(245, 205, 71, 0.5);
+}
+/* "accesa." sfarfalla quando la sezione entra in vista */
+.illuminated.in .glow-text { animation: textFlicker 1.8s linear 0.4s 1; }
+@keyframes textFlicker {
+  0%, 100% { opacity: 1; }
+  8%  { opacity: 0.2; }
+  12% { opacity: 1; }
+  20% { opacity: 0.35; }
+  26% { opacity: 1; }
+  44% { opacity: 0.15; }
+  50% { opacity: 1; }
+  72% { opacity: 0.6; }
+  78% { opacity: 1; }
+}
+.illuminated-content p {
+  font-size: clamp(0.98rem, 1.25vw, 1.18rem);
+  line-height: 1.55;
+  color: var(--beige-dim);
+  max-width: 30em;
+  margin: 0 auto;
+  background: linear-gradient(to top, #6a7da8, #b8a988);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+.illuminated-content p .emphasis {
+  font-weight: 900;
+  color: var(--cream);
+  -webkit-text-fill-color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illuminated-bg .glow-top { translate: 0 -64%; opacity: 0.85; animation: none; }
+  .illuminated-bg .glow-bot { translate: 0  64%; opacity: 0.85; animation: none; }
+}
+
+/* ===== CTA ===== */
+.cta {
+  border-top: 1px solid var(--line);
+  padding: 7rem 2rem 4rem;
+  text-align: center;
+  background: rgba(10, 22, 50, 0.35);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* alone che respira dietro al "vota eureka!" (compositor-friendly: solo opacity) */
+.cta::before {
+  content: '';
+  position: absolute;
+  width: 70vw; max-width: 800px;
+  aspect-ratio: 1.6;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(245, 205, 71, 0.16) 0%, rgba(245, 205, 71, 0.04) 45%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+  animation: ctaBreath 5s ease-in-out infinite;
+}
+@keyframes ctaBreath {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+.cta-content { position: relative; z-index: 1; }
+.cta .super {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.cta h2 {
+  font-weight: 700;
+  font-size: clamp(3rem, 11vw, 11rem);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  color: var(--cream);
+  margin-bottom: 1.8rem;
+  text-shadow:
+    0 0  6px  rgba(247, 238, 213, 0.7),
+    0 0  20px rgba(245, 205, 71, 0.4);
+}
+.cta h2 .bang {
+  color: var(--gold);
+  text-shadow:
+    0 0  8px  rgba(255, 224, 122, 0.85),
+    0 0  22px rgba(245, 205, 71, 0.45);
+}
+.cta a.ig-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: clamp(1.3rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.4rem;
+  transition: all 0.3s ease;
+}
+.cta a.ig-big:hover {
+  color: var(--gold);
+  letter-spacing: 0.01em;
+}
+.cta a.ig-big::before {
+  content: '↳';
+  color: var(--gold);
+  font-size: 1.1em;
+}
+
+footer {
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--line);
+  background: rgba(10, 22, 50, 0.7);
+}
+footer .row {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  gap: 2rem;
+}
+footer .row .center { display: flex; gap: 1.4rem; }
+footer a {
+  color: var(--beige-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+footer a:hover { color: var(--gold); }
+footer .right { text-align: right; }
+@media (max-width: 700px) {
+  footer .row { grid-template-columns: 1fr; text-align: center; }
+  footer .right, footer .center { justify-content: center; text-align: center; }
+}
+
+/* ===== VAN GOGH SHADER (hero) ===== */
+#hero-shader {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* ===== LIGHT SWITCH (cordicella) ===== */
+.pull-cord {
+  position: fixed;
+  top: 0;
+  right: clamp(2rem, 5vw, 4rem);
+  z-index: 95;
+  height: max(14vh, 105px); /* il knob pende ben sotto la nav (~56px) */
+  width: 24px; /* area di tap comoda, il filo resta 2px */
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* mobile: l'hamburger sta in alto a destra — la cordicella si sposta a sinistra */
+@media (max-width: 800px) {
+  .pull-cord { right: 4.4rem; height: max(12vh, 92px); }
+}
+.pull-cord:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.pull-cord.pulled { transform: translateY(16px); }
+.cord-line {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--gold-dim));
+}
+.cord-knob {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold-dim) 72%);
+  box-shadow: 0 0 8px rgba(245, 205, 71, 0.45), 0 0 22px rgba(245, 205, 71, 0.18);
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+@media (hover: hover) {
+  .pull-cord:hover { transform: translateY(6px); }
+  .pull-cord:hover .cord-knob {
+    filter: brightness(1.18);
+    box-shadow: 0 0 14px rgba(245, 205, 71, 0.8), 0 0 36px rgba(245, 205, 71, 0.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pull-cord { transition: none; }
+}
+
+/* ===== STATO SPENTO (body.lights-out) ===== */
+.dark-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 40; /* sopra le sezioni (z1), sotto il lamp (z50) */
+  background: rgba(3, 7, 18, 0.78);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+body.lights-out .dark-veil { opacity: 1; }
+/* su touch la torcia è il dito: velo con foro di luce che segue il tocco */
+@media (hover: none) {
+  body.lights-out .dark-veil {
+    background: rgba(3, 7, 18, 0.62);
+    -webkit-mask-image: radial-gradient(circle 190px at var(--fx, 50%) var(--fy, 35%),
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 1) 78%);
+    mask-image: radial-gradient(circle 190px at var(--fx, 50%) var(--fy, 35%),
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 1) 78%);
+  }
+}
+.torch-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(245, 205, 71, 0.26) 0%,
+    rgba(245, 205, 71, 0.10) 35%,
+    rgba(245, 205, 71, 0) 65%);
+  pointer-events: none;
+  z-index: 41; /* subito sopra il velo (z40) */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+body.lights-out .torch-glow.on { opacity: 1; }
+@media (hover: hover) { .torch-glow { display: none; } }
+/* il cursore-lampada diventa la torcia nel buio */
+body.lights-out #lamp { filter: brightness(1.8) saturate(1.2); }
+#lamp::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 320vh;
+  height: 320vh;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(245, 205, 71, 0.30) 0%,
+    rgba(245, 205, 71, 0.13) 16%,
+    rgba(245, 205, 71, 0.05) 34%,
+    rgba(245, 205, 71, 0.00) 60%);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  pointer-events: none;
+}
+body.lights-out #lamp::after { opacity: 1; }
+nav { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.9s ease; }
+.wire { transition: filter 0.9s ease; }
+body.lights-out nav,
+body.lights-out .wire { filter: brightness(0.55); }
+
+/* ===== LIGHT TRAIL ===== */
+#trail-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 49; /* subito sotto #lamp (z50) */
+  pointer-events: none;
+}
+/* su touch resta attivo per l'onda d'urto al tap (la scia è gated in JS) */
+
+/* ===== MAGNETIC LETTERS ===== */
+.hero-wordmark h1 span.mag { will-change: transform; }
+
+/* ===== PENDULUM BULB (sezione illuminated) ===== */
+.bulb-rig {
+  position: absolute;
+  top: 0;
+  left: 68%; /* accanto al titolo, non sopra */
+  height: min(46vh, 420px);
+  z-index: 2;
+  cursor: grab;
+  transform: translateX(-50%);
+  transform-origin: top center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bulb-rig:active { cursor: grabbing; }
+.bulb-rig:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; border-radius: 8px; }
+.bulb-rig svg { height: 100%; width: auto; display: block; overflow: visible; }
+.bulb-wire-line { stroke: var(--gold-dim); stroke-width: 1.5; opacity: 0.7; }
+.bulb-socket { fill: var(--bg-3); stroke: var(--beige-dim); stroke-width: 1.2; }
+.bulb-thread { stroke: var(--beige-dim); stroke-width: 1; opacity: 0.6; }
+.bulb-glass { fill: rgba(247, 238, 213, 0.04); stroke: var(--cream); stroke-width: 1.8; }
+.bulb-filament { stroke: var(--gold-dim); stroke-width: 1.5; fill: none; transition: stroke 0.35s ease; }
+.bulb-glow { opacity: 0; transition: opacity 0.45s ease; }
+.bulb-rig.on .bulb-glow { opacity: 1; }
+.bulb-rig.on .bulb-filament { stroke: var(--gold-bright); }
+.bulb-rig.on svg {
+  filter: drop-shadow(0 0 18px rgba(245, 205, 71, 0.55)) drop-shadow(0 0 60px rgba(245, 205, 71, 0.25));
+}
+.bulb-rig.igniting .bulb-glow { animation: bulbIgnite 0.55s linear; }
+@keyframes bulbIgnite {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  45% { opacity: 0.2; }
+  65% { opacity: 1; }
+  80% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+@media (max-width: 700px) { .bulb-rig { height: 30vh; left: 76%; } }
+/* la lampadina comanda la sezione: spenta = sezione al buio */
+.illuminated .illuminated-bg { transition: opacity 0.7s ease; }
+.illuminated.bulb-dark .illuminated-bg { opacity: 0.12; }
+.illuminated-content h2 { transition: text-shadow 0.6s ease; }
+.illuminated.bulb-dark .illuminated-content h2 { text-shadow: none; }
+.glow-text { transition: color 0.6s ease, text-shadow 0.6s ease; }
+.illuminated.bulb-dark .glow-text { color: var(--beige-dim); text-shadow: none; }
+
+/* ===== WORD ILLUMINATION ===== */
+.word-lit .w { opacity: 0.42; transition: opacity 0.45s ease, text-shadow 0.45s ease; }
+.word-lit .w.on { opacity: 1; }
+.word-lit .w.edge { text-shadow: 0 0 14px rgba(245, 205, 71, 0.45); }
+/* fix: quel p usava background-clip:text — con gli span il testo sparirebbe */
+.illuminated-content p.word-lit,
+.illuminated-content p.word-lit .school-link {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
+  color: var(--beige-dim);
+}
+
+/* ===== CONSTELLATION (candidati) ===== */
+.constellation {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.candidati .container { position: relative; z-index: 1; }
+
+/* ===== REVEAL =====
+   gate dietro html.js: senza JS gli elementi restano visibili (niente nascondino). */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.9s ease;
+  transition-delay: var(--d, 0s);
+}
+/* blur→fuoco solo su elementi piccoli (sezioni intere costerebbero troppo) */
+html.js .card.reveal, html.js .member.reveal, html.js .event.reveal,
+html.js .proj-card.reveal, html.js .stats.reveal {
+  filter: blur(7px);
+}
+html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
+
+/* fallback paranoico: se reduced-motion o l'IO non scatta, mostra comunque tutto */
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal { opacity: 1; transform: none; filter: none; }
+  /* l'hero conta su animation forwards per diventare visibile: con RM va forzato */
+  .hero-wordmark h1 span, .hero-tagline, .hero-cta {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  /* niente torcia con RM: il velo lights-out resta leggibile */
+  body.lights-out .dark-veil { background: rgba(3, 7, 18, 0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="lamp" aria-hidden="true"></div>
+<canvas id="trail-canvas" aria-hidden="true"></canvas>
+<div class="wire" id="wire" aria-hidden="true"></div>
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+<canvas id="hero-starfield" aria-hidden="true"></canvas>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a href="#top" class="brand">eureka<span class="bang">!</span></a>
+  <ul>
+    <li><a href="#progetti">progetti</a></li>
+    <li><a href="#eventi">eventi</a></li>
+    <li><a href="#candidati">candidati</a></li>
+    <li><a href="#storia">storia</a></li>
+  </ul>
+  <div class="right">
+    <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="ig">@eureka.archimede</a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="pull-cord" id="pull-cord" role="button" tabindex="0" aria-label="interruttore luci" aria-pressed="false">
+  <div class="cord-line"></div>
+  <div class="cord-knob"></div>
+</div>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#progetti">progetti</a>
+  <a href="#eventi">eventi</a>
+  <a href="#candidati">candidati</a>
+  <a href="#storia">storia</a>
+  <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="mobile-ig">@eureka.archimede</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <canvas id="hero-shader" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="hero-wordmark">
+      <h1 aria-label="eureka!">
+        <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
+      </h1>
+      <p class="hero-tagline">
+        un'idea. un'aula. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
+      </p>
+      <div class="hero-cta">
+        <a href="#progetti" class="btn btn-primary" data-hover>i progetti <span class="arrow">→</span></a>
+        <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="btn btn-ghost" data-hover>seguici</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>eureka!</span><span>scoperta</span><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="marquee-link">archimede</a><span>messina</span><span>idee accese</span><span>lista studentesca</span>
+    <span>eureka!</span><span>scoperta</span><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="marquee-link">archimede</a><span>messina</span><span>idee accese</span><span>lista studentesca</span>
+  </div>
+</div>
+
+<!-- ============ PROGETTI ============ -->
+<section class="progetti" id="progetti">
+  <div class="container">
+    <div class="head reveal">
+      <div>
+        <div class="section-label">01 / progetti</div>
+        <h2 class="h2">cose <em>fatte</em>. cose da <em>fare</em>.</h2>
+      </div>
+      <div class="note">
+        ogni progetto nasce in classe. cresce nei corridoi. arriva in consiglio d'istituto.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card reveal" data-hover>
+        <div class="num"><span>01 — spazi</span><span class="arrow">→</span></div>
+        <h3>aule studio <em>aperte</em>. anche di pomeriggio.</h3>
+        <p>spazi liberi. per ripassare. per recuperare. per stare. apertura fino alle 17.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>02 — cultura</span><span class="arrow">→</span></div>
+        <h3>cineforum. dibattiti. <em>autori</em>.</h3>
+        <p>un calendario fisso. ogni mese un appuntamento. cinema. ospiti. parole vere.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>03 — sport</span><span class="arrow">→</span></div>
+        <h3>tornei <em>veri</em>. non simbolici.</h3>
+        <p>calcetto. basket. pallavolo. scacchi. classifiche pubbliche. finali in palestra.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>04 — ascolto</span><span class="arrow">→</span></div>
+        <h3>sportello <em>accessibile</em>. senza fila.</h3>
+        <p>ascolto vero. nessun giudizio. un orario chiaro. un posto dove andare.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>05 — trasparenza</span><span class="arrow">→</span></div>
+        <h3>verbali <em>leggibili</em>. in 7 giorni.</h3>
+        <p>ogni consiglio. un riassunto chiaro. cosa si è detto. cosa si è deciso.</p>
+      </div>
+
+      <div class="card reveal" data-hover>
+        <div class="num"><span>06 — eventi</span><span class="arrow">→</span></div>
+        <h3>una festa <em>d'istituto</em>. che vale.</h3>
+        <p>fine anno. musica. food. la scuola fuori dalla scuola. organizzata da noi.</p>
+      </div>
+    </div>
+
+    <!-- gallery progetti — feed live da Instagram (Behold), si aggiorna da solo -->
+    <div class="proj-gallery" id="proj-gallery">
+      <div class="proj-gallery-head reveal">
+        <div class="section-label">in diretta da instagram</div>
+        <h2 class="h2">i progetti. <em>documentati</em>.</h2>
+        <a class="proj-ig-link" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>@eureka.archimede <span id="proj-ig-followers"></span> <span class="arrow">→</span></a>
+      </div>
+      <div class="proj-gallery-grid" id="proj-gallery-grid"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ EVENTI ============ -->
+<section class="eventi" id="eventi">
+  <div class="container">
+    <div class="head reveal">
+      <div class="section-label">02 / eventi</div>
+      <h2 class="h2">il calendario. <em>acceso</em>.</h2>
+    </div>
+
+    <div class="timeline" id="timeline">
+      <div class="tl-spark" aria-hidden="true"></div>
+      <div class="event reveal" data-hover>
+        <div class="date">ottobre 2025</div>
+        <div class="body">
+          <h3>assemblea d'apertura.</h3>
+          <p>presentazione della lista. domande aperte. risposte vere.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">novembre 2025</div>
+        <div class="body">
+          <h3>cineforum n° 01. visioni di scuola.</h3>
+          <p>un film. due ore. una discussione. in aula magna.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">dicembre 2025</div>
+        <div class="body">
+          <h3>torneo invernale. <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">archimede</a> cup.</h3>
+          <p>calcetto e pallavolo. tutte le classi. una sola palestra.</p>
+        </div>
+        <div class="tag">passato</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">marzo 2026</div>
+        <div class="body">
+          <h3>incontro con l'autore.</h3>
+          <p>uno scrittore. un'ora. domande senza copione.</p>
+        </div>
+        <div class="tag">in corso</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">maggio 2026</div>
+        <div class="body">
+          <h3>festa d'istituto. eureka day.</h3>
+          <p>musica. food truck. stand. il cortile come non l'avete mai visto.</p>
+        </div>
+        <div class="tag">in arrivo</div>
+      </div>
+
+      <div class="event reveal" data-hover>
+        <div class="date">giugno 2026</div>
+        <div class="body">
+          <h3>chiusura. assemblea finale.</h3>
+          <p>cosa abbiamo fatto. cosa non abbiamo fatto. cosa lasciamo.</p>
+        </div>
+        <div class="tag">in arrivo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CANDIDATI ============ -->
+<section class="candidati" id="candidati">
+  <canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
+  <div class="container">
+    <div class="head reveal">
+      <div class="section-label">03 / candidati</div>
+      <h2 class="h2">le persone <em>dietro</em> la lista.</h2>
+      <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
+    </div>
+
+    <!-- ===== consiglio d'istituto ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">consiglio <em>d'istituto</em>.</div>
+        <div class="organo-count">8 candidati</div>
+      </div>
+      <div class="roster">
+        <div class="member reveal" data-hover>
+          <div class="tag">5a</div>
+          <div class="photo"><img src="foto/christian-bucalo.jpg" alt="christian bucalo" onerror="this.remove()">c</div>
+          <div class="info">
+            <div class="name">christian bucalo</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4e</div>
+          <div class="photo"><img src="foto/giacomo-warm.jpg" alt="giacomo warm" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giacomo warm</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4b</div>
+          <div class="photo"><img src="foto/giulia-perri.jpg" alt="giulia perri" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giulia perri</div>
+            <div class="role">n° 03</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4d</div>
+          <div class="photo"><img src="foto/tania-spinella.jpg" alt="tania spinella" onerror="this.remove()">t</div>
+          <div class="info">
+            <div class="name">tania spinella</div>
+            <div class="role">n° 04</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">5i</div>
+          <div class="photo"><img src="foto/giovanni-lo-nostro.jpg" alt="giovanni lo nostro" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giovanni lo nostro</div>
+            <div class="role">n° 05</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3c</div>
+          <div class="photo"><img src="foto/gabriele-picciolo.jpg" alt="gabriele picciolo" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">gabriele picciolo</div>
+            <div class="role">n° 06</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">2c</div>
+          <div class="photo"><img src="foto/federico-de-salvo.jpg" alt="federico de salvo" onerror="this.remove()">f</div>
+          <div class="info">
+            <div class="name">federico de salvo</div>
+            <div class="role">n° 07</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3n</div>
+          <div class="photo"><img src="foto/marco-cangelosi.jpg" alt="marco cangelosi" onerror="this.remove()">m</div>
+          <div class="info">
+            <div class="name">marco cangelosi</div>
+            <div class="role">n° 08</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== consulta provinciale ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">consulta <em>provinciale</em>.</div>
+        <div class="organo-count">4 candidati</div>
+      </div>
+      <div class="roster">
+        <div class="member reveal" data-hover>
+          <div class="tag">4m</div>
+          <div class="photo"><img src="foto/paolo-arigo.jpg" alt="paolo arigo" onerror="this.remove()">p</div>
+          <div class="info">
+            <div class="name">paolo arigo</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">3e</div>
+          <div class="photo"><img src="foto/alberto-di-cagno.jpg" alt="alberto di cagno" onerror="this.remove()">a</div>
+          <div class="info">
+            <div class="name">alberto di cagno</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4c</div>
+          <div class="photo"><img src="foto/giorgio-bensaia.jpg" alt="giorgio bensaia" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giorgio bensaia</div>
+            <div class="role">n° 03</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">5c</div>
+          <div class="photo"><img src="foto/giorgia-curro.jpg" alt="giorgia currò" onerror="this.remove()">g</div>
+          <div class="info">
+            <div class="name">giorgia currò</div>
+            <div class="role">n° 04</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== organo di garanzia ===== -->
+    <div class="organo reveal">
+      <div class="organo-head">
+        <div class="organo-name">organo di <em>garanzia</em>.</div>
+        <div class="organo-count">2 candidati</div>
+      </div>
+      <div class="roster cols-2">
+        <div class="member reveal" data-hover>
+          <div class="tag">5a</div>
+          <div class="photo"><img src="foto/nino-sutera.jpg" alt="nino sutera" onerror="this.remove()">n</div>
+          <div class="info">
+            <div class="name">nino sutera</div>
+            <div class="role">n° 01</div>
+          </div>
+        </div>
+        <div class="member reveal" data-hover>
+          <div class="tag">4e</div>
+          <div class="photo"><img src="foto/nethma.jpg" alt="nethma" onerror="this.remove()">n</div>
+          <div class="info">
+            <div class="name">nethma</div>
+            <div class="role">n° 02</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORIA ============ -->
+<section class="storia" id="storia">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">04 / storia</div>
+      <h2 class="h2">dal 2018. ancora <em>accesi</em>.</h2>
+    </div>
+
+    <div class="grid">
+      <div class="lede reveal">
+        <p class="first">
+          <em>eureka</em> è la parola di <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">archimede</a>. è la parola che si grida quando si trova qualcosa.
+        </p>
+        <p>
+          la lista nasce nel 2018. dentro un liceo da 1.500 studenti. con un'idea semplice. la rappresentanza si fa. non si recita.
+        </p>
+        <p>
+          da allora cambiamo. ogni anno. cambiano le facce. cambiano le classi. resta il metodo.
+        </p>
+        <p>
+          ascoltare. proporre. fare. e poi raccontarlo.
+        </p>
+      </div>
+
+      <aside class="stats reveal">
+        <div class="stat-cell">
+          <div class="big">1.<em>500</em></div>
+          <div class="label">studenti dell'<a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">archimede</a></div>
+        </div>
+        <div class="stat-cell">
+          <div class="big"><em>2018</em></div>
+          <div class="label">anno di fondazione</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big">06</div>
+          <div class="label">progetti attivi</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big">0<em>0</em></div>
+          <div class="label">promesse vuote</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ILLUMINATED (transizione) ============ -->
+<section class="illuminated reveal" aria-label="momento illuminato">
+  <div class="illuminated-bg" aria-hidden="true">
+    <div class="glow-top"></div>
+    <div class="glow-bot"></div>
+  </div>
+  <div class="bulb-rig" id="bulb-rig" role="button" tabindex="0" aria-label="lampadina — accendi o spegni" aria-pressed="false">
+    <svg viewBox="0 0 120 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="bulbGrad">
+          <stop offset="0%" stop-color="#ffe07a" stop-opacity="0.95"/>
+          <stop offset="55%" stop-color="#f5cd47" stop-opacity="0.40"/>
+          <stop offset="100%" stop-color="#f5cd47" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <line class="bulb-wire-line" x1="60" y1="0" x2="60" y2="186"/>
+      <rect class="bulb-socket" x="46" y="186" width="28" height="30" rx="5"/>
+      <line class="bulb-thread" x1="47" y1="194" x2="73" y2="197"/>
+      <line class="bulb-thread" x1="47" y1="201" x2="73" y2="204"/>
+      <line class="bulb-thread" x1="47" y1="208" x2="73" y2="211"/>
+      <circle class="bulb-glow" cx="60" cy="272" r="34" fill="url(#bulbGrad)"/>
+      <path class="bulb-glass" d="M50 216 C50 226 47 230 44 238 A38 38 0 1 0 76 238 C73 230 70 226 70 216 Z"/>
+      <path class="bulb-filament" d="M54 230 L54 258 Q57 266 60 258 Q63 250 66 258 L66 230"/>
+    </svg>
+  </div>
+  <div class="illuminated-content">
+    <h2>
+      un'idea.<br>
+      <span class="glow-text" data-text="accesa.">accesa.</span><br>
+      da quattordici.
+    </h2>
+    <p>
+      una lista. tre organi. una sola direzione.
+      <span class="emphasis">accendere</span> il <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a>,
+      una proposta concreta alla volta.
+    </p>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="contatti">
+  <div class="cta-content">
+    <div class="super">● vota. condividi. accendi.</div>
+    <h2>vota eureka<span class="bang">!</span></h2>
+    <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>
+      @eureka.archimede su instagram
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div>© <span id="year"></span> <span class="glow-mini">eureka<span class="bang">!</span></span></div>
+    <div class="center">
+      <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram</a>
+      <a href="#progetti">progetti</a>
+      <a href="#eventi">eventi</a>
+      <a href="#candidati">candidati</a>
+      <a href="#storia">storia</a>
+    </div>
+    <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a> · messina, it</div>
+  </div>
+</footer>
+
+
+<script>
+// ===== entra sempre dall'alto (no scroll restoration del browser) =====
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+// se la url ha un hash residuo da un giro precedente, lo puliamo
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+window.scrollTo(0, 0);
+window.addEventListener('load', () => window.scrollTo(0, 0));
+
+// ===== year =====
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// =====================================================================
+// ===== PROGETTI GALLERY — feed live da Instagram ======================
+// =====================================================================
+// Sorgente primaria: assets/ig/feed.json — TUTTI i post, generato ogni 3 ore
+// dalla GitHub Action (.github/workflows/ig-feed.yml + scripts/fetch-ig.mjs).
+// Fallback: feed Behold live (ultimi 6 post), poi link al profilo.
+const LOCAL_FEED = 'assets/ig/feed.json';
+const BEHOLD_FEED = 'https://feeds.behold.so/LUPhA0MWLASmG03Yef0U';
+const IG_PROFILE = 'https://instagram.com/eureka.archimede';
+
+(() => {
+  const grid = document.getElementById('proj-gallery-grid');
+  const gallery = document.getElementById('proj-gallery');
+  if (!grid || !gallery) return;
+
+  const PAGE = 12; // post per blocco: il resto arriva con "mostra altri"
+  const fmtData = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+  // separatore migliaia manuale: niente dipendenza dai dati locale del browser
+  const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  const ICONS = {
+    CAROUSEL_ALBUM: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 3h11a2 2 0 0 1 2 2v11h-2V5H8V3zM5 7h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>',
+    VIDEO: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>'
+  };
+
+  const fallback = (msg) => {
+    grid.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'proj-empty';
+    d.innerHTML = `${msg} <a href="${IG_PROFILE}" target="_blank" rel="noopener" data-hover>vai al profilo →</a>`;
+    grid.appendChild(d);
+  };
+
+  // schema unico per le due sorgenti (Action locale / Behold)
+  const normalize = (feed, source) => ({
+    followersCount: feed.followersCount || 0,
+    posts: (feed.posts || []).map(p => {
+      const s = p.sizes || {};
+      return {
+        permalink: p.permalink || IG_PROFILE,
+        timestamp: p.timestamp,
+        likeCount: typeof p.likeCount === 'number' ? p.likeCount : null,
+        mediaType: p.mediaType,
+        caption: (source === 'behold' ? (p.prunedCaption || p.caption) : p.caption || '').trim(),
+        image: source === 'behold'
+          ? ((s.medium || s.large || s.full || {}).mediaUrl || p.mediaUrl)
+          : p.image,
+        bg: p.colorPalette && p.colorPalette.dominant ? `rgb(${p.colorPalette.dominant})` : null
+      };
+    }).filter(p => p.image)
+  });
+
+  const observeReveals = (els) => {
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => io.observe(el));
+  };
+
+  const buildCard = (post, i) => {
+    const a = document.createElement('a');
+    a.className = 'proj-card reveal';
+    a.href = post.permalink;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.setAttribute('data-hover', '');
+    a.style.setProperty('--d', `${(i % 6) * 70}ms`);
+
+    const img = document.createElement('img');
+    img.className = 'proj-card-img';
+    img.src = post.image;
+    img.alt = post.caption ? post.caption.slice(0, 90) : 'post instagram di @eureka.archimede';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    if (post.bg) img.style.background = post.bg; // placeholder mentre carica
+    img.onerror = () => img.remove();
+    a.appendChild(img);
+
+    if (ICONS[post.mediaType]) {
+      const t = document.createElement('span');
+      t.className = 'proj-card-type';
+      t.innerHTML = ICONS[post.mediaType];
+      a.appendChild(t);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'proj-card-body';
+
+    const meta = document.createElement('div');
+    meta.className = 'proj-card-date';
+    const parts = [];
+    if (post.timestamp) parts.push(fmtData.format(new Date(post.timestamp)));
+    if (post.likeCount !== null) parts.push('♥ ' + fmtNum(post.likeCount));
+    meta.textContent = parts.join(' · ');
+    body.appendChild(meta);
+
+    if (post.caption) {
+      const desc = document.createElement('div');
+      desc.className = 'proj-card-desc';
+      desc.textContent = post.caption; // textContent: le caption non possono iniettare HTML
+      body.appendChild(desc);
+    }
+
+    a.appendChild(body);
+    return a;
+  };
+
+  const render = (data) => {
+    if (!data.posts.length) { fallback('nessun post per ora.'); return; }
+
+    // follower count live nel link del profilo
+    const fol = document.getElementById('proj-ig-followers');
+    if (fol && data.followersCount) {
+      fol.textContent = '· ' + fmtNum(data.followersCount) + ' follower';
+    }
+
+    let shown = 0;
+    let moreBtn = null;
+
+    const addBatch = () => {
+      const batch = data.posts.slice(shown, shown + PAGE);
+      const frag = document.createDocumentFragment();
+      const els = batch.map((p, i) => {
+        const card = buildCard(p, i);
+        frag.appendChild(card);
+        return card;
+      });
+      grid.appendChild(frag);
+      shown += batch.length;
+      observeReveals(els);
+
+      const left = data.posts.length - shown;
+      if (left > 0) {
+        if (!moreBtn) {
+          moreBtn = document.createElement('button');
+          moreBtn.type = 'button';
+          moreBtn.className = 'proj-more';
+          moreBtn.setAttribute('data-hover', '');
+          moreBtn.addEventListener('click', addBatch);
+          gallery.appendChild(moreBtn);
+        }
+        moreBtn.textContent = `mostra altri (${left})`;
+      } else if (moreBtn) {
+        moreBtn.remove();
+        moreBtn = null;
+      }
+    };
+
+    addBatch();
+  };
+
+  const load = async () => {
+    // 1. feed locale generato dalla Action (tutti i post, zero limiti)
+    try {
+      const r = await fetch(LOCAL_FEED);
+      if (r.ok) { render(normalize(await r.json(), 'local')); return; }
+    } catch (e) { /* file assente: la Action non è ancora attiva */ }
+
+    // 2. fallback: Behold live (ultimi 6)
+    try {
+      const r = await fetch(BEHOLD_FEED);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      render(normalize(await r.json(), 'behold'));
+    } catch (e) {
+      fallback('instagram non risponde.');
+    }
+  };
+
+  load();
+})();
+
+// ===== mobile menu =====
+const navToggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navToggle.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    });
+  });
+}
+
+// ===== reveal on scroll =====
+const reveals = document.querySelectorAll('.reveal');
+
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => io.observe(el));
+
+  // safety net: dopo 4s mostra SOLO ciò che è nel viewport ma ancora nascosto
+  // (non tutto il documento: ucciderebbe i reveal di chi scrolla dopo)
+  setTimeout(() => {
+    const vh = window.innerHeight;
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) el.classList.add('in');
+    });
+  }, 4000);
+} else {
+  // niente IO disponibile: mostra tutto subito
+  reveals.forEach(el => el.classList.add('in'));
+}
+</script>
+
+<script>
+// =====================================================================
+// ===== HERO WARP STARFIELD (3D prospettico, stelle verso viewer) =====
+// =====================================================================
+(() => {
+  const canvas = document.getElementById('hero-starfield');
+  if (!canvas) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const QUANTITY  = 350;
+  const SPEED     = 1.8;
+  const RATIO     = QUANTITY / 2;
+  const STAR_COL  = 'rgba(245, 205, 71, 0.92)';
+  const BG_FILL   = 'rgba(10, 22, 50, 0.14)';
+
+  const sd = { w:0, h:0, ctx:null, x:0, y:0, z:0, star:{ colorRatio:0, arr:[] } };
+
+  function measure() {
+    sd.w = window.innerWidth;
+    sd.h = window.innerHeight;
+    sd.x = sd.w / 2 | 0;
+    sd.y = sd.h / 2 | 0;
+    sd.z = (sd.w + sd.h) / 2;
+    sd.star.colorRatio = 1 / sd.z;
+  }
+
+  function setup() {
+    measure();
+    sd.ctx = canvas.getContext('2d');
+    canvas.width  = sd.w;
+    canvas.height = sd.h;
+  }
+
+  function bigBang() {
+    sd.star.arr = Array.from({ length: QUANTITY }, () => [
+      Math.random() * sd.w * 2 - sd.x * 2,   // 0 world x
+      Math.random() * sd.h * 2 - sd.y * 2,   // 1 world y
+      Math.round(Math.random() * sd.z),        // 2 depth z
+      0, 0, 0, 0, true                         // 3 px, 4 py, 5 prevX, 6 prevY, 7 vis
+    ]);
+  }
+
+  function resize() {
+    const oldW = canvas.width, oldH = canvas.height;
+    measure();
+    if (oldW === sd.w && oldH === sd.h) return;
+    // snapshot SOLO quando le dimensioni cambiano davvero (niente garbage per frame)
+    const snap = sd.star.arr.map(s => s.slice());
+    canvas.width  = sd.w;
+    canvas.height = sd.h;
+    const rw = sd.w / oldW, rh = sd.h / oldH;
+    sd.star.arr = snap.map(s => {
+      s[0] *= rw; s[1] *= rh;
+      s[3] = sd.x + (s[0] / s[2]) * RATIO;
+      s[4] = sd.y + (s[1] / s[2]) * RATIO;
+      return s;
+    });
+  }
+
+  function update() {
+    sd.star.arr.forEach(s => {
+      s[7] = true; s[5] = s[3]; s[6] = s[4];
+      s[2] -= SPEED;
+      if (s[2] <= 0) { s[2] += sd.z; s[7] = false; }
+      s[3] = sd.x + (s[0] / s[2]) * RATIO;
+      s[4] = sd.y + (s[1] / s[2]) * RATIO;
+    });
+  }
+
+  function draw() {
+    const ctx = sd.ctx;
+    ctx.fillStyle = BG_FILL;
+    ctx.fillRect(0, 0, sd.w, sd.h);
+    ctx.strokeStyle = STAR_COL;
+    sd.star.arr.forEach(s => {
+      if (s[5] > 0 && s[5] < sd.w && s[6] > 0 && s[6] < sd.h && s[7]) {
+        ctx.lineWidth = (1 - sd.star.colorRatio * s[2]) * 2.2;
+        ctx.beginPath();
+        ctx.moveTo(s[5], s[6]);
+        ctx.lineTo(s[3], s[4]);
+        ctx.stroke();
+      }
+    });
+  }
+
+  let rafId = null, active = true, lastWarp = 0;
+
+  function animate(now) {
+    if (active) rafId = requestAnimationFrame(animate);
+    else { rafId = null; return; }
+    if (now - lastWarp < 33) return;   // ~30 fps: su mobile dimezza il costo
+    lastWarp = now;
+    update(); draw();
+  }
+
+  setup(); bigBang();
+  rafId = requestAnimationFrame(animate);
+
+  // resize fuori dal frame loop, con debounce
+  let wrT;
+  window.addEventListener('resize', () => {
+    clearTimeout(wrT);
+    wrT = setTimeout(resize, 150);
+  }, { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    active = !document.hidden;
+    if (active && !rafId) rafId = requestAnimationFrame(animate);
+  });
+})();
+</script>
+
+<script>
+// =====================================================================
+// ===== INTERACTIVE LIGHT (segue mouse, glow oro direzionale) =========
+// =====================================================================
+(() => {
+  const lamp = document.getElementById('lamp');
+  if (!lamp) return;
+  if (window.matchMedia('(hover: none)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const C1 = 'rgba(255,240,160,1)';
+  const C2 = 'rgba(255,230,110,0.85)';
+  const C3 = 'rgba(255,220,80,0.55)';
+  const C4 = 'rgba(255,210,60,0.28)';
+  const C5 = 'rgba(255,205,50,0.10)';
+
+  function shadow(dir) {
+    switch (dir) {
+      case 'left':   return `0 0 5vh 4vh ${C1},-5vh 0 12vh 5vh ${C2},-18vh 0 30vh 5vh ${C3},-38vh 0 60vh 4vh ${C4},-70vh 0 110vh 0 ${C5}`;
+      case 'right':  return `0 0 5vh 4vh ${C1},5vh 0 12vh 5vh ${C2},18vh 0 30vh 5vh ${C3},38vh 0 60vh 4vh ${C4},70vh 0 110vh 0 ${C5}`;
+      case 'top':    return `0 0 5vh 4vh ${C1},0 -5vh 12vh 5vh ${C2},0 -18vh 30vh 5vh ${C3},0 -38vh 60vh 4vh ${C4},0 -70vh 110vh 0 ${C5}`;
+      case 'bottom': return `0 0 5vh 4vh ${C1},0 5vh 12vh 5vh ${C2},0 18vh 30vh 5vh ${C3},0 38vh 60vh 4vh ${C4},0 70vh 110vh 0 ${C5}`;
+      default:       return `0 0 5vh 4vh ${C1},0 0 14vh 7vh ${C2},0 0 35vh 8vh ${C3},0 0 70vh 5vh ${C4},0 0 130vh 0 ${C5}`;
+    }
+  }
+
+  let lastX = 0;
+
+  function onMove(e) {
+    const x = e.clientX, y = e.clientY;
+    const dx = x - lastX;
+    const dir = dx > 1 ? 'right' : dx < -1 ? 'left' : 'center';
+    lamp.style.transform = `translate(${x - 5}px,${y - 5}px)`;
+    lamp.style.boxShadow = shadow(dir);
+    lastX = x;
+  }
+
+  lamp.style.opacity = '1';
+  lamp.style.transform = `translate(${window.innerWidth/2 - 5}px,${window.innerHeight/2 - 5}px)`;
+  lamp.style.boxShadow = shadow('center');
+
+  document.addEventListener('mousemove', onMove, { passive: true });
+})();
+</script>
+
+<script>
+// =====================================================================
+// ===== STARFIELD GLOBALE + STELLE CADENTI ============================
+// =====================================================================
+// Canvas position:fixed dietro a tutti i contenuti. Strategia performance:
+//  – Strato statico (stelle deboli, ~85%): pre-renderizzato UNA volta su
+//    canvas offscreen, ridisegnato come immagine ogni frame (cheap blit).
+//  – Strato dinamico (stelle luminose ~15% + meteore): aggiornato ogni
+//    frame con twinkle/scia.
+//  – Throttle a ~30 FPS per scaricare la CPU senza perdere fluidità visiva.
+//  – Pausa quando la pagina non è visibile (visibilitychange).
+(() => {
+  const canvas = document.getElementById('starfield');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // dpr cap a 1.0 → starfield è sfondo, nessuno nota la differenza
+  let dpr = 1;
+  let w = 0, h = 0;
+
+  // strato statico (stelle deboli) pre-renderizzato
+  const offscreen = document.createElement('canvas');
+  const offCtx = offscreen.getContext('2d');
+
+  // stelle luminose (animate)
+  let brightStars = [];
+
+  // stelle cadenti attive
+  const meteors = [];
+  let nextMeteorAt = 0;
+
+  function rand(a, b){ return a + Math.random() * (b - a); }
+
+  function rebuild(){
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width  = Math.max(1, Math.floor(w * dpr));
+    canvas.height = Math.max(1, Math.floor(h * dpr));
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // densità ridotta: ~1 stella ogni 2500 px² → ~370 stelle a 1280×720
+    const total = Math.floor((w * h) / 2500);
+    const dimCount    = Math.floor(total * 0.90);
+    const brightCount = total - dimCount;
+
+    // ---- pre-render strato statico (deboli) ----
+    offscreen.width  = canvas.width;
+    offscreen.height = canvas.height;
+    offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    offCtx.clearRect(0, 0, w, h);
+    offCtx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < dimCount; i++){
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const r = rand(0.3, 0.85);
+      const a = rand(0.45, 0.9);
+      const gold = Math.random() < 0.18;
+      offCtx.fillStyle = gold
+        ? `rgba(255, 230, 150, ${a})`
+        : `rgba(252, 246, 226, ${a})`;
+      offCtx.beginPath();
+      offCtx.arc(x, y, r, 0, Math.PI * 2);
+      offCtx.fill();
+    }
+    offCtx.globalCompositeOperation = 'source-over';
+
+    // ---- stelle luminose dinamiche ----
+    brightStars = new Array(brightCount);
+    for (let i = 0; i < brightCount; i++){
+      brightStars[i] = {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: rand(0.8, 1.5),
+        bright: rand(0.7, 1.0),
+        tw: Math.random() * Math.PI * 2,
+        tws: rand(0.4, 1.5),
+        gold: Math.random() < 0.2,
+      };
+    }
+  }
+
+  // ---- spawn di una stella cadente ----
+  function spawnMeteor(now){
+    // partenza fuori schermo, dall'alto/sinistra, traiettoria diagonale verso il basso/destra
+    const startEdge = Math.random();
+    let x, y;
+    if (startEdge < 0.5){
+      x = rand(-100, w * 0.4);
+      y = rand(-80, -10);
+    } else {
+      x = rand(-100, -20);
+      y = rand(0, h * 0.5);
+    }
+    // angolo: -10° a 35° dall'orizzontale (verso il basso a destra)
+    const angle = rand(0.18, 0.78);
+    const speed = rand(900, 1500);   // px/s
+    const len   = rand(110, 220);
+    meteors.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      len,
+      life: 0,
+      ttl: rand(0.55, 1.2),
+      gold: Math.random() < 0.35,
+      born: now,
+    });
+  }
+
+  // ---- frame loop, throttled ~30 FPS ----
+  let lastFrame = 0;
+  let raf;
+  let pausedByVisibility = false;
+
+  function frame(now){
+    raf = requestAnimationFrame(frame);
+    if (pausedByVisibility) return;
+    if (now - lastFrame < 50) return;        // ~20 fps
+    const dt = Math.min((now - lastFrame) / 1000, 0.05);
+    lastFrame = now;
+    const t = now * 0.001;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // strato statico (blit cheap)
+    ctx.drawImage(offscreen, 0, 0, w, h);
+
+    // strato dinamico — additive
+    ctx.globalCompositeOperation = 'lighter';
+
+    // 1) stelle luminose con twinkle (no glow halo → cheap)
+    for (let i = 0, n = brightStars.length; i < n; i++){
+      const s = brightStars[i];
+      const tw = reduceMotion ? 1.0 : (0.6 + 0.4 * Math.sin(s.tw + t * s.tws));
+      const a = s.bright * tw;
+      ctx.fillStyle = s.gold
+        ? `rgba(255, 230, 150, ${a})`
+        : `rgba(252, 246, 226, ${a})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 2) stelle cadenti — spawn ridotto per perf
+    if (!reduceMotion){
+      if (t > nextMeteorAt){
+        spawnMeteor(t);
+        nextMeteorAt = t + rand(3, 7);
+      }
+
+      for (let i = meteors.length - 1; i >= 0; i--){
+        const m = meteors[i];
+        m.life += dt;
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+
+        // fade in/out (envelope)
+        const k = m.life / m.ttl;
+        const env = k < 0.15 ? (k / 0.15)
+                  : k > 0.75 ? (1 - (k - 0.75) / 0.25)
+                             : 1;
+
+        // scia (gradient lineare dietro la testa)
+        const norm = Math.hypot(m.vx, m.vy) || 1;
+        const ux = m.vx / norm, uy = m.vy / norm;
+        const tailX = m.x - ux * m.len;
+        const tailY = m.y - uy * m.len;
+        const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+        const headColor = m.gold
+          ? `rgba(255, 230, 150, ${0.95 * env})`
+          : `rgba(252, 246, 226, ${0.95 * env})`;
+        const midColor  = m.gold
+          ? `rgba(255, 200, 100, ${0.45 * env})`
+          : `rgba(220, 220, 240, ${0.45 * env})`;
+        grad.addColorStop(0,    headColor);
+        grad.addColorStop(0.35, midColor);
+        grad.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(m.x, m.y);
+        ctx.stroke();
+
+        // testa luminosa
+        const headRad = 6 * env;
+        if (headRad > 0.3){
+          const hg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, headRad);
+          hg.addColorStop(0, headColor);
+          hg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = hg;
+          ctx.fillRect(m.x - headRad, m.y - headRad, headRad*2, headRad*2);
+        }
+
+        // rimuovi se finita o troppo lontana
+        if (m.life > m.ttl || m.x > w + 200 || m.y > h + 200){
+          meteors.splice(i, 1);
+        }
+      }
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      dpr = 1;
+      rebuild();
+    }, 150);
+  });
+
+  // pausa quando il tab non è visibile
+  document.addEventListener('visibilitychange', () => {
+    pausedByVisibility = document.hidden;
+    lastFrame = performance.now();   // evita salti di dt al rientro
+  });
+
+  rebuild();
+  // il warp starfield (canvas opaco sopra, stesso z) copre questo layer quando attivo:
+  // animarlo sarebbe lavoro invisibile. Frame statico e basta; loop solo se è l'unico sfondo.
+  const warpActive = !reduceMotion && !!document.getElementById('hero-starfield');
+  if (reduceMotion || warpActive){
+    // un frame solo: drawImage + stelle luminose statiche, niente meteore
+    ctx.drawImage(offscreen, 0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+    for (const s of brightStars){
+      ctx.fillStyle = s.gold
+        ? `rgba(255, 230, 150, ${s.bright})`
+        : `rgba(252, 246, 226, ${s.bright})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  } else {
+    raf = requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+<script>
+// =====================================================================
+// ===== ENHANCEMENTS — scroll orchestrator, scramble, tilt, magnetic ==
+// =====================================================================
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+
+  // ---------- stagger: delay incrementale sui reveal dentro le griglie ----------
+  ['.progetti .grid', '.proj-gallery-grid', '.roster', '.timeline', '.stats']
+    .forEach(sel => {
+      document.querySelectorAll(sel).forEach(box => {
+        let i = 0;
+        box.querySelectorAll(':scope > .reveal').forEach(el => {
+          el.style.setProperty('--d', `${(i++ % 9) * 70}ms`);
+        });
+      });
+    });
+
+  // ---------- scroll orchestrator: wire + timeline + nav + marquee ----------
+  const wire     = document.getElementById('wire');
+  const timeline = document.getElementById('timeline');
+  const nav      = document.querySelector('nav');
+  const mobileMenuEl = document.getElementById('mobile-menu');
+  const track    = document.querySelector('.marquee-track');
+
+  let lastY = window.scrollY, lastT = performance.now();
+  let velocity = 0;           // px/s, smussata
+  let marqueeX = 0;
+  let tlH = 0;
+  let docH = 0, halfW = 0, vh = window.innerHeight;   // cache: niente layout read per frame
+
+  function measure() {
+    vh = window.innerHeight;
+    docH = document.documentElement.scrollHeight - vh;
+    if (timeline) {
+      tlH = timeline.offsetHeight;
+      timeline.style.setProperty('--tl-h', tlH + 'px');
+    }
+    if (track) halfW = track.scrollWidth / 2;
+  }
+  measure();
+  window.addEventListener('resize', () => setTimeout(measure, 100), { passive: true });
+  window.addEventListener('load', measure);   // dopo immagini/gallery: docH definitivo
+
+  let navHidden = false;
+
+  function orchestrate(now) {
+    requestAnimationFrame(orchestrate);
+    const dt = Math.min((now - lastT) / 1000, 0.05) || 0.016;
+    lastT = now;
+
+    const y = window.scrollY;
+    const scrolled = y !== lastY;
+    const rawVel = (y - lastY) / dt;
+    velocity += (rawVel - velocity) * 0.12;   // lerp smussata
+    lastY = y;
+
+    // filo di corrente + timeline: solo quando lo scroll cambia
+    if (scrolled) {
+      if (wire && docH > 0) {
+        document.documentElement.style.setProperty('--scroll', (y / docH).toFixed(4));
+      }
+      if (timeline && tlH > 0) {
+        const r = timeline.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / r.height));
+        timeline.style.setProperty('--tl-progress', p.toFixed(4));
+      }
+    }
+
+    // nav: nascondi scendendo, mostra salendo
+    if (nav) {
+      const menuOpen = mobileMenuEl && mobileMenuEl.classList.contains('open');
+      const shouldHide = !menuOpen && y > 320 && velocity > 80;
+      const shouldShow = menuOpen || velocity < -80 || y < 320;
+      if (shouldHide && !navHidden) { nav.classList.add('nav-hidden'); navHidden = true; }
+      else if (shouldShow && navHidden) { nav.classList.remove('nav-hidden'); navHidden = false; }
+    }
+
+    // marquee velocity-aware (halfW cached in measure())
+    if (track && !RM && halfW > 0) {
+      const base = 70;                                  // px/s a riposo
+      const boost = Math.min(Math.abs(velocity) * 0.6, 900);
+      marqueeX -= (base + boost) * dt;
+      if (-marqueeX >= halfW) marqueeX += halfW;
+      const skew = Math.max(-7, Math.min(7, velocity * 0.004));
+      track.style.transform = `translateX(${marqueeX.toFixed(1)}px) skewX(${skew.toFixed(2)}deg)`;
+    }
+  }
+  requestAnimationFrame(orchestrate);
+
+  // ---------- scramble/decode sui titoli ----------
+  if (!RM && 'IntersectionObserver' in window) {
+    const CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!?*#+';
+    const rc = () => CHARS[Math.random() * CHARS.length | 0];
+
+    function scramble(el) {
+      const nodes = [];
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = walker.nextNode())) {
+        if (n.textContent.trim()) nodes.push({ node: n, target: n.textContent });
+      }
+      const D = 850;
+      const start = performance.now();
+      function tick(now) {
+        const k = Math.min(1, (now - start) / D);
+        nodes.forEach(({ node, target }) => {
+          const solved = Math.floor(target.length * k);
+          let out = target.slice(0, solved);
+          for (let i = solved; i < target.length; i++) {
+            const ch = target[i];
+            out += /[a-z0-9àèéìòù]/i.test(ch) ? rc() : ch;
+          }
+          node.textContent = out;
+        });
+        if (k < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    const scrambleIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          scramble(e.target);
+          scrambleIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('.h2, .organo-name').forEach(el => scrambleIO.observe(el));
+  }
+
+  // ---------- count-up statistiche ----------
+  if ('IntersectionObserver' in window) {
+    function countUp(el) {
+      const finalHTML = el.innerHTML;
+      const raw = el.textContent.trim();
+      const target = parseInt(raw.replace(/\D/g, ''), 10);
+      if (isNaN(target)) return;
+      const padded = /^0/.test(raw) ? raw.replace(/\D/g, '').length : 0;
+      const useSep = raw.includes('.');
+      const from = target === 0 ? 47 : 0;     // "00 promesse vuote": countdown a zero
+      const D = 1600, start = performance.now();
+      function fmt(v) {
+        let s = String(v);
+        if (padded) s = s.padStart(padded, '0');
+        if (useSep) s = v.toLocaleString('it-IT');
+        return s;
+      }
+      function tick(now) {
+        const k = Math.min(1, (now - start) / D);
+        const e = 1 - Math.pow(1 - k, 3);     // easeOutCubic
+        const v = Math.round(from + (target - from) * e);
+        if (k < 1) {
+          el.textContent = fmt(v);
+          requestAnimationFrame(tick);
+        } else {
+          el.innerHTML = finalHTML;            // ripristina markup (em oro)
+        }
+      }
+      if (RM) return;
+      requestAnimationFrame(tick);
+    }
+
+    const statIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          countUp(e.target);
+          statIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.6 });
+
+    document.querySelectorAll('.storia .stat-cell .big').forEach(el => statIO.observe(el));
+  }
+
+  // ---------- tilt 3D + glare (desktop) ----------
+  if (HOVER && !RM) {
+    const MAXDEG = 7;
+    document.querySelectorAll('.card, .proj-card, .member').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        el.style.transition = 'transform 0.12s ease-out, background 0.4s ease, border-color 0.35s ease';
+      });
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        el.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+        el.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        const ry = (px - 0.5) * MAXDEG;
+        const rx = -(py - 0.5) * MAXDEG;
+        el.style.transform = `perspective(750px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-3px)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transition = '';
+        el.style.transform = '';
+      });
+    });
+  }
+
+  // ---------- bottoni magnetici (desktop) ----------
+  if (HOVER && !RM) {
+    document.querySelectorAll('.btn, nav .ig, .cta .ig-big').forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${(dx * 0.22).toFixed(1)}px, ${(dy * 0.3).toFixed(1)}px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  // ---------- parallax hero al mouse (desktop) ----------
+  if (HOVER && !RM) {
+    const h1 = document.querySelector('.hero-wordmark h1');
+    const tag = document.querySelector('.hero-tagline');
+    if (h1) {
+      let tx = 0, ty = 0, cx = 0, cy = 0;
+      window.addEventListener('mousemove', e => {
+        tx = (e.clientX / window.innerWidth - 0.5);
+        ty = (e.clientY / window.innerHeight - 0.5);
+      }, { passive: true });
+      (function par() {
+        requestAnimationFrame(par);
+        cx += (tx - cx) * 0.06;
+        cy += (ty - cy) * 0.06;
+        h1.style.transform = `translate3d(${(cx * 16).toFixed(2)}px, ${(cy * 10).toFixed(2)}px, 0)`;
+        if (tag) tag.style.transform = `translate3d(${(cx * 7).toFixed(2)}px, ${(cy * 4).toFixed(2)}px, 0)`;
+      })();
+    }
+  }
+
+  // ---------- scintille al click sul "!" ----------
+  const bang = document.querySelector('.hero-wordmark h1 .bang');
+  if (bang && !RM) {
+    bang.addEventListener('click', e => {
+      const N = 16;
+      for (let i = 0; i < N; i++) {
+        const s = document.createElement('div');
+        s.className = 'spark';
+        s.style.left = e.clientX + 'px';
+        s.style.top = e.clientY + 'px';
+        document.body.appendChild(s);
+        const ang = (i / N) * Math.PI * 2 + Math.random() * 0.6;
+        const dist = 50 + Math.random() * 110;
+        const dx = Math.cos(ang) * dist;
+        const dy = Math.sin(ang) * dist - 30;       // leggera spinta verso l'alto
+        s.animate([
+          { transform: 'translate(0,0) scale(1)',                       opacity: 1 },
+          { transform: `translate(${dx}px, ${dy + 40}px) scale(0.2)`,   opacity: 0 }
+        ], {
+          duration: 550 + Math.random() * 450,
+          easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)'
+        }).onfinish = () => s.remove();
+      }
+    });
+  }
+})();
+</script>
+
+
+<script>
+// =====================================================================
+// ===== WOW MODULES — shader van gogh, interruttore, scia, lettere ===
+// =====   magnetiche, lampadina a pendolo, word-light, costellazione ==
+// =====================================================================
+(() => {
+  // van-gogh-shader — vortici WebGL2 alla Notte Stellata per l'hero
+  const canvas = document.getElementById('hero-shader');
+  if (!canvas) return;
+  const hero = canvas.closest('.hero');
+  if (!hero) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+
+  const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true });
+  if (!gl) { canvas.remove(); return; }
+
+  const VERT = `#version 300 es
+in vec2 a_pos;
+void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
+
+  const FRAG = `#version 300 es
+precision highp float;
+
+uniform float u_time;
+uniform vec2  u_res;
+uniform vec2  u_mouse;
+out vec4 outColor;
+
+// palette (stessi toni delle CSS vars del sito)
+const vec3 NIGHT    = vec3(0.039, 0.086, 0.196); // --bg       #0a1632
+const vec3 COBALT_1 = vec3(0.102, 0.176, 0.369); // --bg-2     #1a2d5e
+const vec3 COBALT_2 = vec3(0.141, 0.247, 0.478); // --bg-3     #243f7a
+const vec3 GOLD     = vec3(0.961, 0.804, 0.278); // --gold     #f5cd47
+const vec3 GOLD_B   = vec3(1.000, 0.878, 0.478); // --gold-bright #ffe07a
+
+float hash(vec2 p) {
+  p = fract(p * vec2(123.34, 345.45));
+  p += dot(p, p + 34.345);
+  return fract(p.x * p.y);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+// fbm 5 ottave con rotazione tra ottave (rompe gli assi della griglia)
+const mat2 ROT = mat2(0.8, 0.6, -0.6, 0.8);
+float fbm(vec2 p) {
+  float v = 0.0, a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise(p);
+    p = ROT * p * 2.0 + 11.5;
+    a *= 0.5;
+  }
+  return v;
+}
+
+// rotazione locale attorno a un centro, decade in gaussiana
+vec2 swirl(vec2 p, vec2 c, float strength, float radius) {
+  vec2 d = p - c;
+  float r = length(d);
+  float a = strength * exp(-(r * r) / (radius * radius));
+  float s = sin(a), k = cos(a);
+  return c + mat2(k, -s, s, k) * d;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_res;
+  vec2 p  = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y; // centrato, aspect-correct
+  float t = u_time * 0.07; // tempo lento, contemplativo
+
+  // mouse nello spazio scena
+  vec2 m = (u_mouse - 0.5) * vec2(u_res.x / u_res.y, 1.0);
+
+  // 3 centri di vortice in deriva lenta, attratti dal mouse
+  vec2 c1 = vec2(-0.45 + 0.10 * sin(t * 0.60),  0.22 + 0.08 * cos(t * 0.43)) + m * 0.08;
+  vec2 c2 = vec2( 0.40 + 0.12 * cos(t * 0.37), -0.05 + 0.10 * sin(t * 0.52)) + m * 0.12;
+  vec2 c3 = vec2( 0.02 + 0.14 * sin(t * 0.28),  0.30 + 0.06 * sin(t * 0.71)) + m * 0.05;
+
+  // deriva globale dolce + vortici concatenati (curl-like)
+  vec2 q = p * 1.9 + vec2(t * 0.05, -t * 0.025);
+  q = swirl(q, c1 * 1.9,  2.6 + 0.4 * sin(t * 0.8), 0.85);
+  q = swirl(q, c2 * 1.9, -2.2 + 0.3 * cos(t * 0.6), 0.75);
+  q = swirl(q, c3 * 1.9,  1.8, 0.60);
+
+  // domain warping a due livelli sopra le coordinate vorticate
+  vec2 w1 = vec2(fbm(q * 1.6 + vec2(0.0, t * 0.4)),
+                 fbm(q * 1.6 + vec2(5.2, 1.3) - t * 0.3));
+  vec2 w2 = vec2(fbm(q * 1.6 + 2.2 * w1 + vec2(1.7, 9.2) + t * 0.15),
+                 fbm(q * 1.6 + 2.2 * w1 + vec2(8.3, 2.8)));
+  float f = fbm(q * 1.6 + 2.4 * w2);
+
+  // pennellate: creste sottili lungo i contorni del flusso
+  float flow = fbm(q * 2.6 + 3.0 * w2 - vec2(t * 0.2, 0.0));
+  float ridgeRaw = 1.0 - abs(2.0 * flow - 1.0);
+  float ridge = pow(ridgeRaw, 3.0);
+
+  // colore: notte -> cobalto, creste piu' chiare
+  vec3 col = mix(NIGHT, COBALT_1, smoothstep(0.25, 0.65, f));
+  col = mix(col, COBALT_2, smoothstep(0.50, 0.85, f + 0.35 * ridge));
+
+  // oro raro e prezioso: solo le creste piu' luminose
+  float gold = smoothstep(0.88, 0.985, ridgeRaw) * smoothstep(0.50, 0.80, f);
+  col += GOLD * gold * 0.9;
+  col = mix(col, GOLD_B, gold * 0.55);
+
+  // alpha moderato: lo starfield dietro deve trasparire
+  float a = smoothstep(0.15, 0.75, f) * 0.70 + ridge * 0.25 + gold * 0.40;
+  a = min(a, 0.85);
+
+  // fade verticale: 18% in basso, 8% in alto
+  a *= smoothstep(0.0, 0.18, uv.y);
+  a *= smoothstep(1.0, 0.92, uv.y);
+
+  // dither leggero contro il banding sui blu scuri
+  float dither = (hash(gl_FragCoord.xy) - 0.5) / 255.0;
+  col += dither;
+
+  outColor = vec4(col * a, a); // alpha premoltiplicato
+}`;
+
+  // compile + link con fallback silenzioso
+  const compile = (type, src) => {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      gl.deleteShader(sh);
+      return null;
+    }
+    return sh;
+  };
+  const vs = compile(gl.VERTEX_SHADER, VERT);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) { canvas.remove(); return; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.remove(); return; }
+  gl.useProgram(prog);
+
+  // triangolo fullscreen
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_res');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // risoluzione: DPR cap 1.25, scala interna 0.75x del CSS size
+  const DPR = Math.min(window.devicePixelRatio || 1, 1.25);
+  const SCALE = 0.75;
+  let w = 1, h = 1;
+  const resize = () => {
+    const r = canvas.getBoundingClientRect();
+    w = Math.max(1, Math.round(r.width * DPR * SCALE));
+    h = Math.max(1, Math.round(r.height * DPR * SCALE));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+  };
+  resize();
+
+  // mouse normalizzato (y in basso = 0), inseguito con lerp lento
+  let mx = 0.5, my = 0.5, tx = 0.5, ty = 0.5;
+  let fingerUntil = 0; // mentre il dito guida, il gyro tace
+  if (HOVER && !RM) {
+    addEventListener('pointermove', (e) => {
+      tx = e.clientX / innerWidth;
+      ty = 1 - e.clientY / innerHeight;
+    }, { passive: true });
+  }
+
+  // su mobile: i vortici inseguono il dito (touchmove arriva anche durante lo scroll)
+  if (!HOVER && !RM) {
+    const follow = (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      tx = t.clientX / innerWidth;
+      ty = 1 - t.clientY / innerHeight;
+      fingerUntil = performance.now() + 2500;
+    };
+    addEventListener('touchstart', follow, { passive: true });
+    addEventListener('touchmove', follow, { passive: true });
+  }
+
+  // ...e l'inclinazione del telefono quando il dito è fermo (gyro).
+  // iOS 13+ richiede un permission prompt → skip silenzioso (resta la deriva autonoma).
+  if (!HOVER && !RM && 'DeviceOrientationEvent' in window &&
+      typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    const clamp01 = (v) => Math.min(1, Math.max(0, v));
+    addEventListener('deviceorientation', (e) => {
+      if (e.gamma === null || e.beta === null) return;
+      if (performance.now() < fingerUntil) return;
+      tx = clamp01(0.5 + e.gamma / 60);          // inclinazione laterale
+      ty = clamp01(0.5 - (e.beta - 45) / 60);    // beta ~45° = telefono in mano, neutro
+    }, { passive: true });
+  }
+
+  const t0 = performance.now();
+  const drawFrame = (t) => {
+    mx += (tx - mx) * 0.03;
+    my += (ty - my) * 0.03;
+    gl.uniform1f(uTime, t);
+    gl.uniform2f(uRes, w, h);
+    gl.uniform2f(uMouse, mx, my);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+
+  let raf = 0, running = false;
+  const loop = () => {
+    drawFrame((performance.now() - t0) / 1000);
+    raf = requestAnimationFrame(loop);
+  };
+  const start = () => {
+    if (running || RM) return;
+    running = true;
+    raf = requestAnimationFrame(loop);
+  };
+  const stop = () => {
+    if (!running) return;
+    running = false;
+    cancelAnimationFrame(raf);
+  };
+
+  // resize con debounce
+  let rT = 0;
+  const onResize = () => {
+    clearTimeout(rT);
+    rT = setTimeout(() => {
+      resize();
+      if (RM) drawFrame(0); // ridisegna il frame statico
+    }, 150);
+  };
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(onResize).observe(hero);
+  } else {
+    addEventListener('resize', onResize, { passive: true });
+  }
+
+  if (RM) {
+    drawFrame(0); // un solo frame statico, niente loop
+    return;
+  }
+
+  // pausa quando l'hero esce dallo schermo
+  let visible = true;
+  const io = new IntersectionObserver((entries) => {
+    visible = entries[0].isIntersecting;
+    if (visible && !document.hidden) start(); else stop();
+  });
+  io.observe(hero);
+
+  // pausa quando il tab e' nascosto
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop(); else if (visible) start();
+  });
+})();
+
+(() => {
+  // light-switch: cordicella che spegne/accende il sito
+  const cord = document.getElementById('pull-cord');
+  if (!cord) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+  const KEY = 'eureka-lights';
+
+  // crea il velo se assente (l'HTML da integrare resta solo la cordicella)
+  let veil = document.getElementById('dark-veil');
+  if (!veil) {
+    veil = document.createElement('div');
+    veil.id = 'dark-veil';
+    veil.className = 'dark-veil';
+    veil.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(veil);
+  }
+
+  const isOut = () => document.body.classList.contains('lights-out');
+
+  const syncAria = () => {
+    cord.setAttribute('aria-pressed', isOut() ? 'true' : 'false');
+  };
+
+  // micro-flicker da vero filo della luce (WAAPI), niente con reduced motion
+  const flicker = (off) => {
+    if (RM || typeof veil.animate !== 'function') return;
+    if (off) {
+      // spegnimento: lampeggio 1 -> 0.6 -> 1
+      veil.animate(
+        [{ opacity: 1 }, { opacity: 0.6 }, { opacity: 1 }],
+        { duration: 180, easing: 'ease-out' }
+      );
+    } else {
+      // riaccensione: flash inverso 0 -> 0.35 -> 0
+      veil.animate(
+        [{ opacity: 0 }, { opacity: 0.35 }, { opacity: 0 }],
+        { duration: 250, easing: 'ease-in-out' }
+      );
+    }
+  };
+
+  const toggle = () => {
+    const off = !isOut();
+    document.body.classList.toggle('lights-out', off);
+    syncAria();
+    flicker(off);
+    if (navigator.vibrate) navigator.vibrate(off ? [10, 40, 10] : 12);  // click dell'interruttore
+    try { sessionStorage.setItem(KEY, off ? 'off' : 'on'); } catch (e) { /* storage non disponibile */ }
+
+    // animazione "tirata" momentanea
+    if (!RM) {
+      cord.classList.add('pulled');
+      setTimeout(() => cord.classList.remove('pulled'), 450);
+    }
+
+    if (off) showTorchHint();
+  };
+
+  // ---- torcia touch: nel buio il dito apre un cono di luce nel velo ----
+  let torch = null;
+  if (!HOVER) {
+    torch = document.createElement('div');
+    torch.className = 'torch-glow';
+    torch.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(torch);
+
+    let px = 0, py = 0, tRaf = 0;
+    const apply = () => {
+      tRaf = 0;
+      veil.style.setProperty('--fx', px + 'px');
+      veil.style.setProperty('--fy', py + 'px');
+      torch.style.transform = `translate(${px}px, ${py}px) translate(-50%, -50%)`;
+    };
+    const onTouch = (e) => {
+      if (!isOut()) return;
+      const t = e.touches[0];
+      if (!t) return;
+      px = t.clientX;
+      py = t.clientY;
+      torch.classList.add('on');
+      if (!tRaf) tRaf = requestAnimationFrame(apply);
+    };
+    addEventListener('touchstart', onTouch, { passive: true });
+    addEventListener('touchmove', onTouch, { passive: true });
+    addEventListener('touchend', () => { if (torch) torch.classList.remove('on'); }, { passive: true });
+  }
+
+  // hint una tantum: su touch nessuno sa che il dito è una torcia
+  let hintShown = false;
+  const showTorchHint = () => {
+    if (HOVER || hintShown) return;
+    hintShown = true;
+    const h = document.createElement('div');
+    h.textContent = 'muovi il dito sullo schermo: è una torcia';
+    h.style.cssText = 'position:fixed;left:50%;bottom:16vh;transform:translateX(-50%);' +
+      'z-index:96;font-size:0.74rem;font-weight:500;letter-spacing:0.05em;white-space:nowrap;' +
+      'color:var(--cream);background:rgba(10,22,50,0.78);border:1px solid var(--line);' +
+      'padding:0.6em 1.1em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
+    document.body.appendChild(h);
+    requestAnimationFrame(() => { h.style.opacity = '1'; });
+    setTimeout(() => {
+      h.style.opacity = '0';
+      setTimeout(() => h.remove(), 700);
+    }, 3600);
+  };
+
+  cord.addEventListener('click', toggle);
+  cord.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      toggle();
+    }
+  });
+
+  // ripristino stato dalla sessione, senza fade al load
+  let saved = null;
+  try { saved = sessionStorage.getItem(KEY); } catch (e) { /* storage non disponibile */ }
+  if (saved === 'off') {
+    veil.style.transition = 'none';
+    document.body.classList.add('lights-out');
+    requestAnimationFrame(() => requestAnimationFrame(() => { veil.style.transition = ''; }));
+  }
+  syncAria();
+})();
+
+(() => {
+  // light-trail: scia di scintille dorate dietro il cursore + onda d'urto sul "!"
+  const canvas = document.getElementById('trail-canvas');
+  if (!canvas) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+
+  // shockwave/burst: no-op di default (RM), sovrascritte sotto se il modulo è attivo
+  window.__eurekaShockwave = () => {};
+  window.__eurekaBurst = () => {};
+
+  if (RM) { canvas.remove(); return; }   // scia gated su HOVER più sotto; onda attiva anche su touch
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // DPR fisso a 1: particelle minuscole, la differenza non si nota
+  let w = 0, h = 0;
+  const resize = () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const MAX = 90;            // cap totale particelle
+  const parts = [];          // scintille della scia
+  const rings = [];          // anelli dell'onda d'urto
+  let lastSpawnX = -1, lastSpawnY = -1;
+  let lastMove = 0;          // timestamp ultimo mousemove
+  let running = false;
+  let raf = 0;
+  let lastT = 0;
+
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+  const frame = (t) => {
+    const dt = Math.min((t - lastT) / 1000, 0.05);
+    lastT = t;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+
+    // scintille: gravità leggera + drag + fade
+    const drag = Math.pow(0.96, dt * 60); // 0.96/frame normalizzato a 60fps
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life += dt;
+      if (p.life >= p.ttl) { parts.splice(i, 1); continue; }
+      p.vy += 25 * dt;
+      p.vx *= drag;
+      p.vy *= drag;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      const a = Math.pow(1 - p.life / p.ttl, 1.5);
+      ctx.fillStyle = `rgba(${p.c},${a.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fill();
+    }
+
+    // anelli: 0 → ~55% della diagonale in 850ms, easeOutCubic
+    for (let i = rings.length - 1; i >= 0; i--) {
+      const r = rings[i];
+      r.life += dt;
+      if (r.life < 0) continue;          // ritardo del secondo anello
+      const k = r.life / 0.85;
+      if (k >= 1) { rings.splice(i, 1); continue; }
+      const e = easeOutCubic(k);
+      ctx.strokeStyle = `rgba(255,224,122,${(0.55 * (1 - e)).toFixed(3)})`;
+      ctx.lineWidth = r.lw;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, Math.max(r.max * e, 0.1), 0, 6.2832);
+      ctx.stroke();
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+
+    // auto-sospensione: niente da disegnare e mouse fermo da > 1.5s
+    if (!parts.length && !rings.length && performance.now() - lastMove > 1500) {
+      running = false;
+      return;
+    }
+    raf = requestAnimationFrame(frame);
+  };
+
+  const wake = () => {
+    if (running || document.hidden) return;
+    running = true;
+    lastT = performance.now();
+    raf = requestAnimationFrame(frame);
+  };
+
+  // ---- parte A: scia al mousemove (desktop) / al dito (mobile, anche durante lo scroll) ----
+  const spawnTrail = (mx, my) => {
+    lastMove = performance.now();
+
+    if (lastSpawnX < 0) { lastSpawnX = mx; lastSpawnY = my; return; }
+
+    const dx = mx - lastSpawnX, dy = my - lastSpawnY;
+    const dist = Math.hypot(dx, dy);
+    if (dist <= 4) {
+      // niente flood: riattiva il loop solo se c'è già roba da animare
+      if (parts.length || rings.length) wake();
+      return;
+    }
+
+    lastSpawnX = mx; lastSpawnY = my;
+    const bx = -dx / dist, by = -dy / dist; // componente opposta al movimento
+
+    const n = Math.random() < 0.5 ? 1 : 2;
+    for (let i = 0; i < n; i++) {
+      if (parts.length >= MAX) parts.shift(); // cap: scarta la più vecchia
+      const ang = Math.random() * 6.2832;
+      const sp = 6 + Math.random() * 14;
+      parts.push({
+        x: mx + (Math.random() * 6 - 3),
+        y: my + (Math.random() * 6 - 3),
+        vx: Math.cos(ang) * sp + bx * (18 + Math.random() * 18),
+        vy: Math.sin(ang) * sp + by * (18 + Math.random() * 18),
+        ttl: 0.5 + Math.random() * 0.4,
+        life: 0,
+        r: 0.8 + Math.random() * 1.2,
+        c: Math.random() < 0.7 ? '255,224,122' : '247,238,213' // oro 70% / cream 30%
+      });
+    }
+    wake();
+  };
+
+  if (HOVER) {
+    window.addEventListener('mousemove', (e) => spawnTrail(e.clientX, e.clientY), { passive: true });
+  } else {
+    window.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (t) spawnTrail(t.clientX, t.clientY);
+    }, { passive: true });
+    // niente streak tra un tocco e l'altro: il primo touchmove riparte pulito
+    window.addEventListener('touchend', () => { lastSpawnX = lastSpawnY = -1; }, { passive: true });
+  }
+
+  // ---- burst radiale di scintille (tap su mobile, riusabile ovunque) ----
+  window.__eurekaBurst = (x, y, n) => {
+    const count = n || 12;
+    for (let i = 0; i < count; i++) {
+      if (parts.length >= MAX) parts.shift();
+      const ang = Math.random() * 6.2832;
+      const sp = 35 + Math.random() * 70;
+      parts.push({
+        x: x + (Math.random() * 4 - 2),
+        y: y + (Math.random() * 4 - 2),
+        vx: Math.cos(ang) * sp,
+        vy: Math.sin(ang) * sp - 12,
+        ttl: 0.45 + Math.random() * 0.4,
+        life: 0,
+        r: 0.9 + Math.random() * 1.4,
+        c: Math.random() < 0.7 ? '255,224,122' : '247,238,213'
+      });
+    }
+    lastMove = performance.now();
+    wake();
+  };
+
+  if (!HOVER) {
+    // ogni tocco accende una manciata di scintille nel punto esatto
+    window.addEventListener('touchstart', (e) => {
+      lastSpawnX = lastSpawnY = -1;
+      const t = e.touches[0];
+      if (t) window.__eurekaBurst(t.clientX, t.clientY, 10);
+    }, { passive: true });
+  }
+
+  // ---- parte B: onda d'urto ----
+  window.__eurekaShockwave = (x, y) => {
+    const max = Math.hypot(w, h) * 0.55;
+    rings.push({ x, y, life: 0,     lw: 2, max });
+    rings.push({ x, y, life: -0.09, lw: 1, max }); // secondo anello sfalsato
+    lastMove = performance.now();
+    wake();
+  };
+
+  const bang = document.querySelector('.hero-wordmark h1 .bang');
+  if (bang) {
+    // coesiste con i listener già presenti sul "!": nessuno stopPropagation
+    bang.addEventListener('click', (e) => {
+      window.__eurekaShockwave(e.clientX, e.clientY);
+    }, { passive: true });
+  }
+
+  // pausa quando il tab è nascosto
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+      running = false;
+    } else if (parts.length || rings.length) {
+      wake();
+    }
+  });
+})();
+
+(() => {
+  // magnetic-letters — le lettere dell'hero scansano il cursore (o il dito) con fisica a molla
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (RM) return;
+  const HOVER = matchMedia('(hover: hover)').matches;
+
+  const h1 = document.querySelector('.hero-wordmark h1');
+  if (!h1) return;
+  const spans = [...h1.querySelectorAll('span')].filter(el => !el.classList.contains('bang'));
+  if (!spans.length) return;
+
+  const R = 130;        // raggio di repulsione (px)
+  const FORCE = 30;     // spinta massima (px)
+  const STIFF = 0.085;  // rigidità della molla
+  const DAMP = 0.16;    // smorzamento (piccolo overshoot)
+  const EPS = 0.05;     // soglia di quiete
+
+  // stato per lettera: offset, velocità, centro a riposo, pronta per la fisica
+  const letters = spans.map(el => ({ el, ox: 0, oy: 0, vx: 0, vy: 0, cx: 0, cy: 0, ready: false }));
+
+  // sblocco: finché neonOn (fill forwards) è attiva il transform inline è ignorato.
+  // L'opacity inline va messa PRIMA di togliere l'animation (la rule CSS mette opacity:0).
+  const prepare = (s) => {
+    if (s.ready) return;
+    s.el.style.opacity = '1';
+    s.el.style.animation = 'none';
+    s.el.classList.add('mag');
+    s.ready = true;
+  };
+  letters.forEach(s => s.el.addEventListener('animationend', () => prepare(s), { once: true }));
+  // fallback: se animationend non arriva (tab in background al load), sblocca comunque
+  setTimeout(() => letters.forEach(prepare), 2800);
+
+  // cache dei centri a riposo: rect al netto dell'offset corrente (il rect include il transform)
+  let lastCache = 0;
+  const cacheRects = () => {
+    for (const s of letters) {
+      const r = s.el.getBoundingClientRect();
+      s.cx = r.left + r.width / 2 - s.ox;
+      s.cy = r.top + r.height / 2 - s.oy;
+    }
+    lastCache = performance.now();
+  };
+  const dirty = () => { lastCache = 0; }; // forza ricalcolo al prossimo frame
+
+  let mx = -1e4, my = -1e4; // mouse "lontano" finché non si muove
+  let raf = 0;              // 0 = loop sospeso
+  let visible = true;
+
+  const tick = (now) => {
+    raf = 0;
+    if (now - lastCache > 500) cacheRects();
+    let active = false;
+
+    for (const s of letters) {
+      if (!s.ready) continue;
+
+      // target: repulsione dentro il raggio, altrimenti ritorno a (0,0)
+      let tx = 0, ty = 0;
+      const dx = s.cx - mx, dy = s.cy - my;
+      const d = Math.hypot(dx, dy);
+      if (d < R) {
+        const f = Math.pow(1 - d / R, 1.5) * FORCE;
+        if (d > 0.001) { tx = (dx / d) * f; ty = (dy / d) * f; }
+        else { tx = f; } // mouse esattamente sul centro: spingi di lato
+      }
+
+      // molla: accelerazione verso il target, smorzata
+      s.vx += (tx - s.ox) * STIFF - s.vx * DAMP;
+      s.vy += (ty - s.oy) * STIFF - s.vy * DAMP;
+      s.ox += s.vx;
+      s.oy += s.vy;
+
+      const still = Math.abs(s.ox) < EPS && Math.abs(s.oy) < EPS &&
+                    Math.abs(s.vx) < EPS && Math.abs(s.vy) < EPS;
+      if (still && tx === 0 && ty === 0) {
+        if (s.ox !== 0 || s.oy !== 0) {
+          s.ox = s.oy = s.vx = s.vy = 0;
+          s.el.style.transform = '';
+        }
+      } else {
+        s.el.style.transform = `translate3d(${s.ox.toFixed(2)}px, ${s.oy.toFixed(2)}px, 0)`;
+        active = true;
+      }
+    }
+
+    // auto-sospensione quando tutto è fermo e nessun target attivo; riparte sugli eventi
+    if (active) raf = requestAnimationFrame(tick);
+  };
+
+  const wake = () => {
+    if (!raf && visible && !document.hidden) raf = requestAnimationFrame(tick);
+  };
+
+  if (HOVER) {
+    addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; wake(); }, { passive: true });
+    document.addEventListener('mouseleave', () => { mx = my = -1e4; wake(); });
+  } else {
+    // mobile: il dito scaccia le lettere; al rilascio tornano a posto con la molla
+    const touch = (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      mx = t.clientX;
+      my = t.clientY;
+      wake();
+    };
+    addEventListener('touchstart', touch, { passive: true });
+    addEventListener('touchmove', touch, { passive: true });
+    addEventListener('touchend', () => { mx = my = -1e4; wake(); }, { passive: true });
+  }
+  addEventListener('resize', dirty, { passive: true });
+  addEventListener('scroll', () => { dirty(); wake(); }, { passive: true }); // le lettere possono finire sotto il cursore
+
+  // pausa quando l'hero è offscreen: ferma il loop e azzera gli offset
+  const io = new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (!visible) {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      for (const s of letters) {
+        s.ox = s.oy = s.vx = s.vy = 0;
+        if (s.ready) s.el.style.transform = '';
+      }
+    }
+  });
+  io.observe(h1);
+
+  // pausa quando il tab è nascosto; riparte al primo mousemove
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; }
+  });
+})();
+
+(() => {
+  // pendulum-bulb — lampadina appesa con fisica del pendolo nella sezione .illuminated
+  const rig = document.getElementById('bulb-rig');
+  if (!rig) return;
+  const section = rig.closest('.illuminated');
+  if (!section) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+
+  let on = false;
+  const setOn = (v, ignite) => {
+    on = v;
+    rig.classList.toggle('on', v);
+    section.classList.toggle('bulb-lit', v);
+    section.classList.toggle('bulb-dark', !v);
+    rig.setAttribute('aria-pressed', v ? 'true' : 'false');
+    if (navigator.vibrate) navigator.vibrate(8);   // feedback tattile (Android)
+    if (v && ignite && !RM) {
+      rig.classList.add('igniting');
+      setTimeout(() => rig.classList.remove('igniting'), 600);
+    }
+  };
+
+  // accensione automatica alla prima entrata in vista (sincronizzata col flicker del testo)
+  let autoDone = false;
+  const autoOn = () => {
+    if (autoDone) return;
+    autoDone = true;
+    setTimeout(() => setOn(true, true), 600);
+  };
+
+  // toggle da tastiera
+  rig.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOn(!on, !on);
+    }
+  });
+
+  // ---- fisica ----
+  let angle = 0, angVel = 0;
+  const G_L = 6.3;          // g/L: periodo ~2.5s
+  const DAMP = 0.8;         // smorzamento continuo
+  let dragging = false;
+  let downT = 0, downX = 0, downY = 0;
+  let pivotX = 0, pivotY = 0;
+  let mx = -1e4, my = -1e4;
+
+  const pivot = () => {
+    const sr = section.getBoundingClientRect();
+    pivotX = sr.left + rig.offsetLeft; /* punto di ancoraggio (left % + translateX(-50%)) */
+    pivotY = sr.top;
+  };
+
+  const apply = () => {
+    rig.style.transform = `translateX(-50%) rotate(${angle.toFixed(4)}rad)`;
+  };
+
+  rig.addEventListener('pointerdown', (e) => {
+    if (RM) return;
+    dragging = true;
+    downT = performance.now();
+    downX = e.clientX; downY = e.clientY;
+    pivot();
+    rig.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  rig.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - pivotX;
+    const dy = Math.max(20, e.clientY - pivotY);
+    const target = Math.max(-1.1, Math.min(1.1, Math.atan2(dx, dy)));
+    angVel = (target - angle) * 18;     // velocita dal delta (per il lancio)
+    angle = target;
+    apply();
+  });
+
+  const release = (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const quick = performance.now() - downT < 220 &&
+                  Math.hypot(e.clientX - downX, e.clientY - downY) < 6;
+    if (quick) setOn(!on, !on);
+  };
+  rig.addEventListener('pointerup', release);
+  rig.addEventListener('pointercancel', () => { dragging = false; });
+
+  // click anche con reduced motion (niente fisica, solo toggle)
+  if (RM) {
+    rig.addEventListener('click', () => setOn(!on, false));
+  }
+
+  if (HOVER && !RM) {
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  }
+
+  // ---- loop ----
+  let raf = 0, lastT = 0, visible = false;
+
+  const tick = (now) => {
+    raf = requestAnimationFrame(tick);
+    const dt = Math.min((now - lastT) / 1000, 0.04) || 0.016;
+    lastT = now;
+    if (dragging) return;
+
+    const t = now * 0.001;
+    let acc = -G_L * Math.sin(angle) - DAMP * angVel;
+    acc += 0.32 * Math.sin(t * 0.9);    // spinta idle: oscillazione dolce sempre viva
+
+    // repulsione dal mouse vicino al bulbo
+    if (mx > -1e3) {
+      const L = rig.offsetHeight * 0.85;
+      const bx = pivotX + Math.sin(angle) * L;
+      const by = pivotY + Math.cos(angle) * L;
+      const d = Math.hypot(bx - mx, by - my);
+      if (d < 140) {
+        acc += Math.sign(bx - mx || 1) * (1 - d / 140) * 2.4;
+      }
+    }
+
+    angVel += acc * dt;
+    angle += angVel * dt;
+    apply();
+  };
+
+  const start = () => {
+    if (raf || RM) return;
+    pivot();
+    lastT = performance.now();
+    raf = requestAnimationFrame(tick);
+  };
+  const stop = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+
+  let visTrack = false;
+  const io = new IntersectionObserver((entries) => {
+    visTrack = entries[0].isIntersecting;
+    visible = visTrack;
+    if (visible) { autoOn(); start(); } else stop();
+  }, { threshold: 0.15 });
+  io.observe(section);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop(); else if (visible) start();
+  });
+
+  window.addEventListener('resize', () => { if (visible) pivot(); }, { passive: true });
+  window.addEventListener('scroll', () => { if (visible) pivot(); }, { passive: true });
+})();
+
+(() => {
+  // word-illumination — parole che si accendono con lo scroll (storia + illuminated)
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = [...document.querySelectorAll('.storia .lede p, .illuminated-content > p')];
+  if (!targets.length) return;
+
+  // split in parole dentro i text nodes — markup inline (em, a, span) intatto
+  targets.forEach(p => {
+    const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) if (n.textContent.trim()) nodes.push(n);
+    nodes.forEach(node => {
+      const frag = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach(tok => {
+        if (!tok) return;
+        if (/^\s+$/.test(tok)) {
+          frag.appendChild(document.createTextNode(tok));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.textContent = tok;
+          frag.appendChild(s);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+    p.classList.add('word-lit');
+    p._words = [...p.querySelectorAll('.w')];
+    p._lastN = -1;
+  });
+
+  if (RM) {
+    targets.forEach(p => p._words.forEach(w => w.classList.add('on')));
+    return;
+  }
+
+  // lavora solo sui paragrafi in viewport
+  const inView = new Set();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) inView.add(e.target);
+      else inView.delete(e.target);
+    });
+  }, { rootMargin: '12% 0px' });
+  targets.forEach(p => io.observe(p));
+
+  let lastY = -1;
+  (function tick() {
+    requestAnimationFrame(tick);
+    if (!inView.size) { lastY = -1; return; }
+    if (window.scrollY === lastY) return;
+    lastY = window.scrollY;
+    const vh = window.innerHeight;
+
+    inView.forEach(p => {
+      const r = p.getBoundingClientRect();
+      const prog = Math.min(1, Math.max(0, (vh * 0.82 - r.top) / (vh * 0.45)));
+      const n = Math.floor(p._words.length * prog);
+      if (n === p._lastN) return;
+      const words = p._words;
+      // aggiorna solo il range cambiato
+      const lo = Math.min(n, p._lastN < 0 ? 0 : p._lastN);
+      const hi = Math.max(n, p._lastN < 0 ? 0 : p._lastN);
+      for (let i = lo; i < hi; i++) words[i].classList.toggle('on', i < n);
+      // frontiera: 2 operazioni DOM invece di N
+      if (p._edge >= 0 && words[p._edge]) words[p._edge].classList.remove('edge');
+      const edge = (n > 0 && n < words.length) ? n - 1 : -1;
+      if (edge >= 0) words[edge].classList.add('edge');
+      p._edge = edge;
+      p._lastN = n;
+    });
+  })();
+})();
+
+(() => {
+  // constellation — costellazione che si disegna dietro la sezione candidati
+  const canvas = document.getElementById('constellation');
+  if (!canvas) return;
+  const section = canvas.closest('.candidati');
+  if (!section) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+
+  let w = 0, h = 0;
+  let stars = [], links = [];
+  let revealT = -1;          // istante d'inizio del disegno
+  let revealed = false;
+
+  function build() {
+    w = section.offsetWidth;
+    h = section.offsetHeight;
+    canvas.width = Math.max(1, Math.floor(w * DPR));
+    canvas.height = Math.max(1, Math.floor(h * DPR));
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // stelle ben distribuite (rejection sampling)
+    const minD = Math.hypot(w, h) * 0.09;
+    stars = [];
+    let guard = 0;
+    while (stars.length < 28 && guard++ < 4000) {
+      const x = Math.random() * w, y = Math.random() * h;
+      if (stars.every(s => Math.hypot(s.x - x, s.y - y) > minD)) {
+        stars.push({
+          x, y,
+          r: 1 + Math.random(),
+          tw: Math.random() * Math.PI * 2,
+          tws: 0.4 + Math.random() * 1.1,
+          gold: Math.random() < 0.2,
+        });
+      }
+    }
+
+    // collegamenti: 1-2 vicini entro soglia, senza duplicati
+    links = [];
+    const thr = w * 0.22;
+    const seen = new Set();
+    stars.forEach((s, i) => {
+      stars
+        .map((o, j) => ({ j, d: Math.hypot(o.x - s.x, o.y - s.y) }))
+        .filter(o => o.j !== i && o.d < thr)
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 2)
+        .forEach(o => {
+          const k = i < o.j ? i + '-' + o.j : o.j + '-' + i;
+          if (!seen.has(k)) { seen.add(k); links.push({ a: i, b: o.j }); }
+        });
+    });
+  }
+
+  // coordinate viewport nel listener (cheap); conversione nel draw a 30fps
+  // pointermove: mouse su desktop, dito su touch — la costellazione si tesse in entrambi
+  let cvx = -1e4, cvy = -1e4;
+  let mx = -1e4, my = -1e4;
+  if (!RM) {
+    window.addEventListener('pointermove', (e) => {
+      cvx = e.clientX;
+      cvy = e.clientY;
+    }, { passive: true });
+    // su touch il dito "lascia" la pagina: spegni le linee al rilascio
+    if (!HOVER) {
+      window.addEventListener('pointerup', () => { cvx = -1e4; mx = -1e4; my = -1e4; }, { passive: true });
+    }
+  }
+
+  function draw(t, rev) {
+    if (cvx > -1e3) {
+      const cr = canvas.getBoundingClientRect();
+      mx = cvx - cr.left;
+      my = cvy - cr.top;
+    }
+    ctx.clearRect(0, 0, w, h);
+
+    // linee della costellazione (si disegnano progressivamente)
+    ctx.lineWidth = 1;
+    links.forEach((l, idx) => {
+      const prog = Math.min(1, Math.max(0, (rev - 1.4 - idx * 0.05) / 0.6));
+      if (prog <= 0) return;
+      const A = stars[l.a], B = stars[l.b];
+      const pulse = 0.10 + 0.03 * Math.sin(t * 0.7 + idx);
+      ctx.strokeStyle = `rgba(237,224,184,${pulse.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(A.x, A.y);
+      ctx.lineTo(A.x + (B.x - A.x) * prog, A.y + (B.y - A.y) * prog);
+      ctx.stroke();
+    });
+
+    // il cursore tesse linee temporanee verso le stelle vicine
+    if (mx > -1e3) {
+      stars.forEach(s => {
+        const d = Math.hypot(s.x - mx, s.y - my);
+        if (d < 160) {
+          ctx.strokeStyle = `rgba(245,205,71,${(0.25 * (1 - d / 160)).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(mx, my);
+          ctx.lineTo(s.x, s.y);
+          ctx.stroke();
+        }
+      });
+    }
+
+    // stelle (fade scaglionato + twinkle)
+    stars.forEach((s, i) => {
+      const ap = Math.min(1, Math.max(0, (rev - i * 0.05) / 0.5));
+      if (ap <= 0) return;
+      const tw = 0.65 + 0.35 * Math.sin(s.tw + t * s.tws);
+      ctx.shadowBlur = 4;
+      ctx.shadowColor = s.gold ? 'rgba(245,205,71,0.8)' : 'rgba(247,238,213,0.7)';
+      ctx.fillStyle = s.gold
+        ? `rgba(255,224,122,${(ap * tw).toFixed(3)})`
+        : `rgba(247,238,213,${(ap * tw).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+      ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+  }
+
+  let raf = 0, last = 0, visible = false;
+
+  function frame(now) {
+    raf = requestAnimationFrame(frame);
+    if (now - last < 33) return;       // ~30 fps
+    last = now;
+    const t = now * 0.001;
+    if (revealT < 0) revealT = t;
+    draw(t, t - revealT);
+    if (t - revealT > 3) revealed = true;
+  }
+
+  const start = () => { if (!raf && !RM) raf = requestAnimationFrame(frame); };
+  const stop = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
+
+  build();
+
+  if (RM) {
+    // render statico completo, niente loop
+    draw(0, 100);
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible && !document.hidden) start(); else stop();
+    }, { threshold: 0.15 });
+    io.observe(section);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop(); else if (visible) start();
+    });
+  }
+
+  let rT = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(rT);
+    rT = setTimeout(() => {
+      build();
+      if (revealed) revealT = -1e4;    // gia rivelata: ridisegna completa
+      if (RM) draw(0, 100);
+    }, 180);
+  }, { passive: true });
+})();
+
+(() => {
+  // shake-to-eureka — scuoti il telefono: lampo dorato + onda d'urto + scintille.
+  // Solo touch; iOS 13+ richiede permission prompt → skip silenzioso.
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+  if (RM || HOVER) return;
+  if (!('DeviceMotionEvent' in window) ||
+      typeof DeviceMotionEvent.requestPermission === 'function') return;
+
+  const flash = () => {
+    const f = document.createElement('div');
+    f.setAttribute('aria-hidden', 'true');
+    f.style.cssText = 'position:fixed;inset:0;z-index:120;pointer-events:none;' +
+      'background:radial-gradient(circle at 50% 40%, rgba(255,236,170,0.85) 0%, ' +
+      'rgba(245,205,71,0.25) 45%, rgba(10,22,50,0) 75%);opacity:0;';
+    document.body.appendChild(f);
+    if (typeof f.animate === 'function') {
+      f.animate(
+        [{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 0 }],
+        { duration: 700, easing: 'ease-out' }
+      ).onfinish = () => f.remove();
+    } else {
+      setTimeout(() => f.remove(), 700);
+    }
+
+    const cx = innerWidth / 2, cy = innerHeight * 0.4;
+    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
+    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 26);
+    if (navigator.vibrate) navigator.vibrate([18, 60, 18]);
+  };
+
+  // energia di scuotimento: somma dei delta di accelerazione con decadimento.
+  // Un colpo singolo (tap, telefono appoggiato) non basta; una scossa vera sì.
+  let lx = 0, ly = 0, lz = 0, primed = false, energy = 0, lastFire = 0;
+  addEventListener('devicemotion', (e) => {
+    const a = e.accelerationIncludingGravity;
+    if (!a || a.x === null) return;
+    if (!primed) { lx = a.x; ly = a.y; lz = a.z; primed = true; return; }
+    const d = Math.abs(a.x - lx) + Math.abs(a.y - ly) + Math.abs(a.z - lz);
+    lx = a.x; ly = a.y; lz = a.z;
+    energy = energy * 0.88 + d;
+    const now = performance.now();
+    if (energy > 55 && now - lastFire > 2800) {
+      lastFire = now;
+      energy = 0;
+      flash();
+    }
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>

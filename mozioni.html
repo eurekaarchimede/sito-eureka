@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mozioni · eureka!</title>
+<meta name="description" content="piattaforma mozioni interna — eureka! liceo archimede">
+<meta name="robots" content="noindex,nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* palette eureka — blu notte + oro */
+  --bg:           #0a1632;
+  --bg-soft:      #112045;
+  --bg-2:         #1a2d5e;
+  --gold:         #f5cd47;
+  --gold-bright:  #ffe07a;
+  --gold-dim:     #c9a531;
+  --beige:        #ede0b8;
+  --beige-dim:    #b8a988;
+  --cream:        #f7eed5;
+  --muted:        #6a7da8;
+  --line:         rgba(237, 224, 184, 0.10);
+  --line-strong:  rgba(237, 224, 184, 0.20);
+
+  /* semantici per voto (tre stati distinti, calibrati per palette) */
+  --vote-yes:     #6fb37a;
+  --vote-no:      #d97a6b;
+  --vote-abs:     #6a7da8;
+
+  --display: "DM Sans", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(36, 63, 122, 0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 30%, rgba(74, 109, 181, 0.18) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--beige);
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1.5;
+  text-transform: lowercase;
+  min-height: 100vh;
+}
+
+::selection { background: var(--gold); color: var(--bg); }
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--gold-bright); }
+button { font-family: inherit; }
+
+/* ===== STARFIELD ===== */
+.starfield {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, #000 10%, #000 90%, rgba(0,0,0,0.5) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, #000 10%, #000 90%, rgba(0,0,0,0.5) 100%);
+}
+main, nav, footer { position: relative; z-index: 1; }
+
+/* ===== NAV ===== */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(10, 22, 50, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+nav .brand-wrap { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
+nav .brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  text-shadow: 0 0 4px rgba(245, 205, 71, 0.55), 0 0 12px rgba(245, 205, 71, 0.35);
+}
+nav .brand .bang { color: var(--gold); }
+nav .brand-sub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--gold);
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+nav .user { display: flex; align-items: center; gap: 0.6rem; font-size: 12px; flex-wrap: wrap; justify-content: flex-end; }
+nav .user .name { color: var(--cream); font-weight: 700; }
+nav .user .role {
+  padding: 0.25rem 0.5rem;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  border-radius: 100px;
+  border: 1px solid var(--line-strong);
+  color: var(--beige-dim);
+  text-transform: uppercase;
+}
+nav .user .role.admin { color: var(--gold); border-color: var(--gold); }
+@media (max-width: 600px) {
+  nav { padding: 0.8rem 1rem; }
+  nav .user .name { display: none; }
+}
+
+/* ===== CONTAINER ===== */
+.container { max-width: 880px; margin: 0 auto; padding: 3rem 1.5rem; }
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3 { color: var(--cream); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.5rem; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 1rem; }
+h3 { font-size: 1.25rem; margin-bottom: 0.4rem; }
+
+p { color: var(--beige-dim); margin-bottom: 0.8rem; }
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+.section-label::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 1.5rem;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  text-transform: lowercase;
+}
+.btn-primary { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+.btn-primary:hover:not(:disabled) {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  transform: translateY(-1px);
+}
+.btn-ghost { color: var(--beige); border-color: var(--line-strong); }
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--beige);
+  background: rgba(235, 217, 182, 0.05);
+}
+.btn-danger { color: var(--vote-no); border-color: rgba(217, 122, 107, 0.4); }
+.btn-danger:hover:not(:disabled) {
+  background: rgba(217, 122, 107, 0.1);
+  border-color: var(--vote-no);
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+.btn-small { padding: 0.45rem 0.9rem; font-size: 11px; }
+
+/* ===== FORMS ===== */
+.form { display: flex; flex-direction: column; gap: 1rem; }
+.form-row { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-row label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--beige-dim);
+  text-transform: uppercase;
+}
+.form-row input,
+.form-row select,
+.form-row textarea {
+  font-family: inherit;
+  font-size: 14px;
+  background: rgba(10, 22, 50, 0.6);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  color: var(--cream);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus { border-color: var(--gold); }
+.form-row textarea { resize: vertical; min-height: 100px; }
+.form-row.checkbox { flex-direction: row; align-items: center; gap: 0.6rem; }
+.form-row.checkbox label { text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 400; color: var(--beige); cursor: pointer; }
+.form-row.checkbox input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+/* ===== CARDS ===== */
+.card {
+  background: rgba(17, 32, 69, 0.4);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.6rem 1.5rem;
+  margin-bottom: 1.2rem;
+  transition: border-color 0.2s ease;
+}
+.card:hover { border-color: var(--line-strong); }
+
+.motion-card .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+.motion-card h3 { font-size: 1.4rem; margin: 0; flex: 1; min-width: 0; }
+.motion-card .desc {
+  color: var(--beige-dim);
+  font-size: 0.98rem;
+  margin: 0.6rem 0 1rem;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+.motion-card .meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+.motion-card .meta b { color: var(--beige-dim); font-weight: 700; }
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge.open      { color: var(--vote-yes); border-color: var(--vote-yes); }
+.badge.scheduled { color: var(--gold);     border-color: var(--gold); }
+.badge.closed    { color: var(--muted);    border-color: var(--muted); }
+.badge.anon      { color: var(--cream);     border-color: var(--line-strong); }
+.badge.named     { color: var(--beige-dim); border-color: var(--line-strong); }
+.badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+/* ===== VOTE BUTTONS ===== */
+.vote-bar { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+.vote {
+  flex: 1;
+  min-width: 110px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 0.95rem 1rem;
+  border-radius: 100px;
+  border: 1.5px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: lowercase;
+}
+.vote.yes { color: var(--vote-yes); border-color: rgba(111, 179, 122, 0.4); }
+.vote.yes:hover:not(:disabled), .vote.yes.active { background: var(--vote-yes); color: var(--bg); border-color: var(--vote-yes); }
+.vote.no  { color: var(--vote-no);  border-color: rgba(217, 122, 107, 0.4); }
+.vote.no:hover:not(:disabled),  .vote.no.active  { background: var(--vote-no); color: var(--bg); border-color: var(--vote-no); }
+.vote.abs { color: var(--vote-abs); border-color: rgba(106, 125, 168, 0.4); }
+.vote.abs:hover:not(:disabled), .vote.abs.active { background: var(--vote-abs); color: var(--cream); border-color: var(--vote-abs); }
+.vote:disabled { opacity: 0.5; cursor: wait; }
+
+.your-vote {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--beige-dim);
+  margin-bottom: 0.6rem;
+}
+.your-vote .v { color: var(--cream); font-weight: 700; }
+.your-vote .v.yes { color: var(--vote-yes); }
+.your-vote .v.no  { color: var(--vote-no); }
+.your-vote .v.abs { color: var(--vote-abs); }
+
+/* ===== RESULTS ===== */
+.results { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.result-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 13px;
+}
+.result-bar .label {
+  width: 95px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.result-bar .label.yes { color: var(--vote-yes); }
+.result-bar .label.no  { color: var(--vote-no); }
+.result-bar .label.abs { color: var(--vote-abs); }
+.result-bar .track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.result-bar .fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s ease;
+}
+.result-bar .fill.yes { background: var(--vote-yes); }
+.result-bar .fill.no  { background: var(--vote-no); }
+.result-bar .fill.abs { background: var(--vote-abs); }
+.result-bar .count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--cream);
+  min-width: 70px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.turnout-line {
+  margin-top: 0.8rem;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.turnout-line b { color: var(--beige); font-weight: 700; }
+
+.voters-list { margin-top: 1rem; font-size: 13px; }
+.voters-list .hdr {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.voters-list .voter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--beige);
+}
+.voters-list .voter:last-child { border-bottom: 0; }
+.voters-list .voter .v {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.voters-list .voter .v.yes { color: var(--vote-yes); }
+.voters-list .voter .v.no  { color: var(--vote-no); }
+.voters-list .voter .v.abs { color: var(--vote-abs); }
+
+.anon-list {
+  margin-top: 0.8rem;
+  font-size: 13px;
+  color: var(--beige-dim);
+  line-height: 1.7;
+}
+.anon-list b { color: var(--cream); display: block; margin-bottom: 0.4rem; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ===== ADMIN PANEL ===== */
+details.admin {
+  margin-bottom: 2.5rem;
+  background: rgba(17, 32, 69, 0.35);
+  border: 1px solid rgba(245, 205, 71, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+}
+details.admin > summary {
+  padding: 1.1rem 1.5rem;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+details.admin > summary::-webkit-details-marker { display: none; }
+details.admin > summary::after {
+  content: '+';
+  font-size: 1.4rem;
+  font-weight: 400;
+  transition: transform 0.2s ease;
+  color: var(--gold);
+}
+details.admin[open] > summary::after { transform: rotate(45deg); }
+
+.admin-body { padding: 0 1.5rem 1.5rem; border-top: 1px solid var(--line); }
+.admin-section { margin-top: 1.5rem; }
+.admin-section h2 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.members-table { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.member-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.7rem 0.9rem;
+  background: rgba(10, 22, 50, 0.5);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.member-row .name { color: var(--cream); font-weight: 700; }
+.member-row .email { color: var(--muted); font-family: ui-monospace, monospace; font-size: 11px; word-break: break-all; }
+.member-row .role-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 100px;
+  border: 1px solid;
+  text-transform: uppercase;
+}
+.member-row .role-badge.admin  { color: var(--gold);      border-color: var(--gold); }
+.member-row .role-badge.member { color: var(--beige-dim); border-color: var(--line-strong); }
+.member-row.inactive { opacity: 0.4; }
+.member-row .actions { display: flex; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end; }
+.member-row .you { font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+@media (max-width: 700px) {
+  .member-row { grid-template-columns: 1fr auto; }
+  .member-row .role-badge { grid-column: 1; justify-self: start; }
+  .member-row .actions { grid-column: 1 / -1; justify-content: flex-start; }
+}
+
+/* ===== LOGIN ===== */
+.login-screen {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.login-card { max-width: 440px; width: 100%; text-align: center; }
+.login-card h1 { font-size: clamp(2.4rem, 6vw, 3.4rem); margin-bottom: 0.4rem; }
+.login-card .lead { color: var(--beige-dim); margin-bottom: 2rem; line-height: 1.55; }
+
+/* ===== TOAST ===== */
+#toast-host {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.toast {
+  padding: 0.85rem 1.3rem;
+  background: var(--bg-soft);
+  border: 1px solid var(--gold);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--cream);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  pointer-events: auto;
+  animation: toastIn 0.3s ease;
+  max-width: 90vw;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+.toast.error { border-color: var(--vote-no); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== UTILITIES ===== */
+.hidden { display: none !important; }
+.empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--muted);
+  font-size: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== SETUP SCREEN ===== */
+.setup-screen { max-width: 720px; margin: 3rem auto; padding: 2rem 1.5rem; }
+.setup-screen pre {
+  background: rgba(10, 22, 50, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  overflow-x: auto;
+  color: var(--cream);
+  margin: 0.8rem 0;
+  text-transform: none;
+}
+.setup-screen ol { margin-left: 1.5rem; color: var(--beige); }
+.setup-screen li { margin-bottom: 0.7rem; line-height: 1.55; }
+.setup-screen code {
+  background: rgba(10, 22, 50, 0.7);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.92em;
+  color: var(--gold);
+  font-family: ui-monospace, monospace;
+  text-transform: none;
+}
+.setup-screen strong { color: var(--cream); }
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+}
+footer a { color: var(--beige-dim); }
+
+/* ===== ELECTIONS ===== */
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+  margin: 0.8rem 0 1rem;
+}
+.candidate-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.65rem 0.75rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.candidate-item:hover:not(.disabled) { border-color: var(--beige-dim); }
+.candidate-item.selected { border-color: var(--gold); background: rgba(245,205,71,0.07); }
+.candidate-item.disabled { opacity: 0.4; cursor: not-allowed; }
+.candidate-item input { display: none; }
+.cand-name { font-weight: 700; font-size: 13px; color: var(--cream); }
+.cand-classe { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 0.15rem; }
+.election-counter { font-size: 12px; letter-spacing: 0.04em; color: var(--beige-dim); margin-bottom: 0.6rem; }
+.election-counter b { color: var(--cream); }
+.eresult { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.eresult-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: 6px;
+}
+.eresult-row.elected { background: rgba(245,205,71,0.06); }
+.eresult-row .rank { width: 22px; font-size: 11px; font-weight: 700; text-align: center; color: var(--muted); flex-shrink: 0; }
+.eresult-row.elected .rank { color: var(--gold); }
+.eresult-row .ename { flex: 1; font-weight: 700; color: var(--cream); font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.eresult-row.elected .ename::after { content: ' · eletto'; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+.eresult-row .etrack { width: 80px; height: 6px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; flex-shrink: 0; }
+.eresult-row .efill { height: 100%; border-radius: 100px; background: var(--gold-dim); transition: width 0.5s ease; }
+.eresult-row.elected .efill { background: var(--gold); }
+.eresult-row .evotes { font-size: 11px; font-weight: 700; color: var(--beige-dim); min-width: 55px; text-align: right; font-variant-numeric: tabular-nums; }
+.esupporters { font-size: 11px; color: var(--muted); padding: 0.1rem 0 0.4rem 30px; line-height: 1.6; }
+
+/* ===== MEMBER DETAIL ===== */
+.member-row[data-member-expand] { cursor: pointer; }
+.member-row[data-member-expand]:hover { background: rgba(245,205,71,0.03); }
+.member-detail {
+  padding: 0.5rem 0.8rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(10, 22, 50, 0.4);
+  border-radius: 0 0 8px 8px;
+  margin-bottom: 0.5rem;
+}
+.member-expand-hint {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  transition: color 0.15s;
+}
+.member-row[data-member-expand]:hover .member-expand-hint { color: var(--beige-dim); }
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+
+<nav>
+  <div class="brand-wrap">
+    <a href="eureka.html" class="brand">eureka<span class="bang">!</span></a>
+    <span class="brand-sub">mozioni</span>
+  </div>
+  <div class="user hidden" id="user-strip">
+    <span class="name" id="user-name"></span>
+    <span class="role" id="user-role"></span>
+    <button class="btn btn-ghost btn-small" id="logout-btn">esci</button>
+  </div>
+</nav>
+
+<main id="app">
+
+  <!-- bootstrap loading -->
+  <section id="loading" class="container">
+    <div class="empty"><span class="spinner"></span>caricamento…</div>
+  </section>
+
+  <!-- setup screen (when SUPABASE_URL not configured) -->
+  <section id="setup" class="setup-screen hidden">
+    <div class="section-label">configurazione</div>
+    <h1>setup richiesto</h1>
+    <p>questa piattaforma usa <a href="https://supabase.com" target="_blank" rel="noopener">supabase</a> come backend (free tier). setup di ~5 minuti, una volta sola.</p>
+    <ol>
+      <li>vai su <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a> → <strong>start your project</strong> → registrati con github o email.</li>
+      <li>crea un nuovo progetto. nome a piacere (es. <code>eureka-mozioni</code>). regione: <strong>europe west (frankfurt)</strong>. password DB: salvala da qualche parte.</li>
+      <li>aspetta 1–2 minuti il provisioning.</li>
+      <li>nella sidebar del progetto: <strong>SQL Editor</strong> → <strong>new query</strong>. apri il file <code>mozioni-setup.sql</code> di questa cartella, copia tutto, incolla, premi <strong>run</strong>.</li>
+      <li><strong>Authentication → URL Configuration</strong>: imposta <code>Site URL</code> all'url dove servirai questa pagina (es. <code>http://localhost:8000</code> o l'url di netlify/vercel/github pages). aggiungi lo stesso valore in <code>Redirect URLs</code>.</li>
+      <li><strong>Project Settings → API</strong>: copia <code>Project URL</code> e <code>anon public</code> key.</li>
+      <li>apri <code>mozioni.html</code> in editor, sostituisci i due placeholder all'inizio dello <code>&lt;script type="module"&gt;</code>:
+<pre>const SUPABASE_URL = 'https://xxx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
+      </li>
+      <li>ricarica questa pagina e fai login con la tua email (<code>warmamiel@gmail.com</code> — già configurata come admin nello script SQL).</li>
+    </ol>
+    <p style="margin-top:2rem; font-size:12px; color:var(--muted)">la <code>anon</code> key è pubblica per design — RLS protegge i dati. <strong>non</strong> committare la <code>service_role</code> key.</p>
+  </section>
+
+  <!-- login -->
+  <section id="login" class="login-screen hidden">
+    <div class="login-card">
+      <div class="section-label" style="justify-content:center">collettivo eureka!</div>
+      <h1>mozioni</h1>
+      <p class="lead">accesso riservato ai membri del collettivo. inserisci la tua email per ricevere un link di accesso.</p>
+      <form id="login-form" class="form">
+        <div class="form-row">
+          <label for="email">email</label>
+          <input type="email" id="email" name="email" required autocomplete="email" placeholder="nome@esempio.it">
+        </div>
+        <button type="submit" class="btn btn-primary" id="login-btn">invia link →</button>
+      </form>
+      <p style="margin-top:2rem; font-size:11px; color:var(--muted); letter-spacing: 0.04em">dopo il primo accesso potrai completare la registrazione.</p>
+    </div>
+  </section>
+
+  <!-- registration -->
+  <section id="register" class="login-screen hidden">
+    <div class="login-card">
+      <div class="section-label" style="justify-content:center">registrazione</div>
+      <h1>unisciti</h1>
+      <p class="lead">completa la registrazione per entrare nel collettivo. l'admin approverà la tua richiesta.</p>
+      <form id="register-form" class="form" style="text-align:left">
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="reg-nome">nome</label>
+            <input type="text" id="reg-nome" required placeholder="mario">
+          </div>
+          <div class="form-row">
+            <label for="reg-cognome">cognome</label>
+            <input type="text" id="reg-cognome" required placeholder="rossi">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="reg-classe">classe</label>
+          <input type="text" id="reg-classe" required placeholder="es. 4E" maxlength="10">
+        </div>
+        <button type="submit" class="btn btn-primary" id="reg-btn">invia richiesta →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- pending approval -->
+  <section id="pending" class="login-screen hidden">
+    <div class="login-card">
+      <div class="section-label" style="justify-content:center">in attesa</div>
+      <h1>richiesta inviata</h1>
+      <p class="lead">la tua registrazione è in attesa di approvazione da parte dell'admin. riprova più tardi.</p>
+      <button class="btn btn-ghost" id="pending-logout">esci</button>
+    </div>
+  </section>
+
+  <!-- dashboard -->
+  <section id="dashboard" class="container hidden">
+    <div class="section-label">collettivo eureka!</div>
+    <h1>mozioni</h1>
+    <p style="margin-bottom:2.5rem; max-width:580px">vota a favore, contrario o astenuto. le mozioni hanno una finestra temporale e possono essere anonime o nominali.</p>
+
+    <details class="admin hidden" id="admin-panel-motions">
+      <summary>nuova mozione</summary>
+      <div class="admin-body">
+        <form id="motion-form" class="form" style="margin-top:1.2rem">
+          <div class="form-row">
+            <label for="m-title">titolo</label>
+            <input type="text" id="m-title" required maxlength="200" placeholder="es. approvazione bilancio attività ottobre">
+          </div>
+          <div class="form-row">
+            <label for="m-desc">descrizione (opzionale)</label>
+            <textarea id="m-desc" placeholder="testo della mozione, contesto, articoli del regolamento, ecc."></textarea>
+          </div>
+          <div class="form-row">
+            <label for="m-duration">durata</label>
+            <select id="m-duration">
+              <option value="15">15 secondi</option>
+              <option value="30">30 secondi</option>
+              <option value="45">45 secondi</option>
+              <option value="60" selected>1 minuto</option>
+              <option value="75">1 min 15s</option>
+              <option value="90">1 min 30s</option>
+              <option value="105">1 min 45s</option>
+              <option value="120">2 minuti</option>
+              <option value="150">2 min 30s</option>
+              <option value="180">3 minuti</option>
+              <option value="240">4 minuti</option>
+              <option value="300">5 minuti</option>
+              <option value="600">10 minuti</option>
+              <option value="1200">20 minuti</option>
+              <option value="1800">30 minuti</option>
+              <option value="3600">1 ora</option>
+              <option value="7200">2 ore</option>
+              <option value="21600">6 ore</option>
+              <option value="86400">24 ore</option>
+            </select>
+          </div>
+          <div class="form-row checkbox">
+            <input type="checkbox" id="m-anon">
+            <label for="m-anon">votazione anonima — i membri non vedono chi ha votato cosa, solo i totali</label>
+          </div>
+          <button type="submit" class="btn btn-primary" id="motion-submit">crea mozione →</button>
+        </form>
+      </div>
+    </details>
+
+    <details class="admin hidden" id="admin-panel-members">
+      <summary>gestione membri</summary>
+      <div class="admin-body">
+        <div class="members-table" id="members-list" style="margin-top:1.2rem"></div>
+      </div>
+    </details>
+
+    <details class="admin hidden" id="admin-panel-elections">
+      <summary>nuova elezione</summary>
+      <div class="admin-body">
+        <form id="election-form" class="form" style="margin-top:1.2rem">
+          <div class="form-row">
+            <label for="e-title">titolo (opzionale)</label>
+            <input type="text" id="e-title" maxlength="200" placeholder="es. consiglio di istituto 2025-26">
+          </div>
+          <div class="form-row">
+            <label for="e-organ">organo</label>
+            <select id="e-organ">
+              <option value="consiglio">consiglio di istituto — 8 posti</option>
+              <option value="garanzia">organo di garanzia — 2 posti</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="e-duration">durata</label>
+            <select id="e-duration">
+              <option value="15">15 secondi</option>
+              <option value="30">30 secondi</option>
+              <option value="45">45 secondi</option>
+              <option value="60">1 minuto</option>
+              <option value="75">1 min 15s</option>
+              <option value="90">1 min 30s</option>
+              <option value="105">1 min 45s</option>
+              <option value="120">2 minuti</option>
+              <option value="150">2 min 30s</option>
+              <option value="180">3 minuti</option>
+              <option value="240">4 minuti</option>
+              <option value="300">5 minuti</option>
+              <option value="600">10 minuti</option>
+              <option value="1200">20 minuti</option>
+              <option value="1800">30 minuti</option>
+              <option value="3600" selected>1 ora</option>
+              <option value="7200">2 ore</option>
+              <option value="21600">6 ore</option>
+              <option value="86400">24 ore</option>
+            </select>
+          </div>
+          <div class="form-row checkbox">
+            <input type="checkbox" id="e-anon">
+            <label for="e-anon">anonima — i membri non vedono chi ha votato chi</label>
+          </div>
+          <button type="submit" class="btn btn-primary" id="election-submit">avvia elezione →</button>
+        </form>
+      </div>
+    </details>
+
+    <div id="elections-list"></div>
+    <div id="motions-list"></div>
+  </section>
+</main>
+
+<footer>
+  <p>eureka! · liceo scientifico archimede · messina · <a href="eureka.html">sito pubblico</a></p>
+</footer>
+
+<div id="toast-host"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+
+// ============================================================
+// CONFIG — sostituisci con i tuoi valori dal pannello Supabase
+// ============================================================
+const SUPABASE_URL      = 'https://awdsasbjuueovjcupmwk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3ZHNhc2JqdXVlb3ZqY3VwbXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NjQ4MjEsImV4cCI6MjA5MzI0MDgyMX0.KyFjJ3bXBulzbfyzQtSplKY5E3JfNwjMXVpbxUV660A';
+// ============================================================
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+const show = (el) => el.classList.remove('hidden');
+const hide = (el) => el.classList.add('hidden');
+
+const fmtDate = (iso) => new Date(iso).toLocaleString('it-IT', {
+  day: '2-digit', month: 'short', year: 'numeric',
+  hour: '2-digit', minute: '2-digit'
+});
+const fmtRel = (iso) => {
+  const diffMs = new Date(iso) - new Date();
+  const abs = Math.abs(diffMs);
+  const min = Math.round(abs / 60000);
+  const h   = Math.round(abs / 3600000);
+  const days = Math.round(abs / 86400000);
+  let s;
+  if (abs < 60000)      s = 'meno di 1m';
+  else if (min < 60)    s = min + 'm';
+  else if (h < 24)      s = h + 'h';
+  else                  s = days + 'g';
+  return diffMs < 0 ? s + ' fa' : 'tra ' + s;
+};
+const fmtDuration = (ms) => {
+  const s = Math.round(ms / 1000);
+  if (s < 60)    return s + 's';
+  if (s < 3600)  return Math.round(s / 60) + ' min';
+  if (s < 86400) return Math.round(s / 3600) + 'h';
+  return Math.round(s / 86400) + 'g';
+};
+
+const VOTE_LABEL = { favorevole: 'favorevole', contrario: 'contrario', astenuto: 'astenuto' };
+const VOTE_CLASS = { favorevole: 'yes', contrario: 'no', astenuto: 'abs' };
+
+function toast(msg, isError = false) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (isError ? ' error' : '');
+  el.textContent = msg;
+  $('#toast-host').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; }, 3500);
+  setTimeout(() => el.remove(), 3900);
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============================================================
+// SETUP CHECK
+// ============================================================
+if (SUPABASE_URL.startsWith('PLACEHOLDER') || SUPABASE_ANON_KEY.startsWith('PLACEHOLDER')) {
+  hide($('#loading'));
+  show($('#setup'));
+  throw new Error('Supabase non configurato');
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+});
+
+// ============================================================
+// STATE
+// ============================================================
+let currentMember = null;   // { id, email, name, role, active, is_primary, classe }
+let currentSession = null;
+let allMotions    = [];
+let myVotes       = {};     // motion_id -> choice
+let resultsCache  = {};     // motion_id -> motion_results json
+let allElections       = [];
+let electionResultsCache = {};
+let pendingSelections  = {};  // election_id -> Set of candidate_ids (UI state)
+const ORGAN_SEATS = { consiglio: 8, garanzia: 2 };
+const ORGAN_LABEL = { consiglio: 'consiglio di istituto', garanzia: 'organo di garanzia' };
+
+// ============================================================
+// STARFIELD (lightweight)
+// ============================================================
+(function starfield() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = $('#starfield');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  let stars = [];
+  function resize() {
+    c.width  = window.innerWidth  * dpr;
+    c.height = window.innerHeight * dpr;
+    c.style.width  = window.innerWidth + 'px';
+    c.style.height = window.innerHeight + 'px';
+    const count = Math.min(160, Math.round(window.innerWidth * window.innerHeight / 9000));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      r: Math.random() * 1.2 + 0.3,
+      a: Math.random() * 0.55 + 0.2,
+      tw: Math.random() * 0.02 + 0.005,
+    }));
+  }
+  resize();
+  let t = 0;
+  let raf = 0;
+  function tick() {
+    t += 1;
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (const s of stars) {
+      const a = s.a + Math.sin(t * s.tw) * 0.15;
+      ctx.fillStyle = 'rgba(247,238,213,' + Math.max(0, a) + ')';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * dpr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  let visible = !document.hidden;
+  function loop() { if (visible) tick(); }
+  loop();
+  document.addEventListener('visibilitychange', () => {
+    visible = !document.hidden;
+    if (!visible) cancelAnimationFrame(raf);
+    else loop();
+  });
+  window.addEventListener('resize', resize);
+})();
+
+// ============================================================
+// AUTH BOOTSTRAP
+// ============================================================
+async function bootstrap() {
+  // Supabase processa i token dal magic link in modo asincrono.
+  // Se l'URL contiene un hash con access_token, aspettiamo che
+  // onAuthStateChange emetta l'evento prima di procedere.
+  let session;
+  const hash = window.location.hash;
+  if (hash && (hash.includes('access_token') || hash.includes('type=magiclink') || hash.includes('type=signup'))) {
+    // magic link redirect — aspetta che Supabase processi i token
+    session = await new Promise((resolve) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          subscription.unsubscribe();
+          resolve(s);
+        }
+      });
+      // timeout di sicurezza: se dopo 5s non arriva nulla, fallback a getSession
+      setTimeout(async () => {
+        subscription.unsubscribe();
+        const { data } = await supabase.auth.getSession();
+        resolve(data.session);
+      }, 5000);
+    });
+    // pulisci hash dall'URL
+    if (window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  } else {
+    const { data } = await supabase.auth.getSession();
+    session = data.session;
+  }
+
+  if (!session) {
+    hide($('#loading'));
+    show($('#login'));
+    return;
+  }
+
+  const { data: regStatus, error } = await supabase.rpc('check_registration', {
+    p_email: session.user.email.toLowerCase()
+  });
+
+  if (error) {
+    toast('errore: ' + error.message, true);
+    hide($('#loading'));
+    show($('#login'));
+    await supabase.auth.signOut();
+    return;
+  }
+
+  if (!regStatus || regStatus.status === 'not_registered') {
+    currentSession = session;
+    hide($('#loading'));
+    show($('#register'));
+    return;
+  }
+
+  if (regStatus.status === 'pending') {
+    hide($('#loading'));
+    show($('#pending'));
+    return;
+  }
+
+  currentMember = regStatus;
+  $('#user-name').textContent = regStatus.name;
+  $('#user-role').textContent = regStatus.role;
+  $('#user-role').classList.toggle('admin', regStatus.role === 'admin');
+  show($('#user-strip'));
+
+  hide($('#loading'));
+  show($('#dashboard'));
+
+  if (regStatus.role === 'admin') {
+    show($('#admin-panel-motions'));
+    show($('#admin-panel-members'));
+    show($('#admin-panel-elections'));
+    await loadMembers();
+  }
+
+  await loadMotions();
+  await loadElections();
+}
+
+
+// ============================================================
+// LOGIN FORM
+// ============================================================
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = $('#email').value.trim().toLowerCase();
+  const btn = $('#login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>invio…';
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: window.location.href.split('#')[0].split('?')[0],
+      shouldCreateUser: true, // auth user creato al primo accesso; il match con members.email è separato
+    },
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'invia link →';
+
+  if (error) {
+    toast('errore: ' + error.message, true);
+  } else {
+    toast('controlla la tua email per il link di accesso.');
+  }
+});
+
+$('#logout-btn').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  location.reload();
+});
+
+// ============================================================
+// REGISTRATION
+// ============================================================
+$('#register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nome = $('#reg-nome').value.trim();
+  const cognome = $('#reg-cognome').value.trim();
+  const classe = $('#reg-classe').value.trim().toUpperCase();
+  const name = nome + ' ' + cognome;
+
+  const btn = $('#reg-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>invio…';
+
+  const { data, error } = await supabase.rpc('register_member', {
+    p_name: name,
+    p_classe: classe,
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'invia richiesta →';
+
+  if (error) {
+    toast('errore: ' + error.message, true);
+    return;
+  }
+  if (data && data.error === 'already_registered') {
+    toast('email già registrata.', true);
+    return;
+  }
+
+  hide($('#register'));
+  show($('#pending'));
+  toast('registrazione inviata. attendi approvazione.');
+});
+
+$('#pending-logout').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  location.reload();
+});
+
+// ============================================================
+// MOTIONS — load + render
+// ============================================================
+async function loadMotions() {
+  const { data: motions, error } = await supabase
+    .from('motions')
+    .select('*')
+    .order('opens_at', { ascending: false });
+
+  if (error) { toast('errore caricamento mozioni: ' + error.message, true); return; }
+  allMotions = motions || [];
+
+  const { data: votes } = await supabase
+    .from('votes')
+    .select('motion_id, choice')
+    .eq('member_id', currentMember.id);
+  myVotes = {};
+  for (const v of (votes || [])) myVotes[v.motion_id] = v.choice;
+
+  // results: closed motions for everyone, open motions only for admin (turnout preview)
+  resultsCache = {};
+  const now = new Date();
+  const targetIds = allMotions
+    .filter(m => new Date(m.closes_at) <= now || (currentMember.role === 'admin' && new Date(m.opens_at) <= now))
+    .map(m => m.id);
+
+  const promises = targetIds.map(id =>
+    supabase.rpc('motion_results', { p_motion_id: id }).then(({ data }) => [id, data])
+  );
+  const results = await Promise.all(promises);
+  for (const [id, data] of results) if (data) resultsCache[id] = data;
+
+  renderMotions();
+}
+
+function statusOf(m) {
+  const now = new Date();
+  if (now < new Date(m.opens_at))  return 'scheduled';
+  if (now < new Date(m.closes_at)) return 'open';
+  return 'closed';
+}
+const STATUS_LABEL = { scheduled: 'programmata', open: 'aperta', closed: 'chiusa' };
+
+function renderMotions() {
+  const list = $('#motions-list');
+  if (!allMotions.length) {
+    list.innerHTML = `<div class="empty">${currentMember.role === 'admin'
+      ? 'nessuna mozione ancora. creane una dal pannello admin sopra.'
+      : 'nessuna mozione ancora. attendi che l\'admin ne crei una.'}</div>`;
+    return;
+  }
+  list.innerHTML = allMotions.map(renderMotionCard).join('');
+
+  $$('.vote[data-motion]').forEach(btn => {
+    btn.addEventListener('click', () => castVote(btn.dataset.motion, btn.dataset.choice));
+  });
+  $$('[data-delete-motion]').forEach(btn => {
+    btn.addEventListener('click', () => deleteMotion(btn.dataset.deleteMotion));
+  });
+}
+
+function renderMotionCard(m) {
+  const st       = statusOf(m);
+  const myChoice = myVotes[m.id];
+  const isAdmin  = currentMember.role === 'admin';
+
+  let body = '';
+
+  if (st === 'open') {
+    const choices = ['favorevole', 'contrario', 'astenuto'];
+    const yourLine = myChoice
+      ? `<div class="your-vote">hai votato <span class="v ${VOTE_CLASS[myChoice]}">${VOTE_LABEL[myChoice]}</span> · puoi modificare finché la votazione è aperta</div>`
+      : `<div class="your-vote">non hai ancora votato. la votazione chiude ${fmtRel(m.closes_at)}.</div>`;
+    body = `
+      ${yourLine}
+      <div class="vote-bar">
+        ${choices.map(c => `
+          <button class="vote ${VOTE_CLASS[c]} ${myChoice === c ? 'active' : ''}" data-motion="${m.id}" data-choice="${c}">
+            ${VOTE_LABEL[c]}
+          </button>
+        `).join('')}
+      </div>
+    `;
+    if (isAdmin) body += renderAdminPreview(m);
+  } else if (st === 'scheduled') {
+    body = `<div class="empty" style="margin-top:1rem; padding:1.2rem">apre ${fmtRel(m.opens_at)} · ${fmtDate(m.opens_at)}</div>`;
+  } else {
+    body = renderResults(m);
+  }
+
+  return `
+    <div class="card motion-card" data-motion-id="${m.id}">
+      <div class="head">
+        <h3>${escapeHtml(m.title)}</h3>
+        <div class="badges">
+          <span class="badge ${st}">${STATUS_LABEL[st]}</span>
+          <span class="badge ${m.anonymous ? 'anon' : 'named'}">${m.anonymous ? 'anonima' : 'nominale'}</span>
+        </div>
+      </div>
+      ${m.description ? `<div class="desc">${escapeHtml(m.description)}</div>` : ''}
+      <div class="meta">
+        <span><b>durata</b> ${fmtDuration(new Date(m.closes_at) - new Date(m.opens_at))}</span>
+        <span><b>chiude</b> ${fmtDate(m.closes_at)}</span>
+      </div>
+      ${body}
+      ${isAdmin ? `<div style="margin-top:1rem; text-align:right; padding-top:1rem; border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-motion="${m.id}">elimina mozione</button></div>` : ''}
+    </div>
+  `;
+}
+
+function renderAdminPreview(m) {
+  const r = resultsCache[m.id];
+  if (!r || r.closed) return '';
+  const voters = r.voters || [];
+  return `
+    <div class="results">
+      <div class="voters-list">
+        <div class="hdr">preview admin · voti ${r.total_voted}/${r.total_voters}</div>
+        ${voters.length
+          ? voters.map(v => `<div class="voter"><span>${escapeHtml(v.name)}</span><span class="v ${VOTE_CLASS[v.choice]}">${VOTE_LABEL[v.choice]}</span></div>`).join('')
+          : '<div style="color:var(--muted); font-size:12px; padding:0.5rem 0">nessuno ha ancora votato.</div>'}
+      </div>
+      ${m.anonymous ? '<div class="turnout-line" style="margin-top:0.5rem; color:var(--gold)">mozione anonima — dettagli visibili solo agli admin</div>' : ''}
+    </div>
+  `;
+}
+
+function renderResults(m) {
+  const r = resultsCache[m.id];
+  if (!r) {
+    return `<div class="results"><div class="empty" style="padding:1rem">risultati non disponibili</div></div>`;
+  }
+  const counts = r.counts || {};
+  const yes = counts.favorevole || 0;
+  const no  = counts.contrario  || 0;
+  const abs = counts.astenuto   || 0;
+  const total = yes + no + abs;
+  const pct = (n) => total > 0 ? Math.round(n / total * 100) : 0;
+
+  let html = `
+    <div class="results">
+      <div class="result-bar">
+        <span class="label yes">favorevoli</span>
+        <div class="track"><div class="fill yes" style="width:${pct(yes)}%"></div></div>
+        <span class="count">${yes} · ${pct(yes)}%</span>
+      </div>
+      <div class="result-bar">
+        <span class="label no">contrari</span>
+        <div class="track"><div class="fill no" style="width:${pct(no)}%"></div></div>
+        <span class="count">${no} · ${pct(no)}%</span>
+      </div>
+      <div class="result-bar">
+        <span class="label abs">astenuti</span>
+        <div class="track"><div class="fill abs" style="width:${pct(abs)}%"></div></div>
+        <span class="count">${abs} · ${pct(abs)}%</span>
+      </div>
+      <div class="turnout-line">partecipazione · <b>${r.total_voted}/${r.total_voters}</b> membri</div>
+  `;
+
+  if (r.voters && r.voters.length) {
+    html += `<div class="voters-list">
+      <div class="hdr">${m.anonymous ? 'dettaglio voti (visibile solo admin)' : 'come hanno votato'}</div>
+      ${r.voters.map(v => `
+        <div class="voter">
+          <span>${escapeHtml(v.name)}</span>
+          <span class="v ${VOTE_CLASS[v.choice]}">${VOTE_LABEL[v.choice]}</span>
+        </div>
+      `).join('')}
+    </div>`;
+  } else if (m.anonymous && r.turnout_names && r.turnout_names.length) {
+    html += `<div class="anon-list">
+      <b>hanno partecipato (anonimo: nessuno vede chi ha votato cosa)</b>
+      ${r.turnout_names.map(escapeHtml).join(' · ')}
+    </div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function castVote(motionId, choice) {
+  const buttons = $$(`.vote[data-motion="${motionId}"]`);
+  buttons.forEach(b => b.disabled = true);
+  const { error } = await supabase
+    .from('votes')
+    .upsert(
+      { motion_id: motionId, member_id: currentMember.id, choice },
+      { onConflict: 'motion_id,member_id' }
+    );
+  buttons.forEach(b => b.disabled = false);
+  if (error) { toast('errore voto: ' + error.message, true); return; }
+  myVotes[motionId] = choice;
+  toast('voto registrato: ' + VOTE_LABEL[choice]);
+  // ricarica per aggiornare admin preview se presente
+  await loadMotions();
+}
+
+async function deleteMotion(id) {
+  if (!confirm('eliminare questa mozione e tutti i voti collegati? operazione irreversibile.')) return;
+  const { error } = await supabase.from('motions').delete().eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('mozione eliminata.');
+  await loadMotions();
+}
+
+// ============================================================
+// ADMIN: motions
+// ============================================================
+$('#motion-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title       = $('#m-title').value.trim();
+  const description = $('#m-desc').value.trim() || null;
+  const duration    = parseInt($('#m-duration').value);
+  const anonymous   = $('#m-anon').checked;
+  const opens_at    = new Date().toISOString();
+  const closes_at   = new Date(Date.now() + duration * 1000).toISOString();
+
+  const btn = $('#motion-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>creazione…';
+
+  const { error } = await supabase.from('motions').insert({
+    title, description, opens_at, closes_at, anonymous,
+    created_by: currentMember.id,
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'crea mozione →';
+
+  if (error) { toast('errore: ' + error.message, true); return; }
+
+  toast('mozione creata.');
+  e.target.reset();
+  $('#m-duration').value = '3600';
+  await loadMotions();
+});
+
+// ============================================================
+// ADMIN: members
+// ============================================================
+async function loadMembers() {
+  const { data, error } = await supabase
+    .from('members')
+    .select('*')
+    .order('created_at', { ascending: true });
+  if (error) { toast('errore membri: ' + error.message, true); return; }
+
+  const list = $('#members-list');
+  if (!data.length) {
+    list.innerHTML = '<div class="empty" style="padding:1rem">nessun membro</div>';
+    return;
+  }
+
+  const pending = data.filter(m => !m.active && !m.is_primary);
+  const active  = data.filter(m => m.active);
+  let html = '';
+
+  if (pending.length) {
+    html += `<div style="margin-bottom:1.5rem">
+      <div style="font-size:10px; font-weight:700; letter-spacing:0.14em; color:var(--gold); text-transform:uppercase; margin-bottom:0.6rem">in attesa di approvazione · ${pending.length}</div>
+      ${pending.map(m => `
+        <div class="member-row" style="border-color:rgba(245,205,71,0.3)">
+          <div>
+            <div class="name">${escapeHtml(m.name)}</div>
+            <div class="email">${escapeHtml(m.email)}${m.classe ? ' · ' + escapeHtml(m.classe) : ''}</div>
+          </div>
+          <span class="badge scheduled">in attesa</span>
+          <div class="actions">
+            <button class="btn btn-primary btn-small" data-approve="${m.id}">approva</button>
+            <button class="btn btn-danger btn-small" data-reject="${m.id}">rifiuta</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  if (active.length) {
+    html += active.map(m => `
+      <div class="member-row" data-member-expand="${m.id}">
+        <div>
+          <div class="name">${escapeHtml(m.name)}${m.is_primary ? ' <span style="color:var(--gold); font-size:10px; letter-spacing:0.1em; text-transform:uppercase">· primario</span>' : ''}</div>
+          <div class="email">${escapeHtml(m.email)}${m.classe ? ' · ' + escapeHtml(m.classe) : ''}</div>
+        </div>
+        <span class="member-expand-hint">▸ elezioni</span>
+        <span class="role-badge ${m.role}">${m.role}</span>
+        <div class="actions">
+          ${m.id === currentMember.id ? '<span class="you">tu</span>'
+            : m.is_primary ? '<span class="you" style="color:var(--gold)">primario</span>'
+            : `
+            <button class="btn btn-ghost btn-small" data-toggle-active="${m.id}" data-current="${m.active}">disattiva</button>
+            <button class="btn btn-ghost btn-small" data-toggle-role="${m.id}" data-current="${m.role}">${m.role === 'admin' ? '→ membro' : '→ admin'}</button>
+            <button class="btn btn-ghost btn-small btn-danger" data-delete-member="${m.id}">×</button>
+          `}
+        </div>
+      </div>
+      <div class="member-detail hidden" id="mdetail-${m.id}"></div>
+    `).join('');
+  }
+
+  if (!html) html = '<div class="empty" style="padding:1rem">nessun membro</div>';
+  list.innerHTML = html;
+
+  $$('[data-approve]').forEach(b => b.addEventListener('click', () => approveMember(b.dataset.approve)));
+  $$('[data-reject]').forEach(b => b.addEventListener('click', () => rejectMember(b.dataset.reject)));
+  $$('[data-toggle-active]').forEach(b => b.addEventListener('click', () => toggleActive(b.dataset.toggleActive, b.dataset.current === 'true')));
+  $$('[data-toggle-role]').forEach(b   => b.addEventListener('click', () => toggleRole(b.dataset.toggleRole, b.dataset.current)));
+  $$('[data-delete-member]').forEach(b => b.addEventListener('click', () => deleteMember(b.dataset.deleteMember)));
+  $$('[data-member-expand]').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      const id = row.dataset.memberExpand;
+      const detail = $(`#mdetail-${id}`);
+      if (!detail) return;
+      if (detail.classList.contains('hidden')) {
+        detail.innerHTML = renderMemberElectionStats(id);
+        detail.classList.remove('hidden');
+        row.querySelector('.member-expand-hint').textContent = '▾ elezioni';
+      } else {
+        detail.classList.add('hidden');
+        row.querySelector('.member-expand-hint').textContent = '▸ elezioni';
+      }
+    });
+  });
+}
+
+async function approveMember(id) {
+  const { error } = await supabase.from('members').update({ active: true }).eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('membro approvato.');
+  await loadMembers();
+}
+
+async function rejectMember(id) {
+  if (!confirm('rifiutare questa richiesta? verrà rimossa.')) return;
+  const { error } = await supabase.from('members').delete().eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('richiesta rifiutata.');
+  await loadMembers();
+}
+
+async function toggleActive(id, isActive) {
+  const { error } = await supabase.from('members').update({ active: !isActive }).eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  await loadMembers();
+}
+
+async function toggleRole(id, current) {
+  const newRole = current === 'admin' ? 'member' : 'admin';
+  const { error } = await supabase.from('members').update({ role: newRole }).eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  await loadMembers();
+}
+
+async function deleteMember(id) {
+  if (!confirm('rimuovere definitivamente questo membro? tutti i suoi voti saranno cancellati. operazione irreversibile.')) return;
+  const { error } = await supabase.from('members').delete().eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('membro rimosso.');
+  await loadMembers();
+  await loadMotions(); // turnout/risultati possono essere cambiati
+}
+
+// ============================================================
+// ELECTIONS — load + render
+// ============================================================
+async function loadElections() {
+  const { data: elections, error } = await supabase
+    .from('elections')
+    .select('*')
+    .order('opens_at', { ascending: false });
+
+  if (error) { toast('errore caricamento elezioni: ' + error.message, true); return; }
+  allElections = elections || [];
+
+  electionResultsCache = {};
+  const promises = allElections.map(el =>
+    supabase.rpc('election_results', { p_election_id: el.id }).then(({ data }) => [el.id, data])
+  );
+  const results = await Promise.all(promises);
+  for (const [id, data] of results) {
+    if (data) {
+      electionResultsCache[id] = data;
+      if (!pendingSelections[id]) {
+        pendingSelections[id] = new Set(data.my_votes || []);
+      }
+    }
+  }
+
+  renderElections();
+}
+
+function electionStatusOf(el) {
+  const now = new Date();
+  if (now < new Date(el.opens_at))  return 'scheduled';
+  if (now < new Date(el.closes_at)) return 'open';
+  return 'closed';
+}
+
+function renderElections() {
+  const list = $('#elections-list');
+  if (!allElections.length) { list.innerHTML = ''; return; }
+  list.innerHTML = allElections.map(renderElectionCard).join('');
+
+  $$('.candidate-item[data-election]').forEach(item => {
+    item.addEventListener('click', () => {
+      const elId   = item.dataset.election;
+      const candId = item.dataset.candidate;
+      const seats  = parseInt(item.dataset.seats);
+      handleCandidateToggle(elId, candId, seats);
+    });
+  });
+  $$('[data-confirm-election]').forEach(btn => {
+    btn.addEventListener('click', () => confirmElectionVote(btn.dataset.confirmElection));
+  });
+  $$('[data-delete-election]').forEach(btn => {
+    btn.addEventListener('click', () => deleteElection(btn.dataset.deleteElection));
+  });
+}
+
+function renderElectionCard(el) {
+  const st      = electionStatusOf(el);
+  const isAdmin = currentMember.role === 'admin';
+  const r       = electionResultsCache[el.id];
+  const seats   = el.seats;
+  const organ   = ORGAN_LABEL[el.organ] || el.organ;
+  const title   = el.title || organ;
+
+  let body = '';
+  if (st === 'open')           body = renderElectionVoting(el, r, seats);
+  else if (st === 'scheduled') body = `<div class="empty" style="margin-top:1rem;padding:1.2rem">apre ${fmtRel(el.opens_at)} · ${fmtDate(el.opens_at)}</div>`;
+  else if (isAdmin)            body = renderElectionResults(el, r, seats);
+  else                         body = renderElectionClosedMember(el, r);
+
+  return `
+    <div class="card motion-card" data-election-id="${el.id}">
+      <div class="head">
+        <h3>${escapeHtml(title)}</h3>
+        <div class="badges">
+          <span class="badge ${st}">${STATUS_LABEL[st]}</span>
+          <span class="badge named">${organ} · ${seats} post${seats === 1 ? 'o' : 'i'}</span>
+          <span class="badge ${el.anonymous ? 'anon' : 'named'}">${el.anonymous ? 'anonima' : 'nominale'}</span>
+        </div>
+      </div>
+      <div class="meta">
+        <span><b>durata</b> ${fmtDuration(new Date(el.closes_at) - new Date(el.opens_at))}</span>
+        <span><b>chiude</b> ${fmtDate(el.closes_at)}</span>
+      </div>
+      ${body}
+      ${isAdmin ? `<div style="margin-top:1rem;text-align:right;padding-top:1rem;border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-election="${el.id}">elimina elezione</button></div>` : ''}
+    </div>
+  `;
+}
+
+function renderElectionVoting(el, r, seats) {
+  const isAdmin    = currentMember.role === 'admin';
+  const pending    = pendingSelections[el.id] || new Set();
+  const myVoteArr  = r ? (r.my_votes || []) : [];
+  const candidates = r ? (r.candidates || []) : [];
+  const selected   = pending.size;
+  const hasVoted   = myVoteArr.length > 0;
+  const dirty      = [...pending].sort().join(',') !== [...myVoteArr].sort().join(',');
+
+  let html = `<div class="election-counter">seleziona fino a <b>${seats}</b> candidat${seats === 1 ? 'o' : 'i'} · selezionat${selected === 1 ? 'o' : 'i'}: <b>${selected}/${seats}</b></div>`;
+
+  if (!candidates.length) {
+    html += `<div class="empty" style="padding:1rem">nessun membro disponibile</div>`;
+  } else {
+    html += `<div class="candidates-grid">`;
+    for (const c of candidates) {
+      const isSel = pending.has(c.id);
+      const isDis = !isSel && selected >= seats;
+      html += `
+        <div class="candidate-item${isSel ? ' selected' : ''}${isDis ? ' disabled' : ''}"
+             data-election="${el.id}" data-candidate="${c.id}" data-seats="${seats}">
+          <span class="cand-name">${escapeHtml(c.name)}</span>
+          ${c.classe ? `<span class="cand-classe">${escapeHtml(c.classe)}</span>` : ''}
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  const btnLabel = hasVoted && !dirty ? 'preferenze confermate ✓' : 'conferma preferenze →';
+  html += `<button class="btn btn-primary" data-confirm-election="${el.id}"${hasVoted && !dirty ? ' disabled' : ''}>${btnLabel}</button>`;
+
+  if (hasVoted && dirty) {
+    html += `<div style="font-size:11px;color:var(--muted);margin-top:.4rem">preferenze già espresse. confermando le sostituirai.</div>`;
+  } else if (!hasVoted) {
+    html += `<div style="font-size:11px;color:var(--muted);margin-top:.4rem">la votazione chiude ${fmtRel(el.closes_at)}.</div>`;
+  }
+
+  if (isAdmin && r) {
+    const topCands = (r.candidates || []).filter(c => (c.votes || 0) > 0);
+    if (topCands.length) {
+      html += `
+        <div class="results" style="margin-top:1.2rem">
+          <div class="voters-list">
+            <div class="hdr">preview admin · votanti ${r.total_voted}/${r.total_voters}</div>
+            ${topCands.slice(0, 8).map(c => `
+              <div class="voter">
+                <span>${escapeHtml(c.name)}</span>
+                <span class="v yes">${c.votes} vot${c.votes === 1 ? 'o' : 'i'}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${el.anonymous ? '<div class="turnout-line" style="color:var(--gold);margin-top:.4rem">elezione anonima — chi ha votato chi visibile solo agli admin</div>' : ''}
+        </div>
+      `;
+    }
+  }
+
+  return html;
+}
+
+function renderElectionResults(el, r, seats) {
+  if (!r || !r.closed) return `<div class="results"><div class="empty" style="padding:1rem">risultati non disponibili</div></div>`;
+  const candidates = r.candidates || [];
+  if (!candidates.length) return `<div class="results"><div class="empty" style="padding:1rem">nessun voto registrato</div></div>`;
+
+  const maxVotes = Math.max(...candidates.map(c => c.votes || 0), 1);
+  let html = `<div class="eresult">
+    <div style="font-size:11px;letter-spacing:.06em;color:var(--muted);margin-bottom:.8rem;text-transform:uppercase;font-weight:700">risultati · partecipazione ${r.total_voted}/${r.total_voters}</div>`;
+
+  candidates.forEach((c, i) => {
+    const rank      = i + 1;
+    const isElected = rank <= seats && (c.votes || 0) > 0;
+    const pct       = Math.round((c.votes || 0) / maxVotes * 100);
+    html += `
+      <div class="eresult-row${isElected ? ' elected' : ''}">
+        <span class="rank">${rank}</span>
+        <span class="ename">${escapeHtml(c.name)}${c.classe ? ` <span style="font-size:10px;font-weight:400;color:var(--muted)">${escapeHtml(c.classe)}</span>` : ''}</span>
+        <div class="etrack"><div class="efill" style="width:${pct}%"></div></div>
+        <span class="evotes">${c.votes || 0} vot${(c.votes || 0) === 1 ? 'o' : 'i'}</span>
+      </div>
+    `;
+    if (c.voters && c.voters.length) {
+      html += `<div class="esupporters">${c.voters.map(escapeHtml).join(', ')}</div>`;
+    }
+  });
+
+  const elected = candidates.filter((_, i) => i < seats && (candidates[i].votes || 0) > 0);
+  html += `</div><div class="turnout-line" style="margin-top:.5rem">eletti: ${elected.length ? elected.map(c => escapeHtml(c.name)).join(', ') : 'nessuno'}</div>`;
+  return html;
+}
+
+function renderElectionClosedMember(el, r) {
+  const myVotes = r ? (r.my_votes || []) : [];
+  const n = myVotes.length;
+  return `<div class="results"><div class="empty" style="padding:1rem">elezione chiusa. ${n > 0 ? `hai espresso ${n} preferenz${n === 1 ? 'a' : 'e'}.` : 'non hai votato.'} i risultati sono riservati agli admin.</div></div>`;
+}
+
+function renderMemberElectionStats(memberId) {
+  if (!allElections.length) return '<div style="font-size:11px;color:var(--muted);padding:.5rem 0">nessuna elezione disponibile.</div>';
+  let html = '';
+  let hasAny = false;
+  for (const el of allElections) {
+    const r = electionResultsCache[el.id];
+    if (!r || !r.candidates) continue;
+    const cand = r.candidates.find(c => c.id === memberId);
+    if (!cand) continue;
+    const votes = cand.votes ?? 0;
+    const organ = ORGAN_LABEL[el.organ] || el.organ;
+    const title = el.title || organ;
+    const st = electionStatusOf(el);
+    const isElected = r.closed && r.candidates.indexOf(cand) < el.seats && votes > 0;
+    html += `<div style="display:flex;align-items:center;gap:.6rem;padding:.35rem 0;font-size:12px">
+      <span class="badge ${st}" style="font-size:9px">${STATUS_LABEL[st]}</span>
+      <span style="color:var(--cream);flex:1">${escapeHtml(title)}</span>
+      <span style="font-weight:700;color:${isElected ? 'var(--gold)' : 'var(--beige-dim)'}">${votes} vot${votes === 1 ? 'o' : 'i'}${isElected ? ' · eletto' : ''}</span>
+    </div>`;
+    hasAny = true;
+  }
+  if (!hasAny) return '<div style="font-size:11px;color:var(--muted);padding:.5rem 0">nessun dato elettorale.</div>';
+  return html;
+}
+
+function handleCandidateToggle(elId, candId, seats) {
+  if (!pendingSelections[elId]) pendingSelections[elId] = new Set();
+  const sel = pendingSelections[elId];
+  if (sel.has(candId)) {
+    sel.delete(candId);
+  } else {
+    if (sel.size >= seats) return;
+    sel.add(candId);
+  }
+  renderElections();
+}
+
+async function confirmElectionVote(electionId) {
+  const btn = $(`[data-confirm-election="${electionId}"]`);
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>invio…'; }
+
+  const candidate_ids = [...(pendingSelections[electionId] || new Set())];
+
+  const { data, error } = await supabase.rpc('cast_election_vote', {
+    p_election_id: electionId,
+    p_candidate_ids: candidate_ids,
+  });
+
+  if (error) {
+    toast('errore: ' + error.message, true);
+    if (btn) { btn.disabled = false; btn.innerHTML = 'conferma preferenze →'; }
+    return;
+  }
+  if (data && data.error) {
+    toast('errore: ' + data.error, true);
+    if (btn) { btn.disabled = false; btn.innerHTML = 'conferma preferenze →'; }
+    return;
+  }
+
+  const n = data?.count ?? 0;
+  toast(n > 0 ? `${n} preferenz${n === 1 ? 'a' : 'e'} confermata${n === 1 ? '' : 'e'}.` : 'voto rimosso (astensione).');
+  delete pendingSelections[electionId];
+  await loadElections();
+}
+
+async function deleteElection(id) {
+  if (!confirm('eliminare questa elezione e tutti i voti collegati? operazione irreversibile.')) return;
+  const { error } = await supabase.from('elections').delete().eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('elezione eliminata.');
+  await loadElections();
+}
+
+$('#election-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title     = $('#e-title').value.trim() || null;
+  const organ     = $('#e-organ').value;
+  const seats     = ORGAN_SEATS[organ];
+  const duration  = parseInt($('#e-duration').value);
+  const anonymous = $('#e-anon').checked;
+  const opens_at  = new Date().toISOString();
+  const closes_at = new Date(Date.now() + duration * 1000).toISOString();
+
+  const btn = $('#election-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>avvio…';
+
+  const { error } = await supabase.from('elections').insert({
+    title, organ, seats, opens_at, closes_at, anonymous,
+    created_by: currentMember.id,
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'avvia elezione →';
+
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('elezione avviata.');
+  e.target.reset();
+  await loadElections();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+bootstrap();
+
+// auto-refresh on tab focus (refresh stati open/closed e nuovi voti)
+let lastRefresh = Date.now();
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && currentMember && Date.now() - lastRefresh > 5000) {
+    lastRefresh = Date.now();
+    loadMotions();
+    loadElections();
+    if (currentMember.role === 'admin') loadMembers();
+  }
+});
+
+// auto-refresh ogni 30s per status transitions
+setInterval(() => {
+  if (!document.hidden && currentMember) { loadMotions(); loadElections(); }
+}, 30000);
+</script>
+</body>
+</html>

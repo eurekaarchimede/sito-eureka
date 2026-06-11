@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.instagram.com)",
+      "Bash(curl -sI \"https://github.com/nextlevelbuilder/ui-ux-pro-max-skill\")",
+      "Read(//private/tmp/ui-ux-pro-max-skill/**)",
+      "Read(//private/tmp/ui-ux-pro-max-skill/.claude-plugin/**)",
+      "Bash(mkdir -p ~/.claude/skills)",
+      "Bash(cp -R /tmp/ui-ux-pro-max-skill/.claude/skills/* ~/.claude/skills/)",
+      "Read(//Users/amielwarm/.claude/skills/**)",
+      "Bash(curl -sL \"https://21st.dev/r/designali-in/shader-animation\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -sL \"https://21st.dev/r/sshahaider/illuminated-hero\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -sL \"https://21st.dev/r/ravikatiyar162/animated-shader-hero\" -H \"Accept: application/json\")",
+      "Bash(grep -nE 'section,\\\\s*footer|section\\\\s*\\\\{|^section\\\\s' \"/Users/amielwarm/Desktop/Claude Code/sito eureka/eureka.html\")",
+      "Bash(awk 'NR>=1299 && NR<=1452' \"/Users/amielwarm/Desktop/Claude Code/sito eureka/eureka.html\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(chmod 644 \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/\"*.jpg)",
+      "Bash(xattr -l \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/christian-bucalo.jpg\")",
+      "Bash(xattr -d com.apple.quarantine \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/\"*.jpg)"
+    ]
+  }
+}
