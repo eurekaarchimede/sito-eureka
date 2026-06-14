@@ -4,9 +4,7 @@
 name: aggiorna feed instagram
 
 on:
-  schedule:
-    - cron: '17 */3 * * *'   # ogni 3 ore, al minuto 17 (i minuti 0 sono congestionati)
-  workflow_dispatch: {}       # bottone per lanciarlo a mano
+  workflow_dispatch: {}       # solo manuale — riattiva il cron quando hai il token Meta
 
 permissions:
   contents: write
