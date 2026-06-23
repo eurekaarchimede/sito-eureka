@@ -91,6 +91,32 @@ body {
 @media (hover: none) { #lamp { display: none; } }
 @media (prefers-reduced-motion: reduce) { #lamp { display: none; } }
 
+/* alone caldo che SEGUE IL DITO su mobile: il dito sostituisce il cursore.
+   solo transform+opacity (compositor) → niente repaint del box-shadow come #lamp.
+   blooma al tocco, segue durante lo scroll-touch, sfuma al rilascio. */
+#touch-glow {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 48;            /* sotto trail (z49) e lamp (z50) */
+  width: 64vmin; height: 64vmin;
+  margin: -32vmin 0 0 -32vmin;  /* centra l'alone sul punto di translate */
+  pointer-events: none;
+  background: radial-gradient(circle,
+    rgba(255, 243, 205, 0.55) 0%,
+    rgba(255, 228, 150, 0.34) 14%,
+    rgba(245, 205, 71, 0.16) 34%,
+    rgba(245, 205, 71, 0.05) 52%,
+    transparent 68%);
+  opacity: 0;
+  transform: translate3d(-50vw, -50vh, 0) scale(0.6);
+  transition: opacity 0.45s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+#touch-glow.on { opacity: 1; }
+@media (hover: hover) { #touch-glow { display: none; } }
+@media (prefers-reduced-motion: reduce) { #touch-glow { display: none; } }
+
 /* ===== STARFIELD (sfondo fisso, attivo su tutto il sito) ===== */
 .starfield {
   position: fixed;
@@ -585,6 +611,20 @@ section { padding: 7rem 2rem; position: relative; }
   }
   .card:hover::after, .proj-card:hover::after, .member:hover::after { opacity: 1; }
   .tilt { transform-style: preserve-3d; will-change: transform; }
+}
+
+/* TAP = ACCENDI: toccando una card su mobile si accende come una lampadina
+   (stessa firma di flicker di bulbIgnite). Si rimuove a fine animazione via JS. */
+@keyframes cardIgnite {
+  0%   { box-shadow: 0 0 0 0 rgba(245, 205, 71, 0); }
+  16%  { box-shadow: 0 0 30px 2px rgba(245, 205, 71, 0.55), inset 0 0 34px rgba(245, 205, 71, 0.20); }
+  34%  { box-shadow: 0 0 10px 1px rgba(245, 205, 71, 0.22), inset 0 0 14px rgba(245, 205, 71, 0.08); }
+  56%  { box-shadow: 0 0 26px 2px rgba(245, 205, 71, 0.50), inset 0 0 30px rgba(245, 205, 71, 0.17); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 205, 71, 0); }
+}
+.card.ignite, .member.ignite {
+  animation: cardIgnite 0.72s ease-out;
+  border-color: rgba(245, 205, 71, 0.5);
 }
 .card .num {
   font-size: 11px;
@@ -1526,6 +1566,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 <body>
 
 <div id="lamp" aria-hidden="true"></div>
+<div id="touch-glow" aria-hidden="true"></div>
 <canvas id="trail-canvas" aria-hidden="true"></canvas>
 <div class="wire" id="wire" aria-hidden="true"></div>
 <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
@@ -2279,10 +2320,23 @@ if ('IntersectionObserver' in window) {
     });
   }
 
+  // SCROLL = WARP: ogni scroll inietta velocità nel campo stellare → iperspazio.
+  // Su mobile lo scroll è IL gesto: scorri e parti in warp, poi rientro morbido.
+  let warpBoost = 0;                          // extra velocità, decade ogni frame
+  let lastScrollY = window.pageYOffset || 0;
+  window.addEventListener('scroll', () => {
+    const y = window.pageYOffset || 0;
+    warpBoost = Math.min(22, warpBoost + Math.abs(y - lastScrollY) * 0.45);
+    lastScrollY = y;
+  }, { passive: true });
+
   function update() {
+    const speed = SPEED + warpBoost;          // base + spinta dallo scroll
+    warpBoost *= 0.90;                         // decadimento → torna alla deriva
+    if (warpBoost < 0.05) warpBoost = 0;
     sd.star.arr.forEach(s => {
       s[7] = true; s[5] = s[3]; s[6] = s[4];
-      s[2] -= SPEED;
+      s[2] -= speed;
       if (s[2] <= 0) { s[2] += sd.z; s[7] = false; }
       s[3] = sd.x + (s[0] / s[2]) * RATIO;
       s[4] = sd.y + (s[1] / s[2]) * RATIO;
@@ -2374,6 +2428,83 @@ if ('IntersectionObserver' in window) {
   lamp.style.boxShadow = shadow('center');
 
   document.addEventListener('mousemove', onMove, { passive: true });
+})();
+
+// =====================================================================
+// ===== TOUCH-GLOW (mobile): alone caldo che segue il dito ============
+// =====================================================================
+// Su mobile non c'è cursore: il dito diventa la sorgente di luce. L'alone
+// blooma al tocco e segue il dito anche durante lo scroll (così OGNI tocco
+// — non solo i movimenti deliberati — accende qualcosa di ben visibile,
+// a differenza delle micro-scintille che passavano inosservate).
+(() => {
+  if (!matchMedia('(hover: none)').matches) return;           // solo touch
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const glow = document.getElementById('touch-glow');
+  if (!glow) return;
+
+  let x = innerWidth / 2, y = innerHeight / 2;
+  let raf = 0, on = false, pressed = false;
+
+  const render = () => {
+    raf = 0;
+    // scala leggermente più grande mentre il dito è premuto → "respiro" al tocco
+    const s = pressed ? 1 : 0.82;
+    glow.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${s})`;
+  };
+  const schedule = () => { if (!raf) raf = requestAnimationFrame(render); };
+
+  const move = (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    x = t.clientX; y = t.clientY;
+    if (!on) { on = true; glow.classList.add('on'); }
+    schedule();
+  };
+
+  addEventListener('touchstart', (e) => {
+    pressed = true;
+    move(e);
+  }, { passive: true });
+  addEventListener('touchmove', move, { passive: true });
+  addEventListener('touchend', () => {
+    pressed = false;
+    on = false;
+    glow.classList.remove('on');   // sfuma dolce (opacity transition); resta all'ultima posizione
+    schedule();
+  }, { passive: true });
+})();
+
+// =====================================================================
+// ===== TAP = ACCENDI: le card si accendono come lampadine al tocco ===
+// =====================================================================
+// Su mobile il tap è l'unico gesto distinto dallo scroll: premialo. Toccare
+// una card (progetti / candidati) la accende con un flicker da insegna +
+// una manciata di scintille nel punto toccato. Niente su desktop (lì c'è
+// già il glare oro all'hover) né con reduced-motion.
+(() => {
+  if (!matchMedia('(hover: none)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ignite = (card, x, y) => {
+    card.classList.remove('ignite');
+    // reflow → ri-triggera l'animazione anche su tap ravvicinati
+    void card.offsetWidth;
+    card.classList.add('ignite');
+    if (window.__eurekaBurst) window.__eurekaBurst(x, y, 8);
+  };
+
+  document.addEventListener('touchstart', (e) => {
+    const card = e.target.closest('.progetti .card, .candidati .member');
+    if (!card) return;
+    const t = e.touches[0];
+    ignite(card, t ? t.clientX : 0, t ? t.clientY : 0);
+  }, { passive: true });
+
+  // pulizia: tolta la classe a fine animazione (delegato, una volta sola per card)
+  document.addEventListener('animationend', (e) => {
+    if (e.animationName === 'cardIgnite') e.target.classList.remove('ignite');
+  });
 })();
 </script>
 
@@ -3419,14 +3550,10 @@ void main() {
 
   if (HOVER) {
     window.addEventListener('mousemove', (e) => spawnTrail(e.clientX, e.clientY), { passive: true });
-  } else {
-    window.addEventListener('touchmove', (e) => {
-      const t = e.touches[0];
-      if (t) spawnTrail(t.clientX, t.clientY);
-    }, { passive: true });
-    // niente streak tra un tocco e l'altro: il primo touchmove riparte pulito
-    window.addEventListener('touchend', () => { lastSpawnX = lastSpawnY = -1; }, { passive: true });
   }
+  // su mobile NON spawniamo la scia al touchmove: il dito serve a scrollare,
+  // quindi le micro-scintille passavano inosservate. Al loro posto c'è
+  // #touch-glow (alone caldo che segue il dito) + il burst deliberato al tap.
 
   // ---- burst radiale di scintille (tap su mobile, riusabile ovunque) ----
   window.__eurekaBurst = (x, y, n) => {
@@ -3664,7 +3791,7 @@ void main() {
   const G_L = 6.3;          // g/L: periodo ~2.5s
   const DAMP = 0.8;         // smorzamento continuo
   let dragging = false;
-  let downT = 0, downX = 0, downY = 0;
+  let downT = 0, downX = 0, downY = 0, downAngle = 0;
   let pivotX = 0, pivotY = 0;
   let mx = -1e4, my = -1e4;
 
@@ -3683,6 +3810,7 @@ void main() {
     dragging = true;
     downT = performance.now();
     downX = e.clientX; downY = e.clientY;
+    downAngle = angle;                  // si oscilla RELATIVAMENTE a dove si afferra
     pivot();
     rig.setPointerCapture(e.pointerId);
     e.preventDefault();
@@ -3690,9 +3818,12 @@ void main() {
 
   rig.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    const dx = e.clientX - pivotX;
-    const dy = Math.max(20, e.clientY - pivotY);
-    const target = Math.max(-1.1, Math.min(1.1, Math.atan2(dx, dy)));
+    // trascinamento RELATIVO: lo spostamento orizzontale dal punto di presa
+    // pilota l'angolo. Simmetrico in entrambi i versi anche se la lampadina
+    // pende vicino al bordo dello schermo (prima, con atan2 dalla posizione
+    // assoluta del dito, a destra lo spazio finiva → oscillava solo a sinistra).
+    const k = 2.2 / Math.max(320, window.innerWidth); // ~mezzo schermo = oscillata piena
+    const target = Math.max(-1.1, Math.min(1.1, downAngle + (e.clientX - downX) * k));
     angVel = (target - angle) * 18;     // velocita dal delta (per il lancio)
     angle = target;
     apply();
