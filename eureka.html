@@ -1384,6 +1384,81 @@ html.js .cta.armed a.ig-big {
 section.section-charged { animation: sectionCharge 1.15s ease-out; }
 @media (prefers-reduced-motion: reduce) { #charge-ring { display: none; } }
 
+/* ===== CIRCUITO DEL PROGRAMMA — i 6 punti come lampadine su un circuito ===== */
+.circuit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto 0.9rem;
+  padding: 0 0.4rem;
+}
+.circuit-wire {
+  flex: 1 1 auto;
+  height: 2px;
+  background: rgba(245, 205, 71, 0.16);
+  position: relative;
+  overflow: hidden;
+}
+.circuit-wire::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold-bright));
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.5s ease;
+}
+.circuit-wire.lit::after { transform: scaleX(1); box-shadow: 0 0 8px rgba(245, 205, 71, 0.55); }
+.circuit-node {
+  flex: 0 0 auto;
+  width: 27px; height: 27px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold-dim);
+  background: rgba(10, 22, 50, 0.85);
+  color: var(--beige-dim);
+  font: 700 11px/1 var(--display);
+  display: grid; place-items: center;
+  cursor: pointer;
+  position: relative; z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease, transform 0.4s ease;
+}
+.circuit-node:hover { transform: scale(1.12); }
+.circuit-node.lit {
+  border-color: var(--gold);
+  color: var(--bg);
+  background: radial-gradient(circle at 40% 35%, var(--gold-bright), var(--gold) 78%);
+  box-shadow: 0 0 14px rgba(245, 205, 71, 0.7), 0 0 30px rgba(245, 205, 71, 0.28);
+}
+.circuit-master {
+  flex: 0 0 auto;
+  margin-left: 7px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font: 800 18px/1 var(--display);
+  color: var(--gold-dim);
+  opacity: 0.55;
+  transition: color 0.5s ease, opacity 0.5s ease, text-shadow 0.5s ease;
+}
+.circuit.complete .circuit-master {
+  color: var(--gold);
+  opacity: 1;
+  text-shadow: 0 0 16px rgba(245, 205, 71, 0.9), 0 0 34px rgba(245, 205, 71, 0.5);
+  animation: bulbIgnite 0.9s ease-out;
+}
+.circuit-hint {
+  text-align: center;
+  font: 700 10px/1 var(--display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin: 0 auto 2.6rem;
+  transition: opacity 0.6s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .circuit-wire::after, .circuit-node, .circuit-master { transition: none; }
+  .circuit.complete .circuit-master { animation: none; }
+}
+
 footer {
   padding: 2.5rem 2rem;
   border-top: 1px solid var(--line);
@@ -4259,6 +4334,102 @@ void main() {
   document.addEventListener('animationend', (e) => {
     if (e.animationName === 'sectionCharge') e.target.classList.remove('section-charged');
   });
+})();
+
+(() => {
+  // CIRCUITO DEL PROGRAMMA — i 6 punti come lampadine su un circuito.
+  // Si accendono una a una scorrendo (o al tap); accese tutte → la "!" madre divampa.
+  // Generato in JS: senza JS la sezione resta un normale elenco di card (progressive).
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const grid = document.querySelector('.progetti .grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('.card')];
+  if (cards.length < 2) return;
+  const KEY = 'eureka-circuit';
+
+  const circuit = document.createElement('div');
+  circuit.className = 'circuit';
+  circuit.setAttribute('aria-hidden', 'true');
+  const nodes = [], wires = [];
+  cards.forEach((card, i) => {
+    if (i > 0) {
+      const w = document.createElement('div');
+      w.className = 'circuit-wire';
+      circuit.appendChild(w);
+      wires.push(w);
+    }
+    const n = document.createElement('button');
+    n.type = 'button';
+    n.className = 'circuit-node';
+    n.textContent = String(i + 1);
+    n.title = (card.querySelector('.num span') || {}).textContent || ('punto ' + (i + 1));
+    circuit.appendChild(n);
+    nodes.push(n);
+  });
+  const master = document.createElement('div');
+  master.className = 'circuit-master';
+  master.textContent = '!';
+  circuit.appendChild(master);
+
+  const hint = document.createElement('div');
+  hint.className = 'circuit-hint';
+  hint.textContent = 'accendi i 6 punti del programma';
+
+  grid.parentNode.insertBefore(circuit, grid);
+  grid.parentNode.insertBefore(hint, grid);
+
+  const lit = new Set();
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { /* no storage */ }
+
+  const fillWire = (wi) => {
+    if (wi >= 0 && wi < wires.length && lit.has(wi) && lit.has(wi + 1)) wires[wi].classList.add('lit');
+  };
+  const complete = () => {
+    if (circuit.classList.contains('complete')) return;
+    circuit.classList.add('complete');
+    if (!RM) {
+      const r = master.getBoundingClientRect();
+      const mx = r.left + r.width / 2, my = r.top + r.height / 2;
+      if (window.__eurekaBurst) window.__eurekaBurst(mx, my, 18);
+      if (window.__eurekaShockwave) window.__eurekaShockwave(mx, my);
+    }
+    if (navigator.vibrate) navigator.vibrate([12, 40, 12]);
+  };
+  const light = (i, burst) => {
+    if (i < 0 || i >= nodes.length || lit.has(i)) return;
+    lit.add(i);
+    nodes[i].classList.add('lit');
+    fillWire(i - 1); fillWire(i);
+    if (burst && !RM && window.__eurekaBurst) {
+      const r = nodes[i].getBoundingClientRect();
+      window.__eurekaBurst(r.left + r.width / 2, r.top + r.height / 2, 6);
+    }
+    if (lit.size > 0 && hint) hint.style.opacity = '0';
+    try { localStorage.setItem(KEY, JSON.stringify([...lit])); } catch (e) { /* no storage */ }
+    if (lit.size === cards.length) complete();
+  };
+
+  nodes.forEach((n, i) => n.addEventListener('click', () => light(i, true)));
+  cards.forEach((c, i) => c.addEventListener('click', () => light(i, true)));
+
+  saved.forEach((i) => light(i, false));   // ripristino senza burst
+
+  // progressive: ogni card che entra in vista accende il suo nodo
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const i = cards.indexOf(e.target);
+          if (i >= 0) light(i, false);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.6 });
+    cards.forEach((c) => io.observe(c));
+  } else {
+    cards.forEach((c, i) => light(i, false));
+  }
 })();
 </script>
 
