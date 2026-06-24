@@ -1300,6 +1300,90 @@ a.proj-card {
   font-size: 1.1em;
 }
 
+/* ===== ACCENDI LA LISTA — interruttore hold-to-charge nella CTA ===== */
+/* progressive enhancement: senza JS la CTA è già accesa; il JS la "arma" */
+.cta-switch {
+  display: none;
+  position: relative;
+  margin: 0 auto 1.9rem;
+  padding: 0.9rem 1.8rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: rgba(10, 22, 50, 0.5);
+  color: var(--cream);
+  font: inherit;
+  font-size: clamp(0.85rem, 2.4vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; user-select: none;
+  touch-action: none;              /* l'hold non deve far scrollare */
+  align-items: center;
+  gap: 0.65rem;
+}
+html.js .cta.armed .cta-switch { display: inline-flex; }
+html.js .cta.armed h2 {
+  opacity: 0.26;
+  text-shadow: none;
+  transition: opacity 0.5s ease, text-shadow 0.6s ease;
+}
+html.js .cta.armed a.ig-big {
+  opacity: 0.3; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.cta-switch::before {                /* pallino "interruttore" */
+  content: '';
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold-dim);
+  flex: 0 0 auto;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.cta-switch.charging::before { background: var(--gold); box-shadow: 0 0 12px rgba(245, 205, 71, 0.75); }
+.cta-switch-fill {
+  position: absolute; inset: 0;
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0));
+  background: linear-gradient(90deg, rgba(245, 205, 71, 0.22), rgba(255, 224, 122, 0.55));
+  z-index: -1;
+}
+.cta-switch-label { position: relative; }
+/* stato acceso: l'h2 fa l'ignition da insegna, l'alone divampa */
+.cta.lit h2 { animation: bulbIgnite 0.95s ease-out; }
+.cta.lit::before { animation: ctaBreath 5s ease-in-out infinite, ctaFlare 0.95s ease-out; }
+@keyframes ctaFlare {
+  0%   { opacity: 1;   transform: translate(-50%, -50%) scale(1.55); }
+  100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .cta-switch { display: none !important; } }
+
+/* ===== HOLD-TO-CHARGE — tieni premuto su una sezione per accenderla ===== */
+#charge-ring {
+  position: fixed; left: 0; top: 0;
+  width: 92px; height: 92px;
+  margin: -46px 0 0 -46px;
+  z-index: 47;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  background: conic-gradient(var(--gold) calc(var(--p, 0) * 360deg), rgba(245, 205, 71, 0.12) 0deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+  mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+  transform: translate3d(-200px, -200px, 0);
+  transition: opacity 0.2s ease;
+  will-change: transform, opacity;
+}
+#charge-ring.on { opacity: 1; }
+@keyframes sectionCharge {
+  0%   { box-shadow: inset 0 0 0 0 rgba(245, 205, 71, 0); }
+  18%  { box-shadow: inset 0 0 130px 0 rgba(245, 205, 71, 0.24); }
+  100% { box-shadow: inset 0 0 0 0 rgba(245, 205, 71, 0); }
+}
+section.section-charged { animation: sectionCharge 1.15s ease-out; }
+@media (prefers-reduced-motion: reduce) { #charge-ring { display: none; } }
+
 footer {
   padding: 2.5rem 2rem;
   border-top: 1px solid var(--line);
@@ -1898,6 +1982,10 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 <section class="cta" id="contatti">
   <div class="cta-content">
     <div class="super">● vota. condividi. accendi.</div>
+    <button class="cta-switch" id="cta-switch" type="button" aria-label="tieni premuto per accendere la lista">
+      <span class="cta-switch-fill" aria-hidden="true"></span>
+      <span class="cta-switch-label">tieni premuto per accendere</span>
+    </button>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>
       @eureka.archimede su instagram
@@ -2225,6 +2313,9 @@ if ('IntersectionObserver' in window) {
     lastScrollY = y;
   }, { passive: true });
 
+  // hook esterno: altri moduli (es. "accendi la lista") possono iniettare warp
+  window.__eurekaWarp = (n) => { warpBoost = Math.min(40, warpBoost + (n || 12)); };
+
   function update() {
     const speed = SPEED + warpBoost;          // base + spinta dallo scroll
     warpBoost *= 0.90;                         // decadimento → torna alla deriva
@@ -2515,6 +2606,29 @@ if ('IntersectionObserver' in window) {
     });
   }
 
+  // ---- stella cadente "a desiderio": parte in alto e sfreccia nella direzione del flick ----
+  // dir > 0 → verso destra, dir < 0 → verso sinistra. Sempre dorata e più lunga/veloce.
+  window.__eurekaWish = (dir) => {
+    if (reduceMotion) return;
+    const t = performance.now() * 0.001;
+    const d = dir >= 0 ? 1 : -1;
+    const startX = d > 0 ? rand(-40, w * 0.35) : rand(w * 0.65, w + 40);
+    const startY = rand(-60, h * 0.18);
+    const angle = rand(0.30, 0.62);              // inclinazione verso il basso
+    const speed = rand(1500, 2100);              // più veloce di una meteora normale
+    meteors.push({
+      x: startX, y: startY,
+      vx: Math.cos(angle) * speed * d,
+      vy: Math.sin(angle) * speed,
+      len: rand(220, 340),
+      life: 0,
+      ttl: rand(0.7, 1.1),
+      gold: true,
+      wish: true,                                // più luminosa nel render
+      born: t,
+    });
+  };
+
   // ---- frame loop, throttled ~30 FPS ----
   let lastFrame = 0;
   let raf;
@@ -2584,7 +2698,7 @@ if ('IntersectionObserver' in window) {
         grad.addColorStop(0.35, midColor);
         grad.addColorStop(1,    'rgba(0,0,0,0)');
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.6;
+        ctx.lineWidth = m.wish ? 2.8 : 1.6;       // la stella-desiderio è più marcata
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
@@ -2592,7 +2706,7 @@ if ('IntersectionObserver' in window) {
         ctx.stroke();
 
         // testa luminosa
-        const headRad = 6 * env;
+        const headRad = (m.wish ? 11 : 6) * env;
         if (headRad > 0.3){
           const hg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, headRad);
           hg.addColorStop(0, headColor);
@@ -2601,8 +2715,8 @@ if ('IntersectionObserver' in window) {
           ctx.fillRect(m.x - headRad, m.y - headRad, headRad*2, headRad*2);
         }
 
-        // rimuovi se finita o troppo lontana
-        if (m.life > m.ttl || m.x > w + 200 || m.y > h + 200){
+        // rimuovi se finita o troppo lontana (anche a sinistra per le stelle-desiderio)
+        if (m.life > m.ttl || m.x > w + 200 || m.x < -200 || m.y > h + 200){
           meteors.splice(i, 1);
         }
       }
@@ -3919,6 +4033,49 @@ void main() {
 })();
 
 (() => {
+  // flick-to-wish — un colpetto secco del polso lancia UNA stella cadente dorata
+  // nella direzione dello scatto. Diverso dallo shake (energia accumulata): qui
+  // conta il singolo spike direzionale. Solo touch/Android (iOS skip).
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOVER = matchMedia('(hover: hover)').matches;
+  if (RM || HOVER) return;
+  if (!('DeviceMotionEvent' in window) ||
+      typeof DeviceMotionEvent.requestPermission === 'function') return;
+
+  let lastFlick = 0, armed = true, hinted = false;
+  const THRESH = 13;          // m/s² sull'asse x: scatto netto, non micromovimenti
+
+  const hint = () => {
+    if (hinted) return;
+    hinted = true;
+    const h = document.createElement('div');
+    h.textContent = '✦ esprimi un desiderio';
+    h.style.cssText = 'position:fixed;left:50%;bottom:14vh;transform:translateX(-50%);' +
+      'z-index:96;font-size:0.74rem;font-weight:500;letter-spacing:0.05em;white-space:nowrap;' +
+      'color:var(--gold);background:rgba(10,22,50,0.78);border:1px solid var(--line);' +
+      'padding:0.55em 1.1em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
+    document.body.appendChild(h);
+    requestAnimationFrame(() => { h.style.opacity = '1'; });
+    setTimeout(() => { h.style.opacity = '0'; setTimeout(() => h.remove(), 700); }, 2600);
+  };
+
+  addEventListener('devicemotion', (e) => {
+    const a = e.acceleration && e.acceleration.x !== null ? e.acceleration : null;
+    if (!a) return;                                  // serve l'accelerazione senza gravità
+    const ax = a.x || 0;
+    const now = performance.now();
+    if (Math.abs(ax) < THRESH * 0.45) armed = true;  // ri-arma quando il polso si ferma
+    if (armed && Math.abs(ax) > THRESH && now - lastFlick > 650) {
+      armed = false;
+      lastFlick = now;
+      if (window.__eurekaWish) window.__eurekaWish(ax < 0 ? -1 : 1);  // dir = verso dello scatto
+      if (navigator.vibrate) navigator.vibrate(12);
+      hint();
+    }
+  }, { passive: true });
+})();
+
+(() => {
   // shake-to-eureka — scuoti il telefono: lampo dorato + onda d'urto + scintille.
   // Solo touch; iOS 13+ richiede permission prompt → skip silenzioso.
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3966,6 +4123,142 @@ void main() {
       flash();
     }
   }, { passive: true });
+})();
+
+(() => {
+  // ACCENDI LA LISTA — nella CTA tieni premuto l'interruttore: una barra carica,
+  // al pieno la lampadina/lista "si accende" (ignition h2 + warp + onda + scintille).
+  // Progressive: senza JS / con reduced-motion la CTA è già accesa e leggibile.
+  const cta = document.querySelector('.cta');
+  const sw = document.getElementById('cta-switch');
+  if (!cta || !sw) return;
+
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const KEY = 'eureka-cta-lit';
+  let alreadyLit = false;
+  try { alreadyLit = sessionStorage.getItem(KEY) === '1'; } catch (e) { /* no storage */ }
+
+  const light = (firstTime) => {
+    cta.classList.remove('armed');
+    cta.classList.add('lit');
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) { /* no storage */ }
+    if (firstTime && !RM) {
+      const r = cta.getBoundingClientRect();
+      const cx = innerWidth / 2;
+      const cy = Math.max(0, Math.min(innerHeight, r.top + r.height * 0.38));
+      if (window.__eurekaWarp) window.__eurekaWarp(30);
+      if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
+      if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 22);
+      if (navigator.vibrate) navigator.vibrate([14, 50, 14]);
+    }
+  };
+
+  // con reduced-motion o già accesa → niente interruttore (CTA resta accesa)
+  if (RM || alreadyLit) { if (alreadyLit) cta.classList.add('lit'); return; }
+
+  cta.classList.add('armed');
+
+  const DUR = 900;
+  let raf = 0, t0 = 0, holding = false;
+  const setP = (p) => sw.style.setProperty('--p', p.toFixed(3));
+
+  const tick = (now) => {
+    if (!holding) return;
+    const p = Math.min(1, (now - t0) / DUR);
+    setP(p);
+    if (p >= 1) { stop(); light(true); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  const stop = () => {
+    holding = false;
+    sw.classList.remove('charging');
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+  const startHold = () => {
+    if (holding || cta.classList.contains('lit')) return;
+    holding = true;
+    sw.classList.add('charging');
+    t0 = performance.now();
+    raf = requestAnimationFrame(tick);
+    if (navigator.vibrate) navigator.vibrate(8);
+  };
+  const cancelHold = () => { if (!holding) return; stop(); setP(0); };
+
+  sw.addEventListener('pointerdown', (e) => { e.preventDefault(); startHold(); });
+  sw.addEventListener('pointerup', cancelHold);
+  sw.addEventListener('pointerleave', cancelHold);
+  sw.addEventListener('pointercancel', cancelHold);
+  // accessibilità: con tastiera l'hold è scomodo → Enter/Spazio accende diretto
+  sw.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); light(true); }
+  });
+})();
+
+(() => {
+  // HOLD-TO-CHARGE — tieni premuto FERMO su una sezione: un anello d'energia oro
+  // cresce sotto il dito; al pieno (~850ms) una scarica accende quella sezione.
+  // Scroll-safe: qualunque movimento del dito > soglia annulla la carica (= sta scrollando).
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (RM) return;
+
+  const ring = document.createElement('div');
+  ring.id = 'charge-ring';
+  ring.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(ring);
+
+  // elementi con gesti propri o interattivi → niente carica
+  const SKIP = 'a,button,input,textarea,select,label,summary,[contenteditable],nav,' +
+               '.cta-switch,.card,.proj-card,.member,.bulb-rig,#bulb-rig,.ig-big,.marquee,.proj-card-link';
+  const HOLD = 850, MOVE_CANCEL = 14;
+  let raf = 0, t0 = 0, sx = 0, sy = 0, cx = 0, cy = 0, active = false, sec = null;
+
+  const place = () => {
+    const g = active ? (0.7 + 0.3 * Math.min(1, (performance.now() - t0) / HOLD)) : 0.7;
+    ring.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale(${g.toFixed(3)})`;
+  };
+  const setP = (p) => ring.style.setProperty('--p', p.toFixed(3));
+
+  const tick = (now) => {
+    if (!active) return;
+    const p = Math.min(1, (now - t0) / HOLD);
+    setP(p); place();
+    if (p >= 1) { fire(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  const stopRaf = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
+  const start = (x, y, target) => {
+    if (active) return;
+    if (target && target.closest && target.closest(SKIP)) return;
+    sec = target && target.closest ? target.closest('section') : null;
+    if (!sec) return;
+    active = true; sx = cx = x; sy = cy = y; t0 = performance.now();
+    setP(0); place(); ring.classList.add('on');
+    raf = requestAnimationFrame(tick);
+  };
+  const cancel = () => {
+    if (!active) return;
+    active = false; ring.classList.remove('on'); stopRaf();
+  };
+  const fire = () => {
+    active = false; ring.classList.remove('on'); stopRaf();
+    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
+    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 16);
+    if (window.__eurekaWarp) window.__eurekaWarp(14);
+    if (navigator.vibrate) navigator.vibrate([10, 40, 10]);
+    if (sec) { sec.classList.remove('section-charged'); void sec.offsetWidth; sec.classList.add('section-charged'); }
+  };
+
+  addEventListener('pointerdown', (e) => { start(e.clientX, e.clientY, e.target); }, { passive: true });
+  addEventListener('pointermove', (e) => {
+    if (!active) return;
+    if (Math.abs(e.clientX - sx) > MOVE_CANCEL || Math.abs(e.clientY - sy) > MOVE_CANCEL) cancel();
+  }, { passive: true });
+  addEventListener('pointerup', cancel, { passive: true });
+  addEventListener('pointercancel', cancel, { passive: true });
+  addEventListener('scroll', cancel, { passive: true });
+  document.addEventListener('animationend', (e) => {
+    if (e.animationName === 'sectionCharge') e.target.classList.remove('section-charged');
+  });
 })();
 </script>
 
