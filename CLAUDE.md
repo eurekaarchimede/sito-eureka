@@ -24,7 +24,7 @@ Sito web one-page per **eureka!**, lista di rappresentanza d'istituto del **Lice
 - **Animazioni (giugno 2026)**: hero "neon ignition" (lettere che si accendono con flicker da insegna), scramble/decode sui titoli, tilt 3D + glare oro sulle card, bottoni magnetici, filo di corrente (scroll progress oro in cima), timeline che si illumina allo scroll con scintilla viaggiante, count-up sulle statistiche, marquee velocity-aware (accelera/skewa con lo scroll), nav glassmorphism hide/show, reveal con blur + stagger, scintille WAAPI al click sul "!" dell'hero, parallax hero al mouse. Tutto gated su `prefers-reduced-motion` e `(hover: hover)` dove serve.
 - **Moduli "wow" (giugno 2026, seconda ondata)**:
   - **Shader Van Gogh** (`#hero-shader`): WebGL2 fragment shader nell'hero — fbm 5 ottave + domain warping + 3 vortici "swirl" in deriva, attratti dal mouse. Palette blu/cobalto con creste oro rare. DPR cap 1.25 × scala 0.75, IO pause, RM = frame statico, fallback canvas.remove().
-  - **Interruttore a cordicella** (`.pull-cord`, fixed top-right, z95): toggle `body.lights-out` → velo scuro (`.dark-veil`, z40) su tutto il sito, il cursore `#lamp` diventa torcia (alone extra via `::after`). Flicker WAAPI allo spegnimento. Stato in sessionStorage. Mobile: right 4.4rem (per non sovrapporsi all'hamburger).
+  - ~~**Interruttore a cordicella**~~ — RIMOSSO (giugno 2026): la cordicella lights-out (velo scuro + torcia) è stata tolta su richiesta (poco utile). Spariti `.pull-cord`, `.dark-veil`, `.torch-glow`, `body.lights-out`, il modulo JS light-switch e l'`#lamp::after`. Conservata solo `nav { transition }` per il hide/show.
   - **Lampadina a pendolo** (`#bulb-rig` in `.illuminated`, left 68% / 76% mobile): SVG con fisica reale (g/L≈6.3, damping, spinta idle), click = on/off → la sezione si accende/spegne (`.bulb-lit`/`.bulb-dark`). Auto-on alla prima visibilità. Repulsione dal mouse vicino. **Drag RELATIVO** (`downAngle + (clientX − downX) * k`, `k = 2.2/innerWidth`, clamp ±1.1 rad): lo spostamento orizzontale dal punto di presa pilota l'angolo → oscilla **simmetrica in entrambi i versi** anche se pende vicino al bordo destro (prima usava `atan2` dalla posizione assoluta del dito: a destra lo spazio finiva → oscillava solo verso sinistra).
   - **Word illumination** (`.word-lit .w`): parole dei paragrafi `.storia .lede` e `.illuminated-content > p` splittate in span (markup inline preservato), accese progressivamente dallo scroll, frontiera con glow oro. Solo opacity (mai color). Fix background-clip per il p della illuminated.
   - **Costellazione** (`#constellation` in `.candidati`): ~28 stelle (rejection sampling) + linee tra vicine, draw-in scaglionato all'ingresso, twinkle, linee oro dal cursore alle stelle entro 160px. 30fps, IO gated.
@@ -34,12 +34,11 @@ Sito web one-page per **eureka!**, lista di rappresentanza d'istituto del **Lice
   - **Alone caldo a dito** (`#touch-glow`, z48): su touch il dito è la sorgente di luce. Un alone radiale caldo (gradient oro/cream con core acceso, `mix-blend-mode: screen`) blooma al `touchstart` e segue il dito anche durante lo scroll (solo transform+opacity → compositor, niente repaint di box-shadow). Sfuma al `touchend`. È l'equivalente mobile di `#lamp` (che è desktop-only, `hover:hover`). Sostituisce la vecchia "scia touch" di scintille al touchmove, che durante lo scroll passava inosservata: ora la scia di particelle (`#trail-canvas`) su mobile resta SOLO come burst deliberato al tap + onda d'urto, niente più spawn al touchmove.
   - **Burst al tap**: ogni touchstart spawna ~10 scintille radiali nel punto toccato (`window.__eurekaBurst(x, y, n)` — no-op con RM).
   - **Nebulosa a dito**: i vortici Van Gogh inseguono il dito; il gyro (Android) tace per 2.5s dopo l'ultimo tocco (`fingerUntil`).
-  - **Torcia touch**: in lights-out il velo (0.62) ha un foro `mask-image: radial-gradient(circle 190px at var(--fx) var(--fy))` che segue il dito + alone oro `.torch-glow` (z41, on solo a dito premuto, il foro resta all'ultima posizione). Hint una tantum al primo spegnimento.
   - **Shake-to-eureka**: devicemotion (Android only — iOS richiede permission → skip): energia accumulata con decadimento 0.88, soglia 55, cooldown 2.8s → flash dorato fullscreen (z120, WAAPI) + shockwave + burst + vibrazione.
   - **Scroll = iperspazio** (`#hero-starfield`): lo scroll inietta velocità nel warp starfield → le stelle si allungano in scie d'oro (iperspazio) mentre scorri, poi rientro morbido alla deriva. `warpBoost = min(22, warpBoost + |Δscroll|·0.45)`, decadimento `·0.90`/frame, `speed = SPEED + warpBoost`. Il canvas è `position:fixed` fullscreen → l'effetto si vede su tutto lo sfondo durante lo scroll, non solo nell'hero. Gated su RM. È IL gesto mobile (lo scroll) trasformato in spettacolo.
   - **Tap = accendi** (`.card.ignite`, `.member.ignite`): toccare una card progetti/candidati la accende come una lampadina — flicker da insegna (`@keyframes cardIgnite`, stessa firma di `bulbIgnite`) + 8 scintille (`__eurekaBurst`) nel punto toccato + bordo oro. Solo su `(hover:none)` (su desktop c'è già il glare oro all'hover), gated su RM. `closest('.progetti .card, .candidati .member')` in delega su `touchstart`; classe rimossa su `animationend`. Le card sono semi-trasparenti sopra il warp → l'accensione glowa bordo+interno.
-- **Font**: Google Fonts (`DM Sans` variable, pesi 400/500/700).
-- **Asset**: cartella `foto/` (ritratti candidati) + `assets/projects/` (locandine progetti, ora inutilizzate — la gallery è live).
+- **Font**: `DM Sans` variable, **self-hosted** in `fonts/` (`dmsans-latin.woff2` + `dmsans-latin-ext.woff2`, ~93KB tot). `@font-face` con `font-weight: 100 1000` + `<link rel="preload">`. Niente più dipendenza da `fonts.googleapis.com` (su mobile con rete lenta Google Fonts a volte non caricava → fallback system-ui = "font alterato"). Self-host garantisce DM Sans su ogni telefono.
+- **Asset**: cartella `foto/` (ritratti candidati, **ottimizzati** giugno 2026: 720px larghi, JPEG q62, ~220KB l'uno invece di ~570KB → 7.8MB→3.1MB tot, caricano sul mobile; tutti `loading="lazy" decoding="async"`) + `assets/projects/` (locandine progetti, ora inutilizzate — la gallery è live).
 - **Feed Instagram live (giugno 2026)**: la gallery in `.progetti` (`#proj-gallery-grid`) mostra **tutti** i post di @eureka.archimede, paginati a blocchi di 12 (bottone `.proj-more` "mostra altri (N)"). Card `<a>` → permalink del post, badge carosello/video, data + like, placeholder col colore dominante, caption via `textContent` (no injection). Due sorgenti con fallback a cascata nel modulo JS `load()`:
   1. **`assets/ig/feed.json`** (primaria) — generato dalla GitHub Action `.github/workflows/ig-feed.yml` (cron ogni 3h) che esegue `scripts/fetch-ig.mjs`: API Meta ufficiale (Instagram Graph), scarica TUTTI i post paginati + immagini in `assets/ig/*.jpg` (gli URL diretti IG scadono → copie locali), committa. Il token long-lived sta cifrato in `data/token.enc` (AES-256-GCM, chiave `ENC_KEY` secret) e si auto-rinnova a ogni run (`refresh_access_token`) → non scade mai. Bootstrap dal secret `IG_TOKEN`. Setup utente: `SETUP-INSTAGRAM.md`.
   2. **Behold** (`https://feeds.behold.so/LUPhA0MWLASmG03Yef0U`) — fallback se `feed.json` assente (Action non ancora girata): ultimi 6 post, immagini proxate `sizes.medium`.
@@ -88,8 +87,7 @@ Codici visivi presi da Oryzo:
 
 ### Tipografia
 
-- **`Fraunces`** (variable serif) — display + body. Asse `SOFT` (0=wedge, 100=soft) per dare carattere unico. `font-variation-settings: "SOFT" 100, "opsz" 144` sui display, `"opsz" 14` sul body.
-- **`JetBrains Mono`** — solo per editorial labels ("01 / progetti"), tag piccoli, footer, microcopy. Mai per body o display.
+- **`DM Sans`** (variable sans-serif, self-hosted) — unico font del sito: display, body, labels, microcopy. `--display: "DM Sans", system-ui, sans-serif`. Pesi via `font-weight` (400/500/700). Tutto in `text-transform: lowercase`. (Nota: il concept iniziale citava Fraunces serif + JetBrains Mono — mai usati nel file finale.)
 
 ### Tono editoriale (copy)
 
@@ -119,7 +117,7 @@ Codici visivi presi da Oryzo:
 
 ```
 <head>
-  Meta + Google Fonts + tutto il CSS in <style>
+  Meta + preload font self-hosted + tutto il CSS in <style> (incl. @font-face DM Sans)
 
 <body>
   .starfield#starfield        ← canvas 2D fixed, stelle + meteore globali
@@ -264,7 +262,7 @@ Sono anche candidato in lista (`giacomo warm`, classe 4E, n° 02 al consiglio d'
 - ⏳ Validazione contenuti (progetti, eventi, statistiche) con la lista
 - ✅ Open Graph / favicon / meta social (manca solo og:image)
 - ✅ Pacchetto animazioni 2026: neon ignition hero, scramble titoli, tilt 3D, magnetic buttons, filo di corrente, timeline luminosa, count-up, marquee velocity-aware, scintille click
-- ✅ Moduli wow (seconda ondata): shader Van Gogh hero, interruttore lights-out, lampadina a pendolo, word illumination, costellazione candidati, scia di luce + shockwave, lettere magnetiche
+- ✅ Moduli wow (seconda ondata): shader Van Gogh hero, lampadina a pendolo, word illumination, costellazione candidati, scia di luce + shockwave, lettere magnetiche (interruttore lights-out RIMOSSO giugno 2026)
 - ⏳ Deploy
 
 **Prossimo step naturale**: validazione contenuti con la lista, meta OG, deploy su Netlify/Vercel.

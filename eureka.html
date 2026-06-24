@@ -20,11 +20,27 @@
 <!-- segna che il JS è abilitato: gate per la reveal CSS (senza JS i contenuti restano visibili) -->
 <script>document.documentElement.classList.add('js');</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<!-- font self-hosted (niente dipendenza da Google Fonts: garantisce DM Sans su ogni telefono) -->
+<link rel="preload" href="fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <style>
+/* ===== FONT SELF-HOSTED — DM Sans variable ===== */
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("fonts/dmsans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("fonts/dmsans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
 :root {
   /* palette "notte stellata" — van gogh */
   --bg:         #0a1632;     /* blu notte profondo (sfondo) */
@@ -149,7 +165,7 @@ nav {
   font-weight: 500;
   font-size: 12px;
   letter-spacing: 0.04em;
-  /* transition (transform + filter) dichiarata nel blocco lights-out più sotto */
+  /* transition dichiarata più sotto (nav hide/show allo scroll) */
 }
 nav.nav-hidden { transform: translateY(-100%); }
 
@@ -1325,122 +1341,8 @@ footer .right { text-align: right; }
   display: block;
 }
 
-/* ===== LIGHT SWITCH (cordicella) ===== */
-.pull-cord {
-  position: fixed;
-  top: 0;
-  right: clamp(2rem, 5vw, 4rem);
-  z-index: 95;
-  height: max(14vh, 105px); /* il knob pende ben sotto la nav (~56px) */
-  width: 24px; /* area di tap comoda, il filo resta 2px */
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-/* mobile: l'hamburger sta in alto a destra — la cordicella si sposta a sinistra */
-@media (max-width: 800px) {
-  .pull-cord { right: 4.4rem; height: max(12vh, 92px); }
-}
-.pull-cord:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 4px;
-  border-radius: 6px;
-}
-.pull-cord.pulled { transform: translateY(16px); }
-.cord-line {
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, var(--gold-dim));
-}
-.cord-knob {
-  position: absolute;
-  bottom: -7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold-dim) 72%);
-  box-shadow: 0 0 8px rgba(245, 205, 71, 0.45), 0 0 22px rgba(245, 205, 71, 0.18);
-  transition: box-shadow 0.3s ease, filter 0.3s ease;
-}
-@media (hover: hover) {
-  .pull-cord:hover { transform: translateY(6px); }
-  .pull-cord:hover .cord-knob {
-    filter: brightness(1.18);
-    box-shadow: 0 0 14px rgba(245, 205, 71, 0.8), 0 0 36px rgba(245, 205, 71, 0.35);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .pull-cord { transition: none; }
-}
-
-/* ===== STATO SPENTO (body.lights-out) ===== */
-.dark-veil {
-  position: fixed;
-  inset: 0;
-  z-index: 40; /* sopra le sezioni (z1), sotto il lamp (z50) */
-  background: rgba(3, 7, 18, 0.78);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.9s ease;
-}
-body.lights-out .dark-veil { opacity: 1; }
-/* su touch la torcia è il dito: velo con foro di luce che segue il tocco */
-@media (hover: none) {
-  body.lights-out .dark-veil {
-    background: rgba(3, 7, 18, 0.62);
-    -webkit-mask-image: radial-gradient(circle 190px at var(--fx, 50%) var(--fy, 35%),
-      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 1) 78%);
-    mask-image: radial-gradient(circle 190px at var(--fx, 50%) var(--fy, 35%),
-      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 1) 78%);
-  }
-}
-.torch-glow {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(245, 205, 71, 0.26) 0%,
-    rgba(245, 205, 71, 0.10) 35%,
-    rgba(245, 205, 71, 0) 65%);
-  pointer-events: none;
-  z-index: 41; /* subito sopra il velo (z40) */
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-body.lights-out .torch-glow.on { opacity: 1; }
-@media (hover: hover) { .torch-glow { display: none; } }
-/* il cursore-lampada diventa la torcia nel buio */
-body.lights-out #lamp { filter: brightness(1.8) saturate(1.2); }
-#lamp::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 320vh;
-  height: 320vh;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(245, 205, 71, 0.30) 0%,
-    rgba(245, 205, 71, 0.13) 16%,
-    rgba(245, 205, 71, 0.05) 34%,
-    rgba(245, 205, 71, 0.00) 60%);
-  opacity: 0;
-  transition: opacity 0.9s ease;
-  pointer-events: none;
-}
-body.lights-out #lamp::after { opacity: 1; }
-nav { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.9s ease; }
-.wire { transition: filter 0.9s ease; }
-body.lights-out nav,
-body.lights-out .wire { filter: brightness(0.55); }
+/* ===== NAV TRANSITION (hide/show allo scroll) ===== */
+nav { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
 /* ===== LIGHT TRAIL ===== */
 #trail-canvas {
@@ -1551,8 +1453,6 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
     transform: none !important;
     filter: none !important;
   }
-  /* niente torcia con RM: il velo lights-out resta leggibile */
-  body.lights-out .dark-veil { background: rgba(3, 7, 18, 0.45); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1588,11 +1488,6 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
     </button>
   </div>
 </nav>
-
-<div class="pull-cord" id="pull-cord" role="button" tabindex="0" aria-label="interruttore luci" aria-pressed="false">
-  <div class="cord-line"></div>
-  <div class="cord-knob"></div>
-</div>
 
 <div class="mobile-menu" id="mobile-menu">
   <a href="#progetti">progetti</a>
@@ -1779,7 +1674,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
       <div class="roster">
         <div class="member reveal" data-hover>
           <div class="tag">5a</div>
-          <div class="photo"><img src="foto/christian-bucalo.jpg" alt="christian bucalo" onerror="this.remove()">c</div>
+          <div class="photo"><img src="foto/christian-bucalo.jpg" alt="christian bucalo" loading="lazy" decoding="async" onerror="this.remove()">c</div>
           <div class="info">
             <div class="name">christian bucalo</div>
             <div class="role">n° 01</div>
@@ -1787,7 +1682,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">4e</div>
-          <div class="photo"><img src="foto/giacomo-warm.jpg" alt="giacomo warm" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/giacomo-warm.jpg" alt="giacomo warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">giacomo warm</div>
             <div class="role">n° 02</div>
@@ -1795,7 +1690,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">4b</div>
-          <div class="photo"><img src="foto/giulia-perri.jpg" alt="giulia perri" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/giulia-perri.jpg" alt="giulia perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">giulia perri</div>
             <div class="role">n° 03</div>
@@ -1803,7 +1698,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">4d</div>
-          <div class="photo"><img src="foto/tania-spinella.jpg" alt="tania spinella" onerror="this.remove()">t</div>
+          <div class="photo"><img src="foto/tania-spinella.jpg" alt="tania spinella" loading="lazy" decoding="async" onerror="this.remove()">t</div>
           <div class="info">
             <div class="name">tania spinella</div>
             <div class="role">n° 04</div>
@@ -1811,7 +1706,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">5i</div>
-          <div class="photo"><img src="foto/giovanni-lo-nostro.jpg" alt="giovanni lo nostro" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/giovanni-lo-nostro.jpg" alt="giovanni lo nostro" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">giovanni lo nostro</div>
             <div class="role">n° 05</div>
@@ -1819,7 +1714,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">3c</div>
-          <div class="photo"><img src="foto/gabriele-picciolo.jpg" alt="gabriele picciolo" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/gabriele-picciolo.jpg" alt="gabriele picciolo" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">gabriele picciolo</div>
             <div class="role">n° 06</div>
@@ -1827,7 +1722,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">2c</div>
-          <div class="photo"><img src="foto/federico-de-salvo.jpg" alt="federico de salvo" onerror="this.remove()">f</div>
+          <div class="photo"><img src="foto/federico-de-salvo.jpg" alt="federico de salvo" loading="lazy" decoding="async" onerror="this.remove()">f</div>
           <div class="info">
             <div class="name">federico de salvo</div>
             <div class="role">n° 07</div>
@@ -1835,7 +1730,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">3n</div>
-          <div class="photo"><img src="foto/marco-cangelosi.jpg" alt="marco cangelosi" onerror="this.remove()">m</div>
+          <div class="photo"><img src="foto/marco-cangelosi.jpg" alt="marco cangelosi" loading="lazy" decoding="async" onerror="this.remove()">m</div>
           <div class="info">
             <div class="name">marco cangelosi</div>
             <div class="role">n° 08</div>
@@ -1853,7 +1748,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
       <div class="roster">
         <div class="member reveal" data-hover>
           <div class="tag">4m</div>
-          <div class="photo"><img src="foto/paolo-arigo.jpg" alt="paolo arigo" onerror="this.remove()">p</div>
+          <div class="photo"><img src="foto/paolo-arigo.jpg" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
           <div class="info">
             <div class="name">paolo arigo</div>
             <div class="role">n° 01</div>
@@ -1861,7 +1756,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">3e</div>
-          <div class="photo"><img src="foto/alberto-di-cagno.jpg" alt="alberto di cagno" onerror="this.remove()">a</div>
+          <div class="photo"><img src="foto/alberto-di-cagno.jpg" alt="alberto di cagno" loading="lazy" decoding="async" onerror="this.remove()">a</div>
           <div class="info">
             <div class="name">alberto di cagno</div>
             <div class="role">n° 02</div>
@@ -1869,7 +1764,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">4c</div>
-          <div class="photo"><img src="foto/giorgio-bensaia.jpg" alt="giorgio bensaia" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/giorgio-bensaia.jpg" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">giorgio bensaia</div>
             <div class="role">n° 03</div>
@@ -1877,7 +1772,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">5c</div>
-          <div class="photo"><img src="foto/giorgia-curro.jpg" alt="giorgia currò" onerror="this.remove()">g</div>
+          <div class="photo"><img src="foto/giorgia-curro.jpg" alt="giorgia currò" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <div class="name">giorgia currò</div>
             <div class="role">n° 04</div>
@@ -1895,7 +1790,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
       <div class="roster cols-2">
         <div class="member reveal" data-hover>
           <div class="tag">5a</div>
-          <div class="photo"><img src="foto/nino-sutera.jpg" alt="nino sutera" onerror="this.remove()">n</div>
+          <div class="photo"><img src="foto/nino-sutera.jpg" alt="nino sutera" loading="lazy" decoding="async" onerror="this.remove()">n</div>
           <div class="info">
             <div class="name">nino sutera</div>
             <div class="role">n° 01</div>
@@ -1903,7 +1798,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
         <div class="member reveal" data-hover>
           <div class="tag">4e</div>
-          <div class="photo"><img src="foto/nethma.jpg" alt="nethma" onerror="this.remove()">n</div>
+          <div class="photo"><img src="foto/nethma.jpg" alt="nethma" loading="lazy" decoding="async" onerror="this.remove()">n</div>
           <div class="info">
             <div class="name">nethma</div>
             <div class="role">n° 02</div>
@@ -3019,7 +2914,7 @@ if ('IntersectionObserver' in window) {
 
 <script>
 // =====================================================================
-// ===== WOW MODULES — shader van gogh, interruttore, scia, lettere ===
+// ===== WOW MODULES — shader van gogh, scia di luce, lettere =========
 // =====   magnetiche, lampadina a pendolo, word-light, costellazione ==
 // =====================================================================
 (() => {
@@ -3289,133 +3184,6 @@ void main() {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stop(); else if (visible) start();
   });
-})();
-
-(() => {
-  // light-switch: cordicella che spegne/accende il sito
-  const cord = document.getElementById('pull-cord');
-  if (!cord) return;
-
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const HOVER = matchMedia('(hover: hover)').matches;
-  const KEY = 'eureka-lights';
-
-  // crea il velo se assente (l'HTML da integrare resta solo la cordicella)
-  let veil = document.getElementById('dark-veil');
-  if (!veil) {
-    veil = document.createElement('div');
-    veil.id = 'dark-veil';
-    veil.className = 'dark-veil';
-    veil.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(veil);
-  }
-
-  const isOut = () => document.body.classList.contains('lights-out');
-
-  const syncAria = () => {
-    cord.setAttribute('aria-pressed', isOut() ? 'true' : 'false');
-  };
-
-  // micro-flicker da vero filo della luce (WAAPI), niente con reduced motion
-  const flicker = (off) => {
-    if (RM || typeof veil.animate !== 'function') return;
-    if (off) {
-      // spegnimento: lampeggio 1 -> 0.6 -> 1
-      veil.animate(
-        [{ opacity: 1 }, { opacity: 0.6 }, { opacity: 1 }],
-        { duration: 180, easing: 'ease-out' }
-      );
-    } else {
-      // riaccensione: flash inverso 0 -> 0.35 -> 0
-      veil.animate(
-        [{ opacity: 0 }, { opacity: 0.35 }, { opacity: 0 }],
-        { duration: 250, easing: 'ease-in-out' }
-      );
-    }
-  };
-
-  const toggle = () => {
-    const off = !isOut();
-    document.body.classList.toggle('lights-out', off);
-    syncAria();
-    flicker(off);
-    if (navigator.vibrate) navigator.vibrate(off ? [10, 40, 10] : 12);  // click dell'interruttore
-    try { sessionStorage.setItem(KEY, off ? 'off' : 'on'); } catch (e) { /* storage non disponibile */ }
-
-    // animazione "tirata" momentanea
-    if (!RM) {
-      cord.classList.add('pulled');
-      setTimeout(() => cord.classList.remove('pulled'), 450);
-    }
-
-    if (off) showTorchHint();
-  };
-
-  // ---- torcia touch: nel buio il dito apre un cono di luce nel velo ----
-  let torch = null;
-  if (!HOVER) {
-    torch = document.createElement('div');
-    torch.className = 'torch-glow';
-    torch.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(torch);
-
-    let px = 0, py = 0, tRaf = 0;
-    const apply = () => {
-      tRaf = 0;
-      veil.style.setProperty('--fx', px + 'px');
-      veil.style.setProperty('--fy', py + 'px');
-      torch.style.transform = `translate(${px}px, ${py}px) translate(-50%, -50%)`;
-    };
-    const onTouch = (e) => {
-      if (!isOut()) return;
-      const t = e.touches[0];
-      if (!t) return;
-      px = t.clientX;
-      py = t.clientY;
-      torch.classList.add('on');
-      if (!tRaf) tRaf = requestAnimationFrame(apply);
-    };
-    addEventListener('touchstart', onTouch, { passive: true });
-    addEventListener('touchmove', onTouch, { passive: true });
-    addEventListener('touchend', () => { if (torch) torch.classList.remove('on'); }, { passive: true });
-  }
-
-  // hint una tantum: su touch nessuno sa che il dito è una torcia
-  let hintShown = false;
-  const showTorchHint = () => {
-    if (HOVER || hintShown) return;
-    hintShown = true;
-    const h = document.createElement('div');
-    h.textContent = 'muovi il dito sullo schermo: è una torcia';
-    h.style.cssText = 'position:fixed;left:50%;bottom:16vh;transform:translateX(-50%);' +
-      'z-index:96;font-size:0.74rem;font-weight:500;letter-spacing:0.05em;white-space:nowrap;' +
-      'color:var(--cream);background:rgba(10,22,50,0.78);border:1px solid var(--line);' +
-      'padding:0.6em 1.1em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
-    document.body.appendChild(h);
-    requestAnimationFrame(() => { h.style.opacity = '1'; });
-    setTimeout(() => {
-      h.style.opacity = '0';
-      setTimeout(() => h.remove(), 700);
-    }, 3600);
-  };
-
-  cord.addEventListener('click', toggle);
-  cord.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-      e.preventDefault();
-      toggle();
-    }
-  });
-
-  // ripristino stato dalla sessione, senza fade al load
-  let saved = null;
-  try { saved = sessionStorage.getItem(KEY); } catch (e) { /* storage non disponibile */ }
-  if (saved === 'off') {
-    veil.style.transition = 'none';
-    document.body.classList.add('lights-out');
-    requestAnimationFrame(() => requestAnimationFrame(() => { veil.style.transition = ''; }));
-  }
-  syncAria();
 })();
 
 (() => {
