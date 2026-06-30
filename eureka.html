@@ -1302,10 +1302,24 @@ a.proj-card {
 
 /* ===== ACCENDI LA LISTA — interruttore hold-to-charge nella CTA ===== */
 /* progressive enhancement: senza JS la CTA è già accesa; il JS la "arma" */
-.cta-switch {
+.cta-switch-wrap {
   display: none;
   position: relative;
   margin: 0 auto 1.9rem;
+}
+html.js .cta.armed .cta-switch-wrap { display: inline-block; }
+.cta-plasma {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 230px; height: 150px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.cta-switch {
+  display: none;
+  position: relative;
+  margin: 0;
   padding: 0.9rem 1.8rem;
   border: 1px solid var(--gold);
   border-radius: 999px;
@@ -1457,6 +1471,83 @@ section.section-charged { animation: sectionCharge 1.15s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .circuit-wire::after, .circuit-node, .circuit-master { transition: none; }
   .circuit.complete .circuit-master { animation: none; }
+}
+
+/* ===== CIRCUITO A PONTE — collega i due contatti col dito ===== */
+.bridge {
+  position: relative;
+  padding: 5rem 1.5rem 5.5rem;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.bridge-prompt {
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4.4vw, 2.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  margin: 0.7rem auto 2.6rem;
+  max-width: 26rem;
+}
+.bridge-rig {
+  width: min(100%, 420px);
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+  touch-action: pan-y;
+}
+.bridge-node {
+  fill: var(--bg-soft);
+  stroke: var(--gold-dim);
+  stroke-width: 2.5;
+  cursor: pointer;
+  touch-action: none;
+  transition: stroke 0.25s ease, filter 0.25s ease;
+  animation: bridgePulse 2.4s ease-in-out infinite;
+}
+.bridge-node-b { animation-delay: 1.2s; }
+.bridge-node.near {
+  stroke: var(--gold);
+  filter: drop-shadow(0 0 8px rgba(245, 205, 71, 0.85));
+  animation: none;
+}
+@keyframes bridgePulse {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(245, 205, 71, 0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(245, 205, 71, 0.5)); }
+}
+.bridge-wire {
+  stroke: var(--gold-dim);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+}
+.bridge-rig.connected .bridge-wire { stroke: var(--gold); filter: drop-shadow(0 0 6px rgba(245, 205, 71, 0.7)); }
+.bridge-bulb-glass {
+  fill: var(--gold-dim);
+  opacity: 0.35;
+  transition: fill 0.3s ease, opacity 0.3s ease;
+}
+.bridge-bulb-glow {
+  fill: rgba(245, 205, 71, 0);
+  transition: fill 0.4s ease;
+}
+.bridge-rig.connected .bridge-bulb-glass { fill: var(--gold-bright); opacity: 1; }
+.bridge-rig.connected .bridge-bulb-glow { fill: rgba(245, 205, 71, 0.30); }
+.bridge-rig.connected .bridge-bulb { animation: bulbIgnite 0.85s ease-out; }
+.bridge-hint {
+  margin-top: 1.3rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  transition: opacity 0.4s ease;
+}
+.bridge-rig.connected ~ .bridge-hint { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .bridge-node { animation: none; }
+  .bridge-rig.connected .bridge-bulb { animation: none; }
 }
 
 footer {
@@ -2014,6 +2105,22 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
   </div>
 </section>
 
+<!-- ============ CIRCUITO A PONTE (collega i contatti) ============ -->
+<section class="bridge">
+  <div class="section-label reveal">chiudi il circuito</div>
+  <h2 class="bridge-prompt reveal">collega i due contatti.<br>un'idea diventa luce.</h2>
+  <svg class="bridge-rig" id="bridge-rig" viewBox="0 0 320 140" aria-hidden="true">
+    <line class="bridge-wire" id="bridge-wire" x1="46" y1="100" x2="46" y2="100"/>
+    <g class="bridge-bulb" id="bridge-bulb" transform="translate(160,38)">
+      <circle class="bridge-bulb-glow" r="30"/>
+      <circle class="bridge-bulb-glass" r="11"/>
+    </g>
+    <circle class="bridge-node bridge-node-a" id="bridge-node-a" cx="46" cy="100" r="14"/>
+    <circle class="bridge-node bridge-node-b" id="bridge-node-b" cx="274" cy="100" r="14"/>
+  </svg>
+  <div class="bridge-hint">tieni e trascina da un contatto all'altro</div>
+</section>
+
 <!-- ============ ILLUMINATED (transizione) ============ -->
 <section class="illuminated reveal" aria-label="momento illuminato">
   <div class="illuminated-bg" aria-hidden="true">
@@ -2057,10 +2164,13 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 <section class="cta" id="contatti">
   <div class="cta-content">
     <div class="super">● vota. condividi. accendi.</div>
-    <button class="cta-switch" id="cta-switch" type="button" aria-label="tieni premuto per accendere la lista">
-      <span class="cta-switch-fill" aria-hidden="true"></span>
-      <span class="cta-switch-label">tieni premuto per accendere</span>
-    </button>
+    <div class="cta-switch-wrap" id="cta-switch-wrap">
+      <canvas class="cta-plasma" id="cta-plasma" aria-hidden="true"></canvas>
+      <button class="cta-switch" id="cta-switch" type="button" aria-label="tieni premuto per accendere la lista">
+        <span class="cta-switch-fill" aria-hidden="true"></span>
+        <span class="cta-switch-label">tieni premuto per accendere</span>
+      </button>
+    </div>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>
       @eureka.archimede su instagram
@@ -3953,6 +4063,55 @@ void main() {
   let revealT = -1;          // istante d'inizio del disegno
   let revealed = false;
 
+  // ---- costellazioni che ricordi: ogni candidato toccato accende la sua stella per sempre ----
+  const CKEY = 'eureka-constellation';
+  let members = [...section.querySelectorAll('.member')];
+  let keyStars = [];
+  let permaLinks = [];
+  let discovered = new Set();
+  try { discovered = new Set(JSON.parse(localStorage.getItem(CKEY) || '[]')); } catch (e) { /* no storage */ }
+
+  const onComplete = () => {
+    const r = section.getBoundingClientRect();
+    const cx = innerWidth / 2, cy = Math.max(0, Math.min(innerHeight, r.top + r.height * 0.5));
+    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
+    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 30);
+    if (window.__eurekaWarp) window.__eurekaWarp(20);
+    if (navigator.vibrate) navigator.vibrate([14, 50, 14]);
+    if (RM) return;
+    const msg = document.createElement('div');
+    msg.textContent = 'hai visto tutta la lista. eureka!';
+    msg.style.cssText = 'position:fixed;left:50%;bottom:14vh;transform:translateX(-50%);' +
+      'z-index:96;font-size:0.78rem;font-weight:700;letter-spacing:0.04em;white-space:nowrap;' +
+      'color:var(--gold);background:rgba(10,22,50,0.85);border:1px solid var(--gold);' +
+      'padding:0.65em 1.3em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
+    document.body.appendChild(msg);
+    requestAnimationFrame(() => { msg.style.opacity = '1'; });
+    setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.remove(), 700); }, 3400);
+  };
+
+  const discoverStar = (i) => {
+    if (discovered.has(i) || !keyStars[i]) return;
+    // collega alla stella scoperta più vicina (la costellazione cresce come un filo)
+    let nearest = -1, nd = Infinity;
+    discovered.forEach((j) => {
+      const d = Math.hypot(keyStars[j].x - keyStars[i].x, keyStars[j].y - keyStars[i].y);
+      if (d < nd) { nd = d; nearest = j; }
+    });
+    if (nearest >= 0) permaLinks.push({ a: nearest, b: i });
+    discovered.add(i);
+    try { localStorage.setItem(CKEY, JSON.stringify([...discovered])); } catch (e) { /* no storage */ }
+    if (navigator.vibrate) navigator.vibrate(10);
+    if (discovered.size >= members.length && members.length > 0) onComplete();
+  };
+
+  document.addEventListener('click', (e) => {
+    const m = e.target.closest('.candidati .member');
+    if (!m) return;
+    const idx = members.indexOf(m);
+    if (idx >= 0) discoverStar(idx);
+  });
+
   function build() {
     w = section.offsetWidth;
     h = section.offsetHeight;
@@ -3994,6 +4153,18 @@ void main() {
           if (!seen.has(k)) { seen.add(k); links.push({ a: i, b: o.j }); }
         });
     });
+
+    // stelle-chiave: una per candidato, posizione stabile per indice (sopravvive ai resize)
+    members = [...section.querySelectorAll('.member')];
+    const built = [];
+    members.forEach(() => {
+      let x, y, tries = 0;
+      do {
+        x = Math.random() * w; y = Math.random() * h; tries++;
+      } while (tries < 40 && built.some(k => Math.hypot(k.x - x, k.y - y) < minD * 0.7));
+      built.push({ x, y, tw: Math.random() * Math.PI * 2, tws: 0.4 + Math.random() * 0.8 });
+    });
+    keyStars = built;
   }
 
   // coordinate viewport nel listener (cheap); conversione nel draw a 30fps
@@ -4062,6 +4233,32 @@ void main() {
       ctx.fill();
     });
     ctx.shadowBlur = 0;
+
+    // costellazione personale: fili permanenti tra candidati scoperti + stelle-chiave accese
+    if (keyStars.length) {
+      ctx.lineWidth = 1.4;
+      permaLinks.forEach(l => {
+        const A = keyStars[l.a], B = keyStars[l.b];
+        if (!A || !B) return;
+        ctx.strokeStyle = 'rgba(245,205,71,0.5)';
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.lineTo(B.x, B.y);
+        ctx.stroke();
+      });
+      discovered.forEach(i => {
+        const s = keyStars[i];
+        if (!s) return;
+        const tw = 0.8 + 0.2 * Math.sin(s.tw + t * s.tws);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(255,224,122,0.9)';
+        ctx.fillStyle = `rgba(255,224,122,${tw.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 3.4, 0, 6.2832);
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+    }
   }
 
   let raf = 0, last = 0, visible = false;
@@ -4080,6 +4277,24 @@ void main() {
   const stop = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
 
   build();
+
+  // chi torna con stato già salvato: ricostruisci i fili tra le stelle già scoperte (catena per vicinanza)
+  if (discovered.size > 1) {
+    const done = [], todo = [...discovered];
+    done.push(todo.shift());
+    while (todo.length) {
+      let bi = 0, bd = Infinity, bj = -1;
+      todo.forEach((j, ti) => {
+        done.forEach((k) => {
+          const d = Math.hypot(keyStars[k].x - keyStars[j].x, keyStars[k].y - keyStars[j].y);
+          if (d < bd) { bd = d; bi = ti; bj = k; }
+        });
+      });
+      const next = todo.splice(bi, 1)[0];
+      permaLinks.push({ a: bj, b: next });
+      done.push(next);
+    }
+  }
 
   if (RM) {
     // render statico completo, niente loop
@@ -4105,6 +4320,101 @@ void main() {
       if (RM) draw(0, 100);
     }, 180);
   }, { passive: true });
+})();
+
+(() => {
+  // CIRCUITO A PONTE — trascina il dito da un contatto all'altro per chiudere il
+  // circuito: la lampadina si accende. Esito sempre garantito e binario (snap
+  // generoso al rilascio se sei vicino al secondo contatto, altrimenti il filo
+  // si ritira elastico) — mai una simulazione fisica ambigua.
+  const svg = document.getElementById('bridge-rig');
+  if (!svg) return;
+  const wire = document.getElementById('bridge-wire');
+  const nodeA = document.getElementById('bridge-node-a');
+  const nodeB = document.getElementById('bridge-node-b');
+  if (!wire || !nodeA || !nodeB) return;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const A = { x: 46, y: 100 };
+  const B = { x: 274, y: 100 };
+  const THRESH = 46;   // unità SVG: soglia generosa, l'esito deve sembrare "magnetico"
+
+  const toSvgPoint = (clientX, clientY) => {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    const p = pt.matrixTransform(ctm.inverse());
+    return { x: p.x, y: p.y };
+  };
+  const toScreenPoint = (x, y) => {
+    const pt = svg.createSVGPoint();
+    pt.x = x; pt.y = y;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return { x: innerWidth / 2, y: innerHeight / 2 };
+    const p = pt.matrixTransform(ctm);
+    return { x: p.x, y: p.y };
+  };
+
+  const setWire = (x, y) => { wire.setAttribute('x2', x); wire.setAttribute('y2', y); };
+
+  let dragging = false, raf = 0;
+
+  const retract = () => {
+    if (raf) cancelAnimationFrame(raf);
+    if (RM) { setWire(A.x, A.y); return; }
+    const fromX = parseFloat(wire.getAttribute('x2'));
+    const fromY = parseFloat(wire.getAttribute('y2'));
+    const t0 = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / 220);
+      const ease = 1 - Math.pow(1 - k, 3);
+      setWire(fromX + (A.x - fromX) * ease, fromY + (A.y - fromY) * ease);
+      if (k < 1) raf = requestAnimationFrame(step); else raf = 0;
+    };
+    raf = requestAnimationFrame(step);
+  };
+
+  const connect = () => {
+    setWire(B.x, B.y);
+    svg.classList.add('connected');
+    const s = toScreenPoint(160, 38);
+    if (window.__eurekaShockwave) window.__eurekaShockwave(s.x, s.y);
+    if (window.__eurekaBurst) window.__eurekaBurst(s.x, s.y, 20);
+    if (navigator.vibrate) navigator.vibrate([12, 40, 14]);
+  };
+
+  const onMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+    const p = toSvgPoint(e.clientX, e.clientY);
+    setWire(p.x, p.y);
+    nodeB.classList.toggle('near', Math.hypot(p.x - B.x, p.y - B.y) < THRESH);
+  };
+  const onUp = (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    nodeB.classList.remove('near');
+    if (Math.hypot(p.x - B.x, p.y - B.y) < THRESH) connect(); else retract();
+  };
+
+  nodeA.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    svg.classList.remove('connected');   // ritocca per rigiocare
+    dragging = true;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    try { nodeA.setPointerCapture(e.pointerId); } catch (err) { /* no-op */ }
+    const p = toSvgPoint(e.clientX, e.clientY);
+    setWire(p.x, p.y);
+  });
+  nodeA.addEventListener('pointermove', onMove);
+  nodeA.addEventListener('pointerup', onUp);
+  nodeA.addEventListener('pointercancel', () => {
+    dragging = false;
+    nodeB.classList.remove('near');
+    retract();
+  });
 })();
 
 (() => {
@@ -4270,6 +4580,121 @@ void main() {
 })();
 
 (() => {
+  // PLASMA SULL'INTERRUTTORE — archi elettrici dorati frastagliati (midpoint
+  // displacement, non onde sinusoidali) crepitano spontaneamente vicino
+  // all'interruttore "accendi la lista": si vede SUBITO da fermo, si
+  // intensificano durante la carica, un'unica scarica grande al momento di
+  // accensione. Estetica "nervosa/tagliente", in contrasto col resto morbido.
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (RM) return;
+  const cta = document.querySelector('.cta');
+  const sw = document.getElementById('cta-switch');
+  const canvas = document.getElementById('cta-plasma');
+  if (!cta || !sw || !canvas) return;
+  if (cta.classList.contains('lit')) return;   // già accesa: niente da mostrare
+
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  let w = 0, h = 0;
+
+  const resize = () => {
+    const r = canvas.getBoundingClientRect();
+    w = r.width; h = r.height;
+    if (!w || !h) return;
+    canvas.width = Math.max(1, Math.floor(w * DPR));
+    canvas.height = Math.max(1, Math.floor(h * DPR));
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  };
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  // midpoint displacement: fulmine frastagliato tra due punti, ricorsivo con decadimento
+  function bolt(x0, y0, x1, y1, depth, jag) {
+    if (depth <= 0) return [[x0, y0], [x1, y1]];
+    const mx = (x0 + x1) / 2 + rand(-jag, jag);
+    const my = (y0 + y1) / 2 + rand(-jag, jag);
+    return [
+      ...bolt(x0, y0, mx, my, depth - 1, jag * 0.55).slice(0, -1),
+      ...bolt(mx, my, x1, y1, depth - 1, jag * 0.55),
+    ];
+  }
+
+  function drawBolt(pts, alpha) {
+    ctx.beginPath();
+    pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(245,205,71,0.8)';
+    ctx.strokeStyle = `rgba(245,205,71,${(0.35 * alpha).toFixed(3)})`;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = `rgba(255,248,222,${alpha.toFixed(3)})`;
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+  }
+
+  let arcs = [];
+  const spawnArc = (big) => {
+    if (!w || !h) return;
+    const cx = w / 2, cy = h / 2;
+    const x0 = cx + rand(-w * 0.42, -w * 0.18), y0 = cy + rand(-h * 0.3, h * 0.3);
+    const x1 = cx + rand(w * 0.18, w * 0.42), y1 = cy + rand(-h * 0.3, h * 0.3);
+    arcs.push({ pts: bolt(x0, y0, x1, y1, big ? 4 : 3, big ? 14 : 9), life: 0, ttl: rand(0.12, 0.22) });
+  };
+
+  let firedFinal = false;
+  const bigDischarge = () => {
+    firedFinal = true;
+    for (let i = 0; i < 5; i++) spawnArc(true);
+    setTimeout(stop, 480);
+  };
+
+  let nextIdleAt = rand(2.5, 4.5);
+  let visible = false, raf = 0, last = 0;
+  const frame = (now) => {
+    raf = requestAnimationFrame(frame);
+    if (!visible) { last = now; return; }
+    if (now - last < 1000 / 30) return;
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    const t = now * 0.001;
+
+    if (!firedFinal) {
+      if (cta.classList.contains('lit')) {
+        bigDischarge();
+      } else if (sw.classList.contains('charging')) {
+        if (Math.random() < dt * 7) spawnArc(false);   // crepitio intenso durante la carica
+      } else if (t > nextIdleAt) {
+        spawnArc(false);
+        nextIdleAt = t + rand(3, 5.5);                 // scariche ambient spontanee, si vede da fermo
+      }
+    }
+
+    ctx.clearRect(0, 0, w, h);
+    for (let i = arcs.length - 1; i >= 0; i--) {
+      const a = arcs[i];
+      a.life += dt;
+      const k = a.life / a.ttl;
+      const env = k < 0.3 ? k / 0.3 : 1 - (k - 0.3) / 0.7;
+      if (env <= 0 || k >= 1) { arcs.splice(i, 1); continue; }
+      drawBolt(a.pts, env);
+    }
+  };
+  const start = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  const stop = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => {
+      visible = es[0].isIntersecting;
+      if (visible && !firedFinal) start(); else if (!visible) stop();
+    }, { threshold: 0.1 }).observe(cta);
+  } else { visible = true; start(); }
+})();
+
+(() => {
   // HOLD-TO-CHARGE — tieni premuto FERMO su una sezione: un anello d'energia oro
   // cresce sotto il dito; al pieno (~850ms) una scarica accende quella sezione.
   // Scroll-safe: qualunque movimento del dito > soglia annulla la carica (= sta scrollando).
@@ -4431,6 +4856,7 @@ void main() {
     cards.forEach((c, i) => light(i, false));
   }
 })();
+</script>
 
 </body>
 </html>
