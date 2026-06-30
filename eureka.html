@@ -1459,78 +1459,6 @@ section.section-charged { animation: sectionCharge 1.15s ease-out; }
   .circuit.complete .circuit-master { animation: none; }
 }
 
-/* ===== VASCA DI ARCHIMEDE — inclina il telefono e versa l'acqua d'oro ===== */
-.vasca {
-  position: relative;
-  min-height: 76vh;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  overflow: hidden;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  isolation: isolate;
-}
-.vasca-canvas {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-.vasca-content {
-  position: relative; z-index: 1;
-  padding: 2rem 1.5rem;
-  pointer-events: none;            /* i gesti passano al canvas/section */
-}
-.vasca-prompt {
-  font-weight: 700;
-  font-size: clamp(2rem, 7vw, 4.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.03em;
-  color: var(--cream);
-  margin: 0.9rem 0 0;
-  transition: opacity 0.5s ease;
-}
-.vasca.spilled .vasca-prompt { opacity: 0.16; }
-.vasca-tilt-btn {
-  pointer-events: auto;
-  margin-top: 1.4rem;
-  padding: 0.7rem 1.5rem;
-  border: 1px solid var(--gold);
-  border-radius: 999px;
-  background: rgba(10, 22, 50, 0.6);
-  color: var(--gold);
-  font: 700 0.82rem/1 var(--display);
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.vasca-eureka {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%) scale(0.6);
-  font-weight: 800;
-  font-size: clamp(3rem, 13vw, 9rem);
-  letter-spacing: -0.04em;
-  color: var(--cream);
-  text-shadow: 0 0 24px rgba(255, 236, 170, 0.9), 0 0 60px rgba(245, 205, 71, 0.5);
-  opacity: 0;
-  pointer-events: none;
-}
-.vasca-eureka .bang { color: var(--gold); }
-.vasca.spilled .vasca-eureka { animation: vascaEureka 1.7s ease-out; }
-@keyframes vascaEureka {
-  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-  16%  { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
-  70%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.02); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .vasca-canvas { display: none; }
-  .vasca { min-height: auto; padding: 4.5rem 1.5rem; }
-  .vasca-tilt-btn { display: none; }
-}
-
 footer {
   padding: 2.5rem 2rem;
   border-top: 1px solid var(--line);
@@ -2083,17 +2011,6 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
         </div>
       </aside>
     </div>
-  </div>
-</section>
-
-<!-- ============ VASCA DI ARCHIMEDE (inclina → versa l'acqua) ============ -->
-<section class="vasca" aria-label="il principio di archimede">
-  <canvas class="vasca-canvas" aria-hidden="true"></canvas>
-  <div class="vasca-content">
-    <div class="section-label reveal">il principio di archimede</div>
-    <h2 class="vasca-prompt reveal">inclina il telefono.<br>versa l'acqua.</h2>
-    <button class="vasca-tilt-btn" type="button" hidden>attiva il sensore di movimento</button>
-    <div class="vasca-eureka" aria-hidden="true">eureka<span class="bang">!</span></div>
   </div>
 </section>
 
@@ -4193,12 +4110,12 @@ void main() {
 (() => {
   // flick-to-wish — un colpetto secco del polso lancia UNA stella cadente dorata
   // nella direzione dello scatto. Diverso dallo shake (energia accumulata): qui
-  // conta il singolo spike direzionale. Solo touch/Android (iOS skip).
+  // conta il singolo spike direzionale. Solo touch/Android (iOS richiede permission → skip).
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const HOVER = matchMedia('(hover: hover)').matches;
   if (RM || HOVER) return;
-  if (!('DeviceMotionEvent' in window)) return;
-  const iOS = typeof DeviceMotionEvent.requestPermission === 'function';
+  if (!('DeviceMotionEvent' in window) ||
+      typeof DeviceMotionEvent.requestPermission === 'function') return;
 
   let lastFlick = 0, armed = true, hinted = false;
   const THRESH = 13;          // m/s² sull'asse x: scatto netto, non micromovimenti
@@ -4217,7 +4134,7 @@ void main() {
     setTimeout(() => { h.style.opacity = '0'; setTimeout(() => h.remove(), 700); }, 2600);
   };
 
-  const motionHandler = (e) => {
+  addEventListener('devicemotion', (e) => {
     const a = e.acceleration && e.acceleration.x !== null ? e.acceleration : null;
     if (!a) return;                                  // serve l'accelerazione senza gravità
     const ax = a.x || 0;
@@ -4230,10 +4147,7 @@ void main() {
       if (navigator.vibrate) navigator.vibrate(12);
       hint();
     }
-  };
-  const attach = () => addEventListener('devicemotion', motionHandler, { passive: true });
-  if (iOS) addEventListener('eureka-motion-ok', attach, { once: true });  // iOS: dopo il permesso vasca
-  else attach();
+  }, { passive: true });
 })();
 
 (() => {
@@ -4242,8 +4156,8 @@ void main() {
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const HOVER = matchMedia('(hover: hover)').matches;
   if (RM || HOVER) return;
-  if (!('DeviceMotionEvent' in window)) return;
-  const iOS = typeof DeviceMotionEvent.requestPermission === 'function';
+  if (!('DeviceMotionEvent' in window) ||
+      typeof DeviceMotionEvent.requestPermission === 'function') return;
 
   const flash = () => {
     const f = document.createElement('div');
@@ -4270,7 +4184,7 @@ void main() {
   // energia di scuotimento: somma dei delta di accelerazione con decadimento.
   // Un colpo singolo (tap, telefono appoggiato) non basta; una scossa vera sì.
   let lx = 0, ly = 0, lz = 0, primed = false, energy = 0, lastFire = 0;
-  const motionHandler = (e) => {
+  addEventListener('devicemotion', (e) => {
     const a = e.accelerationIncludingGravity;
     if (!a || a.x === null) return;
     if (!primed) { lx = a.x; ly = a.y; lz = a.z; primed = true; return; }
@@ -4283,10 +4197,7 @@ void main() {
       energy = 0;
       flash();
     }
-  };
-  const attach = () => addEventListener('devicemotion', motionHandler, { passive: true });
-  if (iOS) addEventListener('eureka-motion-ok', attach, { once: true });  // iOS: dopo il permesso vasca
-  else attach();
+  }, { passive: true });
 })();
 
 (() => {
@@ -4520,199 +4431,6 @@ void main() {
     cards.forEach((c, i) => light(i, false));
   }
 })();
-
-(() => {
-  // VASCA DI ARCHIMEDE — inclina il telefono: un fluido d'oro si versa e slosha
-  // sul fondo della sezione. Tilt forte → "eureka!" + onda + scintille (il mito
-  // della vasca reso gesto). Mobile: gyro (iOS via bottone permesso). Desktop:
-  // il mouse pilota l'inclinazione. Reduced-motion → niente canvas (testo statico).
-  const section = document.querySelector('.vasca');
-  if (!section) return;
-  const canvas = section.querySelector('.vasca-canvas');
-  const btn = section.querySelector('.vasca-tilt-btn');
-  const prompt = section.querySelector('.vasca-prompt');
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (RM || !canvas) { if (btn) btn.hidden = true; return; }
-
-  const ctx = canvas.getContext('2d');
-  const HOVER = matchMedia('(hover: hover)').matches;
-  const dpr = Math.min(1.5, window.devicePixelRatio || 1);
-  let w = 0, h = 0;
-
-  const resize = () => {
-    w = section.clientWidth; h = section.clientHeight || Math.round(innerHeight * 0.76);
-    canvas.width = Math.max(1, Math.floor(w * dpr));
-    canvas.height = Math.max(1, Math.floor(h * dpr));
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  };
-  resize();
-  addEventListener('resize', resize, { passive: true });
-
-  let tiltTarget = 0, tilt = 0, slosh = 0, phase = 0, lastSpill = 0, visible = true;
-  const setTarget = (t) => {
-    const c = Math.max(-0.5, Math.min(0.5, t));
-    slosh = Math.min(1, slosh + Math.abs(c - tiltTarget) * 1.5);
-    tiltTarget = c;
-  };
-
-  // ---- input ----
-  const onOrient = (e) => { if (e.gamma != null) setTarget((e.gamma || 0) * 0.013); };
-  const grantMotion = () => {                         // iOS: stesso gesto → abilita flick + shake
-    if (typeof DeviceMotionEvent !== 'undefined' &&
-        typeof DeviceMotionEvent.requestPermission === 'function') {
-      DeviceMotionEvent.requestPermission().then((s) => {
-        if (s === 'granted') dispatchEvent(new Event('eureka-motion-ok'));
-      }).catch(() => {});
-    }
-  };
-  const enableSensor = () => {
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-        typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission().then((s) => {
-        if (s === 'granted') { addEventListener('deviceorientation', onOrient); if (btn) btn.hidden = true; }
-        grantMotion();
-      }).catch(() => {});
-    } else if ('DeviceOrientationEvent' in window) {
-      addEventListener('deviceorientation', onOrient);
-    }
-  };
-
-  if (!HOVER) {
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-        typeof DeviceOrientationEvent.requestPermission === 'function') {
-      if (btn) { btn.hidden = false; btn.addEventListener('click', enableSensor); }   // iOS: serve gesto
-    } else {
-      enableSensor();                                                                  // Android: auto
-    }
-    // fallback/extra: trascinando il dito sulla sezione si inclina la vasca
-    section.addEventListener('touchmove', (e) => {
-      const t = e.touches[0]; if (!t) return;
-      setTarget(((t.clientX / innerWidth) - 0.5) * 0.95);
-    }, { passive: true });
-  } else {
-    if (prompt) prompt.innerHTML = "muovi il mouse.<br>versa l'acqua.";
-    section.addEventListener('pointermove', (e) => {
-      const r = section.getBoundingClientRect();
-      setTarget(((e.clientX - r.left) / r.width - 0.5) * 0.95);
-    });
-  }
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((es) => { visible = es[0].isIntersecting; }, { threshold: 0.04 }).observe(section);
-  }
-
-  const spill = () => {
-    const now = performance.now();
-    if (now - lastSpill < 2600) return;
-    lastSpill = now;
-    section.classList.remove('spilled'); void section.offsetWidth; section.classList.add('spilled');
-    const cx = innerWidth / 2;
-    const cy = Math.max(0, Math.min(innerHeight, section.getBoundingClientRect().top + h * 0.5));
-    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
-    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 18);
-    if (window.__eurekaWarp) window.__eurekaWarp(16);
-    if (navigator.vibrate) navigator.vibrate([12, 40, 12]);
-    slosh = 1;
-  };
-
-  // superficie: 3 seni non commensurati → moto organico, non meccanico.
-  // l'ampiezza delle onde cresce con lo slosh; la retta porta l'inclinazione.
-  const surfY = (x, baseY, amp) => {
-    const nx = x / w;
-    const lineY = baseY - Math.tan(tilt) * (x - w / 2);
-    const wave = amp * (
-      0.50 * Math.sin(nx * 6.3 + phase) +
-      0.30 * Math.sin(nx * 11.7 - phase * 1.27) +
-      0.20 * Math.sin(nx * 19.1 + phase * 0.6)
-    );
-    return lineY + wave;
-  };
-
-  const draw = () => {
-    ctx.clearRect(0, 0, w, h);
-    const baseY = h * 0.58;
-    const amp = 4 + slosh * 30;
-    const segs = 44;
-    const xs = [], ys = [];
-    for (let i = 0; i <= segs; i++) { const x = (w * i) / segs; xs.push(x); ys.push(surfY(x, baseY, amp)); }
-
-    // --- corpo: oro fuso opaco, chiaro vicino al pelo → ambra profonda sul fondo ---
-    ctx.beginPath();
-    ctx.moveTo(0, h);
-    for (let i = 0; i <= segs; i++) ctx.lineTo(xs[i], ys[i]);
-    ctx.lineTo(w, h);
-    ctx.closePath();
-    const top = baseY - amp - 8;
-    const g = ctx.createLinearGradient(0, top, 0, h);
-    g.addColorStop(0,    'rgba(255, 246, 205, 0.98)');
-    g.addColorStop(0.08, 'rgba(255, 224, 120, 0.98)');
-    g.addColorStop(0.40, 'rgba(248, 202, 84, 0.98)');
-    g.addColorStop(1,    'rgba(216, 160, 54, 0.98)');
-    ctx.fillStyle = g;
-    ctx.fill();
-    // sheen orizzontale: un lato più luminoso → superficie riflettente, non sabbia
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const sh = ctx.createLinearGradient(0, 0, w, 0);
-    sh.addColorStop(0, 'rgba(255, 240, 180, 0.10)');
-    sh.addColorStop(0.5, 'rgba(255, 240, 180, 0)');
-    sh.addColorStop(1, 'rgba(255, 230, 140, 0.12)');
-    ctx.fillStyle = sh;
-    ctx.fill();
-    ctx.restore();
-
-    // --- glow che "emette" appena sopra il pelo (additivo, morbido) ---
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.beginPath();
-    for (let i = 0; i <= segs; i++) (i ? ctx.lineTo(xs[i], ys[i]) : ctx.moveTo(xs[i], ys[i]));
-    ctx.lineTo(w, baseY - amp - 26); ctx.lineTo(0, baseY - amp - 26); ctx.closePath();
-    const gl = ctx.createLinearGradient(0, baseY - amp - 26, 0, baseY + amp);
-    gl.addColorStop(0, 'rgba(255, 224, 130, 0)');
-    gl.addColorStop(1, 'rgba(255, 232, 160, 0.28)');
-    ctx.fillStyle = gl;
-    ctx.fill();
-
-    // --- riflesso speculare che scorre con l'inclinazione ---
-    const sx = w * Math.max(0.08, Math.min(0.92, 0.5 + tilt * 0.9));
-    const si = Math.round((sx / w) * segs);
-    const sy = ys[Math.max(0, Math.min(segs, si))];
-    const spec = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.22);
-    spec.addColorStop(0, 'rgba(255, 250, 230, 0.55)');
-    spec.addColorStop(1, 'rgba(255, 250, 230, 0)');
-    ctx.fillStyle = spec;
-    ctx.fillRect(sx - w * 0.22, sy - 30, w * 0.44, 60);
-    ctx.restore();
-
-    // --- menisco: linea brillante sul pelo + ombra sottile sotto (profondità) ---
-    ctx.beginPath();
-    for (let i = 0; i <= segs; i++) (i ? ctx.lineTo(xs[i], ys[i]) : ctx.moveTo(xs[i], ys[i]));
-    ctx.strokeStyle = 'rgba(255, 248, 222, 0.95)';
-    ctx.lineWidth = 2.4;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-    ctx.beginPath();
-    for (let i = 0; i <= segs; i++) { const y = ys[i] + 3; (i ? ctx.lineTo(xs[i], y) : ctx.moveTo(xs[i], y)); }
-    ctx.strokeStyle = 'rgba(120, 78, 14, 0.35)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  };
-
-  let raf = 0, last = 0;
-  const frame = (now) => {
-    raf = requestAnimationFrame(frame);
-    if (!visible) { last = now; return; }
-    if (now - last < 1000 / 40) return;
-    const dt = Math.min((now - last) / 1000, 0.05); last = now;
-    tilt += (tiltTarget - tilt) * Math.min(1, dt * 6);
-    slosh *= 0.96; if (slosh < 0.002) slosh = 0;
-    phase += dt * 2.2;
-    if (Math.abs(tilt) > 0.36) spill();
-    draw();
-  };
-  raf = requestAnimationFrame(frame);
-})();
-</script>
 
 </body>
 </html>
