@@ -1647,6 +1647,9 @@ body.lens-on {
   user-select: none;
   -webkit-touch-callout: none;
 }
+/* dentro la lente gli aloni caldi diventerebbero macchie blu: spenti finché è aperta */
+body.lens-on #lamp,
+body.lens-on #touch-glow { opacity: 0 !important; }
 /* inchiostro invisibile: esiste solo dentro la lanterna (opacity pilotata in JS) */
 .ink {
   position: absolute;
@@ -4989,6 +4992,8 @@ void main() {
     window.__eurekaLensOn = true;                      // ferma i canvas di sfondo
     dispatchEvent(new Event('eureka-lens'));           // annulla hold-to-charge in corso
     document.body.classList.add('lens-on');
+    // il doppio click su desktop seleziona testo: pulisci la selezione
+    try { const s = getSelection(); if (s && !s.isCollapsed) s.removeAllRanges(); } catch (e) { /* no-op */ }
     document.addEventListener('touchmove', blockTouch, { passive: false });
     inkPos = inks.map((el) => {
       const r = el.getBoundingClientRect();
@@ -5022,11 +5027,14 @@ void main() {
 
   // ---- gesto: doppio tap, il secondo resta giù ----
   const TAP_MS = 280, GAP_MS = 400, NEAR = 60;
+  // niente lanterna sopra elementi che hanno gesti/click propri
+  const SKIP = 'a,button,input,textarea,select,nav,.bridge-rig,.bulb-rig,.cta-switch,.mobile-menu';
   let downT = 0, downX = 0, downY = 0;
   let lastTapT = -1e4, lastTapX = 0, lastTapY = 0;
 
   addEventListener('pointerdown', (e) => {
     if (lensOn) return;
+    if (e.target.closest && e.target.closest(SKIP)) { lastTapT = -1e4; return; }
     const now = performance.now();
     // secondo tocco vicino e veloce dopo un tap? apri la lanterna
     if (now - lastTapT < GAP_MS &&
