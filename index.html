@@ -1605,6 +1605,72 @@ nav { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
 }
 /* su touch resta attivo per l'onda d'urto al tap (la scia è gated in JS) */
 
+/* ===== LANTERNA DI ARCHIMEDE — doppio tap e tieni giù: il rovescio del cielo ===== */
+/* Cerchio bianco in mix-blend-mode:difference: dentro, la notte diventa pergamena
+   (|#0a1632−bianco|≈crema) e l'oro diventa inchiostro blu. La palette contiene
+   già il proprio negativo. Niente doppio DOM, niente backdrop-filter: un solo div. */
+html { touch-action: manipulation; }  /* disattiva il double-tap zoom (serve alla lanterna) */
+#lanterna {
+  position: fixed;
+  left: 0; top: 0;
+  width: min(64vmin, 320px);
+  height: min(64vmin, 320px);
+  border-radius: 50%;
+  /* core bianco pieno (inversione netta), bordo che sfuma a nero (= nessuna inversione) */
+  background: radial-gradient(circle, #fff 0%, #fff 86%, #000 100%);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 60;                 /* sopra contenuti e canvas, sotto la nav (z100) */
+  opacity: 0;
+  transform: translate(-9999px, -9999px);
+  will-change: transform, opacity;
+}
+#lanterna.on { opacity: 1; }
+#lanterna-ring {
+  position: fixed;
+  left: 0; top: 0;
+  width: min(64vmin, 320px);
+  height: min(64vmin, 320px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(245, 205, 71, 0.8);
+  box-shadow: 0 0 20px rgba(245, 205, 71, 0.4), inset 0 0 16px rgba(245, 205, 71, 0.18);
+  pointer-events: none;
+  z-index: 61;
+  opacity: 0;
+  transform: translate(-9999px, -9999px);
+  will-change: transform, opacity;
+  transition: opacity 0.25s ease;
+}
+#lanterna-ring.on { opacity: 1; }
+body.lens-on {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* inchiostro invisibile: esiste solo dentro la lanterna (opacity pilotata in JS) */
+.ink {
+  position: absolute;
+  font-style: italic;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+@media (max-width: 480px) { .ink { font-size: 0.72rem; } }
+
+/* ===== EASTER EGG — tieni premuto il "!" del logo ===== */
+nav .brand .bang {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  display: inline-block;       /* serve per il transform del glow */
+  transition: filter 0.2s ease, text-shadow 0.2s ease;
+}
+
 /* ===== MAGNETIC LETTERS ===== */
 .hero-wordmark h1 span.mag { will-change: transform; }
 
@@ -1749,6 +1815,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
+  <div class="ink" style="left:50%; bottom:11%; transform:translateX(-50%)" aria-hidden="true">l'hai trovata. adesso cercale tutte.</div>
   <canvas id="hero-shader" aria-hidden="true"></canvas>
   <div class="hero-inner">
     <div class="hero-wordmark">
@@ -1776,6 +1843,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ PROGETTI ============ -->
 <section class="progetti" id="progetti">
+  <div class="ink" style="right:6%; top:22px" aria-hidden="true">punto 07: ascoltare anche chi non ci vota.</div>
   <div class="container">
     <div class="head reveal">
       <div>
@@ -1840,6 +1908,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ EVENTI ============ -->
 <section class="eventi" id="eventi">
+  <div class="ink" style="left:6%; bottom:20px" aria-hidden="true">il miglior evento sarà quello che proponi tu.</div>
   <div class="container">
     <div class="head reveal">
       <div class="section-label">02 / eventi</div>
@@ -1907,6 +1976,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ CANDIDATI ============ -->
 <section class="candidati" id="candidati">
+  <div class="ink" style="right:6%; top:22px" aria-hidden="true">quattordici teste. una lampadina sola.</div>
   <canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
   <div class="container">
     <div class="head reveal">
@@ -2061,6 +2131,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ STORIA ============ -->
 <section class="storia" id="storia">
+  <div class="ink" style="left:6%; bottom:18px" aria-hidden="true">archimede scriveva sulla sabbia. noi sulle storie.</div>
   <div class="container">
     <div class="reveal">
       <div class="section-label">04 / storia</div>
@@ -2162,6 +2233,7 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
 
 <!-- ============ CTA ============ -->
 <section class="cta" id="contatti">
+  <div class="ink" style="left:50%; bottom:14px; transform:translateX(-50%)" aria-hidden="true">sei arrivato fin qui. ora accendila davvero: vota.</div>
   <div class="cta-content">
     <div class="super">● vota. condividi. accendi.</div>
     <div class="cta-switch-wrap" id="cta-switch-wrap">
@@ -2535,6 +2607,7 @@ if ('IntersectionObserver' in window) {
   function animate(now) {
     if (active) rafId = requestAnimationFrame(animate);
     else { rafId = null; return; }
+    if (window.__eurekaLensOn) return; // lanterna aperta: il tempo si ferma
     if (now - lastWarp < 33) return;   // ~30 fps: su mobile dimezza il costo
     lastWarp = now;
     update(); draw();
@@ -2822,6 +2895,7 @@ if ('IntersectionObserver' in window) {
   function frame(now){
     raf = requestAnimationFrame(frame);
     if (pausedByVisibility) return;
+    if (window.__eurekaLensOn) return;       // lanterna aperta: cielo fermo
     if (now - lastFrame < 50) return;        // ~20 fps
     const dt = Math.min((now - lastFrame) / 1000, 0.05);
     lastFrame = now;
@@ -3437,8 +3511,9 @@ void main() {
 
   let raf = 0, running = false;
   const loop = () => {
-    drawFrame((performance.now() - t0) / 1000);
     raf = requestAnimationFrame(loop);
+    if (window.__eurekaLensOn) return;       // lanterna aperta: vortici fermi
+    drawFrame((performance.now() - t0) / 1000);
   };
   const start = () => {
     if (running || RM) return;
@@ -4727,7 +4802,7 @@ void main() {
   };
   const stopRaf = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
   const start = (x, y, target) => {
-    if (active) return;
+    if (active || window.__eurekaLensOn) return;
     if (target && target.closest && target.closest(SKIP)) return;
     sec = target && target.closest ? target.closest('section') : null;
     if (!sec) return;
@@ -4756,6 +4831,7 @@ void main() {
   addEventListener('pointerup', cancel, { passive: true });
   addEventListener('pointercancel', cancel, { passive: true });
   addEventListener('scroll', cancel, { passive: true });
+  addEventListener('eureka-lens', cancel, { passive: true });  // lanterna aperta: niente carica
   document.addEventListener('animationend', (e) => {
     if (e.animationName === 'sectionCharge') e.target.classList.remove('section-charged');
   });
@@ -4855,6 +4931,219 @@ void main() {
   } else {
     cards.forEach((c, i) => light(i, false));
   }
+})();
+
+(() => {
+  // LANTERNA DI ARCHIMEDE — doppio tap, il secondo resta giù: sotto il dito si
+  // apre un cerchio in mix-blend-mode:difference. Dentro, la notte si inverte in
+  // pergamena calda e l'oro in inchiostro blu: il "lato giorno" del sito. Le
+  // scritte .ink (invisibili fuori) si accendono solo vicino alla lente.
+  // Mentre la lanterna è aperta i canvas di sfondo si fermano (il tempo si ferma)
+  // e lo scroll è bloccato. Rilasci il dito: la notte si richiude.
+  if (!CSS.supports('mix-blend-mode', 'difference')) return;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const lens = document.createElement('div');
+  lens.id = 'lanterna';
+  lens.setAttribute('aria-hidden', 'true');
+  const ring = document.createElement('div');
+  ring.id = 'lanterna-ring';
+  ring.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(lens);
+  document.body.appendChild(ring);
+
+  const inks = [...document.querySelectorAll('.ink')];
+  let inkPos = [];            // {el, cx, cy} in coordinate viewport, cache all'apertura
+
+  let lensOn = false;
+  let lx = 0, ly = 0, raf = 0;
+  let isTouch = false;
+
+  const size = () => Math.min(Math.min(innerWidth, innerHeight) * 0.64, 320);
+
+  const render = () => {
+    raf = 0;
+    const d = size();
+    // il centro della lente sta sopra il dito (come la lente d'ingrandimento iOS)
+    const cy = ly - (isTouch ? d * 0.42 : 0);
+    const t = `translate(${(lx - d / 2).toFixed(1)}px, ${(cy - d / 2).toFixed(1)}px)`;
+    lens.style.transform = t;
+    ring.style.transform = t;
+    // inchiostro: opacità in funzione della distanza dal centro della lente
+    const r = d / 2;
+    for (const p of inkPos) {
+      const dist = Math.hypot(p.cx - lx, p.cy - cy);
+      const op = Math.max(0, Math.min(1, 1.15 - dist / r));
+      p.el.style.opacity = op < 0.03 ? '0' : op.toFixed(2);
+    }
+  };
+  const schedule = () => { if (!raf) raf = requestAnimationFrame(render); };
+
+  const blockTouch = (e) => { e.preventDefault(); };
+
+  const open = (x, y, touch) => {
+    if (lensOn) return;
+    lensOn = true;
+    isTouch = touch;
+    lx = x; ly = y;
+    window.__eurekaLensOn = true;                      // ferma i canvas di sfondo
+    dispatchEvent(new Event('eureka-lens'));           // annulla hold-to-charge in corso
+    document.body.classList.add('lens-on');
+    document.addEventListener('touchmove', blockTouch, { passive: false });
+    inkPos = inks.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { el, cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+    });
+    render();
+    lens.classList.add('on');
+    ring.classList.add('on');
+    if (!RM && typeof lens.animate === 'function') {
+      lens.animate(
+        [{ opacity: 0, transform: lens.style.transform + ' scale(0.55)' },
+         { opacity: 1, transform: lens.style.transform + ' scale(1)' }],
+        { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
+      );
+    }
+    if (navigator.vibrate) navigator.vibrate(10);
+    try { localStorage.setItem('eureka-lens-hint', '1'); } catch (e) { /* no storage */ }
+  };
+
+  const close = () => {
+    if (!lensOn) return;
+    lensOn = false;
+    window.__eurekaLensOn = false;
+    document.body.classList.remove('lens-on');
+    document.removeEventListener('touchmove', blockTouch);
+    lens.classList.remove('on');
+    ring.classList.remove('on');
+    inks.forEach((el) => { el.style.opacity = '0'; });
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+
+  // ---- gesto: doppio tap, il secondo resta giù ----
+  const TAP_MS = 280, GAP_MS = 400, NEAR = 60;
+  let downT = 0, downX = 0, downY = 0;
+  let lastTapT = -1e4, lastTapX = 0, lastTapY = 0;
+
+  addEventListener('pointerdown', (e) => {
+    if (lensOn) return;
+    const now = performance.now();
+    // secondo tocco vicino e veloce dopo un tap? apri la lanterna
+    if (now - lastTapT < GAP_MS &&
+        Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < NEAR) {
+      lastTapT = -1e4;
+      open(e.clientX, e.clientY, e.pointerType !== 'mouse');
+      return;
+    }
+    downT = now; downX = e.clientX; downY = e.clientY;
+  }, { passive: true });
+
+  addEventListener('pointermove', (e) => {
+    if (!lensOn) return;
+    lx = e.clientX; ly = e.clientY;
+    schedule();
+  }, { passive: true });
+
+  addEventListener('pointerup', (e) => {
+    if (lensOn) { close(); return; }
+    // tap valido: breve e fermo → arma il doppio tap
+    const now = performance.now();
+    if (now - downT < TAP_MS &&
+        Math.hypot(e.clientX - downX, e.clientY - downY) < 12) {
+      lastTapT = now; lastTapX = e.clientX; lastTapY = e.clientY;
+    }
+  }, { passive: true });
+
+  addEventListener('pointercancel', close, { passive: true });
+
+  // hint una tantum: nessuno scopre un gesto nascosto da solo
+  const HOVER = matchMedia('(hover: hover)').matches;
+  let hinted = false;
+  try { hinted = localStorage.getItem('eureka-lens-hint') === '1'; } catch (e) { /* no storage */ }
+  if (!hinted) {
+    setTimeout(() => {
+      if (lensOn) return;
+      let seen = false;
+      try { seen = localStorage.getItem('eureka-lens-hint') === '1'; } catch (e) { /* no storage */ }
+      if (seen) return;
+      const h = document.createElement('div');
+      h.textContent = HOVER
+        ? '◐ doppio click e tieni premuto: la lanterna'
+        : '◐ doppio tap e tieni giù: la lanterna';
+      h.style.cssText = 'position:fixed;left:50%;bottom:12vh;transform:translateX(-50%);' +
+        'z-index:96;font-size:0.74rem;font-weight:500;letter-spacing:0.05em;white-space:nowrap;' +
+        'color:var(--gold);background:rgba(10,22,50,0.82);border:1px solid var(--line);' +
+        'padding:0.55em 1.15em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
+      document.body.appendChild(h);
+      requestAnimationFrame(() => { h.style.opacity = '1'; });
+      setTimeout(() => { h.style.opacity = '0'; setTimeout(() => h.remove(), 700); }, 4200);
+      try { localStorage.setItem('eureka-lens-hint', '1'); } catch (e) { /* no storage */ }
+    }, 14000);
+  }
+})();
+
+(() => {
+  // EASTER EGG — tieni premuto il "!" del logo (~900ms): il punto si carica di
+  // luce e al pieno l'intera pagina divampa (flash + shockwave + burst + warp).
+  const bang = document.querySelector('nav .brand .bang');
+  if (!bang) return;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (RM) return;
+
+  const DUR = 900, COOLDOWN = 3000;
+  let raf = 0, t0 = 0, holding = false, lastFire = 0;
+
+  const reset = () => {
+    holding = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    bang.style.filter = '';
+    bang.style.textShadow = '';
+  };
+
+  const fire = () => {
+    reset();
+    lastFire = performance.now();
+    const f = document.createElement('div');
+    f.setAttribute('aria-hidden', 'true');
+    f.style.cssText = 'position:fixed;inset:0;z-index:120;pointer-events:none;' +
+      'background:radial-gradient(circle at 50% 30%, rgba(255,236,170,0.85) 0%, ' +
+      'rgba(245,205,71,0.25) 45%, rgba(10,22,50,0) 75%);opacity:0;';
+    document.body.appendChild(f);
+    if (typeof f.animate === 'function') {
+      f.animate(
+        [{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 0 }],
+        { duration: 700, easing: 'ease-out' }
+      ).onfinish = () => f.remove();
+    } else { setTimeout(() => f.remove(), 700); }
+    const r = bang.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
+    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 24);
+    if (window.__eurekaWarp) window.__eurekaWarp(30);
+    if (navigator.vibrate) navigator.vibrate([14, 50, 14]);
+  };
+
+  const tick = (now) => {
+    if (!holding) return;
+    const p = Math.min(1, (now - t0) / DUR);
+    bang.style.filter = `brightness(${(1 + p * 1.6).toFixed(2)})`;
+    bang.style.textShadow = `0 0 ${(6 + p * 22).toFixed(0)}px rgba(255, 224, 122, ${(0.4 + p * 0.6).toFixed(2)})`;
+    if (p >= 1) { fire(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+
+  bang.addEventListener('pointerdown', (e) => {
+    if (performance.now() - lastFire < COOLDOWN) return;
+    e.preventDefault();
+    holding = true;
+    t0 = performance.now();
+    raf = requestAnimationFrame(tick);
+  });
+  bang.addEventListener('pointerup', reset);
+  bang.addEventListener('pointerleave', reset);
+  bang.addEventListener('pointercancel', reset);
+  // il "!" da solo non deve navigare (il resto del brand sì)
+  bang.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
 })();
 </script>
 
