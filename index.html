@@ -2423,7 +2423,10 @@ if ('IntersectionObserver' in window) {
   let lastScrollY = window.pageYOffset || 0;
   window.addEventListener('scroll', () => {
     const y = window.pageYOffset || 0;
-    warpBoost = Math.min(22, warpBoost + Math.abs(y - lastScrollY) * 0.45);
+    // l'iperspazio è il gesto-firma dell'hero: oltre la prima schermata si
+    // attenua (mai a zero), per non seppellire il testo delle sezioni a ogni scroll
+    const depthFactor = Math.max(0.22, 1 - y / (innerHeight * 1.6));
+    warpBoost = Math.min(22, warpBoost + Math.abs(y - lastScrollY) * 0.45 * depthFactor);
     lastScrollY = y;
   }, { passive: true });
 
@@ -2969,48 +2972,6 @@ if ('IntersectionObserver' in window) {
     }
   }
   requestAnimationFrame(orchestrate);
-
-  // ---------- scramble/decode sui titoli ----------
-  if (!RM && 'IntersectionObserver' in window) {
-    const CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!?*#+';
-    const rc = () => CHARS[Math.random() * CHARS.length | 0];
-
-    function scramble(el) {
-      const nodes = [];
-      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-      let n;
-      while ((n = walker.nextNode())) {
-        if (n.textContent.trim()) nodes.push({ node: n, target: n.textContent });
-      }
-      const D = 850;
-      const start = performance.now();
-      function tick(now) {
-        const k = Math.min(1, (now - start) / D);
-        nodes.forEach(({ node, target }) => {
-          const solved = Math.floor(target.length * k);
-          let out = target.slice(0, solved);
-          for (let i = solved; i < target.length; i++) {
-            const ch = target[i];
-            out += /[a-z0-9àèéìòù]/i.test(ch) ? rc() : ch;
-          }
-          node.textContent = out;
-        });
-        if (k < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    const scrambleIO = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          scramble(e.target);
-          scrambleIO.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.4 });
-
-    document.querySelectorAll('.h2, .organo-name').forEach(el => scrambleIO.observe(el));
-  }
 
   // ---------- count-up statistiche ----------
   if ('IntersectionObserver' in window) {
@@ -4251,49 +4212,6 @@ void main() {
       if (revealed) revealT = -1e4;    // gia rivelata: ridisegna completa
       if (RM) draw(0, 100);
     }, 180);
-  }, { passive: true });
-})();
-
-(() => {
-  // flick-to-wish — un colpetto secco del polso lancia UNA stella cadente dorata
-  // nella direzione dello scatto. Diverso dallo shake (energia accumulata): qui
-  // conta il singolo spike direzionale. Solo touch/Android (iOS richiede permission → skip).
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const HOVER = matchMedia('(hover: hover)').matches;
-  if (RM || HOVER) return;
-  if (!('DeviceMotionEvent' in window) ||
-      typeof DeviceMotionEvent.requestPermission === 'function') return;
-
-  let lastFlick = 0, armed = true, hinted = false;
-  const THRESH = 13;          // m/s² sull'asse x: scatto netto, non micromovimenti
-
-  const hint = () => {
-    if (hinted) return;
-    hinted = true;
-    const h = document.createElement('div');
-    h.textContent = '✦ esprimi un desiderio';
-    h.style.cssText = 'position:fixed;left:50%;bottom:14vh;transform:translateX(-50%);' +
-      'z-index:96;font-size:0.74rem;font-weight:500;letter-spacing:0.05em;white-space:nowrap;' +
-      'color:var(--gold);background:rgba(10,22,50,0.78);border:1px solid var(--line);' +
-      'padding:0.55em 1.1em;border-radius:999px;pointer-events:none;opacity:0;transition:opacity 0.6s;';
-    document.body.appendChild(h);
-    requestAnimationFrame(() => { h.style.opacity = '1'; });
-    setTimeout(() => { h.style.opacity = '0'; setTimeout(() => h.remove(), 700); }, 2600);
-  };
-
-  addEventListener('devicemotion', (e) => {
-    const a = e.acceleration && e.acceleration.x !== null ? e.acceleration : null;
-    if (!a) return;                                  // serve l'accelerazione senza gravità
-    const ax = a.x || 0;
-    const now = performance.now();
-    if (Math.abs(ax) < THRESH * 0.45) armed = true;  // ri-arma quando il polso si ferma
-    if (armed && Math.abs(ax) > THRESH && now - lastFlick > 650) {
-      armed = false;
-      lastFlick = now;
-      if (window.__eurekaWish) window.__eurekaWish(ax < 0 ? -1 : 1);  // dir = verso dello scatto
-      if (navigator.vibrate) navigator.vibrate(12);
-      hint();
-    }
   }, { passive: true });
 })();
 
