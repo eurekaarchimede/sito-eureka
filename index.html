@@ -1300,70 +1300,44 @@ a.proj-card {
   font-size: 1.1em;
 }
 
-/* ===== ACCENDI LA LISTA — interruttore hold-to-charge nella CTA ===== */
+/* ===== IL FILAMENTO — scalda il filo col dito, la lampadina divampa ===== */
 /* progressive enhancement: senza JS la CTA è già accesa; il JS la "arma" */
-.cta-switch-wrap {
+.filament-wrap {
   display: none;
   position: relative;
+  width: min(360px, 82vw);
   margin: 0 auto 1.9rem;
-}
-html.js .cta.armed .cta-switch-wrap { display: inline-block; }
-.cta-plasma {
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 230px; height: 150px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 0;
-}
-.cta-switch {
-  display: none;
-  position: relative;
-  margin: 0;
-  padding: 0.9rem 1.8rem;
-  border: 1px solid var(--gold);
-  border-radius: 999px;
-  background: rgba(10, 22, 50, 0.5);
-  color: var(--cream);
-  font: inherit;
-  font-size: clamp(0.85rem, 2.4vw, 1rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  overflow: hidden;
-  isolation: isolate;
+  touch-action: none;              /* scaldare il filo non deve scrollare */
   -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none; user-select: none;
-  touch-action: none;              /* l'hold non deve far scrollare */
-  align-items: center;
-  gap: 0.65rem;
+  outline: none;
 }
-html.js .cta.armed .cta-switch { display: inline-flex; }
+html.js .cta.armed .filament-wrap { display: block; }
+#filament-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+.filament-hint {
+  margin-top: 0.7rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  transition: opacity 0.5s ease;
+}
+.cta.lit .filament-hint { opacity: 0; }
+.filament-wrap:focus-visible { box-shadow: 0 0 0 2px var(--gold); border-radius: 12px; }
 html.js .cta.armed h2 {
-  opacity: 0.26;
+  opacity: 0.22;
   text-shadow: none;
-  transition: opacity 0.5s ease, text-shadow 0.6s ease;
+  transition: opacity 0.6s ease, text-shadow 0.7s ease;
 }
 html.js .cta.armed a.ig-big {
   opacity: 0.3; pointer-events: none;
   transition: opacity 0.5s ease;
 }
-.cta-switch::before {                /* pallino "interruttore" */
-  content: '';
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--gold-dim);
-  flex: 0 0 auto;
-  transition: background 0.3s, box-shadow 0.3s;
-}
-.cta-switch.charging::before { background: var(--gold); box-shadow: 0 0 12px rgba(245, 205, 71, 0.75); }
-.cta-switch-fill {
-  position: absolute; inset: 0;
-  transform-origin: left center;
-  transform: scaleX(var(--p, 0));
-  background: linear-gradient(90deg, rgba(245, 205, 71, 0.22), rgba(255, 224, 122, 0.55));
-  z-index: -1;
-}
-.cta-switch-label { position: relative; }
 /* stato acceso: l'h2 fa l'ignition da insegna, l'alone divampa */
 .cta.lit h2 { animation: bulbIgnite 0.95s ease-out; }
 .cta.lit::before { animation: ctaBreath 5s ease-in-out infinite, ctaFlare 0.95s ease-out; }
@@ -1371,32 +1345,7 @@ html.js .cta.armed a.ig-big {
   0%   { opacity: 1;   transform: translate(-50%, -50%) scale(1.55); }
   100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
 }
-@media (prefers-reduced-motion: reduce) { .cta-switch { display: none !important; } }
-
-/* ===== HOLD-TO-CHARGE — tieni premuto su una sezione per accenderla ===== */
-#charge-ring {
-  position: fixed; left: 0; top: 0;
-  width: 92px; height: 92px;
-  margin: -46px 0 0 -46px;
-  z-index: 47;
-  pointer-events: none;
-  border-radius: 50%;
-  opacity: 0;
-  background: conic-gradient(var(--gold) calc(var(--p, 0) * 360deg), rgba(245, 205, 71, 0.12) 0deg);
-  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%);
-  mask: radial-gradient(closest-side, transparent 58%, #000 60%);
-  transform: translate3d(-200px, -200px, 0);
-  transition: opacity 0.2s ease;
-  will-change: transform, opacity;
-}
-#charge-ring.on { opacity: 1; }
-@keyframes sectionCharge {
-  0%   { box-shadow: inset 0 0 0 0 rgba(245, 205, 71, 0); }
-  18%  { box-shadow: inset 0 0 130px 0 rgba(245, 205, 71, 0.24); }
-  100% { box-shadow: inset 0 0 0 0 rgba(245, 205, 71, 0); }
-}
-section.section-charged { animation: sectionCharge 1.15s ease-out; }
-@media (prefers-reduced-motion: reduce) { #charge-ring { display: none; } }
+@media (prefers-reduced-motion: reduce) { .filament-wrap { display: none !important; } }
 
 /* ===== CIRCUITO DEL PROGRAMMA — i 6 punti come lampadine su un circuito ===== */
 .circuit {
@@ -1471,83 +1420,6 @@ section.section-charged { animation: sectionCharge 1.15s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .circuit-wire::after, .circuit-node, .circuit-master { transition: none; }
   .circuit.complete .circuit-master { animation: none; }
-}
-
-/* ===== CIRCUITO A PONTE — collega i due contatti col dito ===== */
-.bridge {
-  position: relative;
-  padding: 5rem 1.5rem 5.5rem;
-  text-align: center;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.bridge-prompt {
-  font-weight: 700;
-  font-size: clamp(1.6rem, 4.4vw, 2.6rem);
-  line-height: 1.06;
-  letter-spacing: -0.03em;
-  color: var(--cream);
-  margin: 0.7rem auto 2.6rem;
-  max-width: 26rem;
-}
-.bridge-rig {
-  width: min(100%, 420px);
-  height: auto;
-  margin: 0 auto;
-  overflow: visible;
-  touch-action: pan-y;
-}
-.bridge-node {
-  fill: var(--bg-soft);
-  stroke: var(--gold-dim);
-  stroke-width: 2.5;
-  cursor: pointer;
-  touch-action: none;
-  transition: stroke 0.25s ease, filter 0.25s ease;
-  animation: bridgePulse 2.4s ease-in-out infinite;
-}
-.bridge-node-b { animation-delay: 1.2s; }
-.bridge-node.near {
-  stroke: var(--gold);
-  filter: drop-shadow(0 0 8px rgba(245, 205, 71, 0.85));
-  animation: none;
-}
-@keyframes bridgePulse {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(245, 205, 71, 0)); }
-  50%      { filter: drop-shadow(0 0 6px rgba(245, 205, 71, 0.5)); }
-}
-.bridge-wire {
-  stroke: var(--gold-dim);
-  stroke-width: 3;
-  stroke-linecap: round;
-  fill: none;
-}
-.bridge-rig.connected .bridge-wire { stroke: var(--gold); filter: drop-shadow(0 0 6px rgba(245, 205, 71, 0.7)); }
-.bridge-bulb-glass {
-  fill: var(--gold-dim);
-  opacity: 0.35;
-  transition: fill 0.3s ease, opacity 0.3s ease;
-}
-.bridge-bulb-glow {
-  fill: rgba(245, 205, 71, 0);
-  transition: fill 0.4s ease;
-}
-.bridge-rig.connected .bridge-bulb-glass { fill: var(--gold-bright); opacity: 1; }
-.bridge-rig.connected .bridge-bulb-glow { fill: rgba(245, 205, 71, 0.30); }
-.bridge-rig.connected .bridge-bulb { animation: bulbIgnite 0.85s ease-out; }
-.bridge-hint {
-  margin-top: 1.3rem;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--gold-dim);
-  text-transform: uppercase;
-  transition: opacity 0.4s ease;
-}
-.bridge-rig.connected ~ .bridge-hint { opacity: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .bridge-node { animation: none; }
-  .bridge-rig.connected .bridge-bulb { animation: none; }
 }
 
 footer {
@@ -2179,21 +2051,6 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
   </div>
 </section>
 
-<!-- ============ CIRCUITO A PONTE (collega i contatti) ============ -->
-<section class="bridge">
-  <div class="section-label reveal">chiudi il circuito</div>
-  <h2 class="bridge-prompt reveal">collega i due contatti.<br>un'idea diventa luce.</h2>
-  <svg class="bridge-rig" id="bridge-rig" viewBox="0 0 320 140" aria-hidden="true">
-    <line class="bridge-wire" id="bridge-wire" x1="46" y1="100" x2="46" y2="100"/>
-    <g class="bridge-bulb" id="bridge-bulb" transform="translate(160,38)">
-      <circle class="bridge-bulb-glow" r="30"/>
-      <circle class="bridge-bulb-glass" r="11"/>
-    </g>
-    <circle class="bridge-node bridge-node-a" id="bridge-node-a" cx="46" cy="100" r="14"/>
-    <circle class="bridge-node bridge-node-b" id="bridge-node-b" cx="274" cy="100" r="14"/>
-  </svg>
-  <div class="bridge-hint">tieni e trascina da un contatto all'altro</div>
-</section>
 
 <!-- ============ ILLUMINATED (transizione) ============ -->
 <section class="illuminated reveal" aria-label="momento illuminato">
@@ -2239,12 +2096,9 @@ html.js .reveal.in { opacity: 1; transform: translateY(0); filter: none; }
   <div class="ink" style="left:50%; bottom:14px; transform:translateX(-50%)" aria-hidden="true">sei arrivato fin qui. ora accendila davvero: vota.</div>
   <div class="cta-content">
     <div class="super">● vota. condividi. accendi.</div>
-    <div class="cta-switch-wrap" id="cta-switch-wrap">
-      <canvas class="cta-plasma" id="cta-plasma" aria-hidden="true"></canvas>
-      <button class="cta-switch" id="cta-switch" type="button" aria-label="tieni premuto per accendere la lista">
-        <span class="cta-switch-fill" aria-hidden="true"></span>
-        <span class="cta-switch-label">tieni premuto per accendere</span>
-      </button>
+    <div class="filament-wrap" id="filament-wrap" role="button" tabindex="0" aria-label="scalda il filamento per accendere la lista">
+      <canvas id="filament-canvas" aria-hidden="true"></canvas>
+      <div class="filament-hint">passa il dito sul filamento</div>
     </div>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" data-hover>
@@ -4401,101 +4255,6 @@ void main() {
 })();
 
 (() => {
-  // CIRCUITO A PONTE — trascina il dito da un contatto all'altro per chiudere il
-  // circuito: la lampadina si accende. Esito sempre garantito e binario (snap
-  // generoso al rilascio se sei vicino al secondo contatto, altrimenti il filo
-  // si ritira elastico) — mai una simulazione fisica ambigua.
-  const svg = document.getElementById('bridge-rig');
-  if (!svg) return;
-  const wire = document.getElementById('bridge-wire');
-  const nodeA = document.getElementById('bridge-node-a');
-  const nodeB = document.getElementById('bridge-node-b');
-  if (!wire || !nodeA || !nodeB) return;
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const A = { x: 46, y: 100 };
-  const B = { x: 274, y: 100 };
-  const THRESH = 46;   // unità SVG: soglia generosa, l'esito deve sembrare "magnetico"
-
-  const toSvgPoint = (clientX, clientY) => {
-    const pt = svg.createSVGPoint();
-    pt.x = clientX; pt.y = clientY;
-    const ctm = svg.getScreenCTM();
-    if (!ctm) return { x: 0, y: 0 };
-    const p = pt.matrixTransform(ctm.inverse());
-    return { x: p.x, y: p.y };
-  };
-  const toScreenPoint = (x, y) => {
-    const pt = svg.createSVGPoint();
-    pt.x = x; pt.y = y;
-    const ctm = svg.getScreenCTM();
-    if (!ctm) return { x: innerWidth / 2, y: innerHeight / 2 };
-    const p = pt.matrixTransform(ctm);
-    return { x: p.x, y: p.y };
-  };
-
-  const setWire = (x, y) => { wire.setAttribute('x2', x); wire.setAttribute('y2', y); };
-
-  let dragging = false, raf = 0;
-
-  const retract = () => {
-    if (raf) cancelAnimationFrame(raf);
-    if (RM) { setWire(A.x, A.y); return; }
-    const fromX = parseFloat(wire.getAttribute('x2'));
-    const fromY = parseFloat(wire.getAttribute('y2'));
-    const t0 = performance.now();
-    const step = (now) => {
-      const k = Math.min(1, (now - t0) / 220);
-      const ease = 1 - Math.pow(1 - k, 3);
-      setWire(fromX + (A.x - fromX) * ease, fromY + (A.y - fromY) * ease);
-      if (k < 1) raf = requestAnimationFrame(step); else raf = 0;
-    };
-    raf = requestAnimationFrame(step);
-  };
-
-  const connect = () => {
-    setWire(B.x, B.y);
-    svg.classList.add('connected');
-    const s = toScreenPoint(160, 38);
-    if (window.__eurekaShockwave) window.__eurekaShockwave(s.x, s.y);
-    if (window.__eurekaBurst) window.__eurekaBurst(s.x, s.y, 20);
-    if (navigator.vibrate) navigator.vibrate([12, 40, 14]);
-  };
-
-  const onMove = (e) => {
-    if (!dragging) return;
-    e.preventDefault();
-    const p = toSvgPoint(e.clientX, e.clientY);
-    setWire(p.x, p.y);
-    nodeB.classList.toggle('near', Math.hypot(p.x - B.x, p.y - B.y) < THRESH);
-  };
-  const onUp = (e) => {
-    if (!dragging) return;
-    dragging = false;
-    const p = toSvgPoint(e.clientX, e.clientY);
-    nodeB.classList.remove('near');
-    if (Math.hypot(p.x - B.x, p.y - B.y) < THRESH) connect(); else retract();
-  };
-
-  nodeA.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    svg.classList.remove('connected');   // ritocca per rigiocare
-    dragging = true;
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    try { nodeA.setPointerCapture(e.pointerId); } catch (err) { /* no-op */ }
-    const p = toSvgPoint(e.clientX, e.clientY);
-    setWire(p.x, p.y);
-  });
-  nodeA.addEventListener('pointermove', onMove);
-  nodeA.addEventListener('pointerup', onUp);
-  nodeA.addEventListener('pointercancel', () => {
-    dragging = false;
-    nodeB.classList.remove('near');
-    retract();
-  });
-})();
-
-(() => {
   // flick-to-wish — un colpetto secco del polso lancia UNA stella cadente dorata
   // nella direzione dello scatto. Diverso dallo shake (energia accumulata): qui
   // conta il singolo spike direzionale. Solo touch/Android (iOS richiede permission → skip).
@@ -4588,256 +4347,222 @@ void main() {
   }, { passive: true });
 })();
 
+
 (() => {
-  // ACCENDI LA LISTA — nella CTA tieni premuto l'interruttore: una barra carica,
-  // al pieno la lampadina/lista "si accende" (ignition h2 + warp + onda + scintille).
-  // Progressive: senza JS / con reduced-motion la CTA è già accesa e leggibile.
+  // IL FILAMENTO — scalda il filo di tungsteno col dito. Curva di colore blackbody
+  // reale (freddo grigio → rosso cupo → arancio → bianco incandescente), il calore
+  // si diffonde lungo il filo e sbava luce (bloom additivo). Scaldato tutto il
+  // filamento → la lampadina divampa e la lista si accende. Progressive: senza JS
+  // o con reduced-motion la CTA è già accesa e leggibile.
   const cta = document.querySelector('.cta');
-  const sw = document.getElementById('cta-switch');
-  if (!cta || !sw) return;
+  const wrap = document.getElementById('filament-wrap');
+  const canvas = document.getElementById('filament-canvas');
+  if (!cta || !wrap || !canvas) return;
 
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const KEY = 'eureka-cta-lit';
   let alreadyLit = false;
   try { alreadyLit = sessionStorage.getItem(KEY) === '1'; } catch (e) { /* no storage */ }
 
-  const light = (firstTime) => {
+  const igniteState = (firstTime) => {
     cta.classList.remove('armed');
     cta.classList.add('lit');
     try { sessionStorage.setItem(KEY, '1'); } catch (e) { /* no storage */ }
     if (firstTime && !RM) {
       const r = cta.getBoundingClientRect();
       const cx = innerWidth / 2;
-      const cy = Math.max(0, Math.min(innerHeight, r.top + r.height * 0.38));
+      const cy = Math.max(0, Math.min(innerHeight, r.top + r.height * 0.4));
       if (window.__eurekaWarp) window.__eurekaWarp(30);
       if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
-      if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 22);
+      if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 24);
       if (navigator.vibrate) navigator.vibrate([14, 50, 14]);
     }
   };
 
-  // con reduced-motion o già accesa → niente interruttore (CTA resta accesa)
+  // con reduced-motion o già accesa → niente filamento (la CTA resta accesa)
   if (RM || alreadyLit) { if (alreadyLit) cta.classList.add('lit'); return; }
 
   cta.classList.add('armed');
 
-  const DUR = 900;
-  let raf = 0, t0 = 0, holding = false;
-  const setP = (p) => sw.style.setProperty('--p', p.toFixed(3));
-
-  const tick = (now) => {
-    if (!holding) return;
-    const p = Math.min(1, (now - t0) / DUR);
-    setP(p);
-    if (p >= 1) { stop(); light(true); return; }
-    raf = requestAnimationFrame(tick);
-  };
-  const stop = () => {
-    holding = false;
-    sw.classList.remove('charging');
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
-  };
-  const startHold = () => {
-    if (holding || cta.classList.contains('lit')) return;
-    holding = true;
-    sw.classList.add('charging');
-    t0 = performance.now();
-    raf = requestAnimationFrame(tick);
-    if (navigator.vibrate) navigator.vibrate(8);
-  };
-  const cancelHold = () => { if (!holding) return; stop(); setP(0); };
-
-  sw.addEventListener('pointerdown', (e) => { e.preventDefault(); startHold(); });
-  sw.addEventListener('pointerup', cancelHold);
-  sw.addEventListener('pointerleave', cancelHold);
-  sw.addEventListener('pointercancel', cancelHold);
-  // accessibilità: con tastiera l'hold è scomodo → Enter/Spazio accende diretto
-  sw.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); light(true); }
-  });
-})();
-
-(() => {
-  // PLASMA SULL'INTERRUTTORE — archi elettrici dorati frastagliati (midpoint
-  // displacement, non onde sinusoidali) crepitano spontaneamente vicino
-  // all'interruttore "accendi la lista": si vede SUBITO da fermo, si
-  // intensificano durante la carica, un'unica scarica grande al momento di
-  // accensione. Estetica "nervosa/tagliente", in contrasto col resto morbido.
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (RM) return;
-  const cta = document.querySelector('.cta');
-  const sw = document.getElementById('cta-switch');
-  const canvas = document.getElementById('cta-plasma');
-  if (!cta || !sw || !canvas) return;
-  if (cta.classList.contains('lit')) return;   // già accesa: niente da mostrare
-
   const ctx = canvas.getContext('2d');
-  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  let w = 0, h = 0;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0, pts = [];
 
-  const resize = () => {
-    const r = canvas.getBoundingClientRect();
-    w = r.width; h = r.height;
-    if (!w || !h) return;
-    canvas.width = Math.max(1, Math.floor(w * DPR));
-    canvas.height = Math.max(1, Math.floor(h * DPR));
+  const build = () => {
+    W = wrap.clientWidth || 320;
+    H = Math.round(W * 0.42);
+    canvas.style.height = H + 'px';
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  };
-  resize();
-  window.addEventListener('resize', resize, { passive: true });
-
-  const rand = (a, b) => a + Math.random() * (b - a);
-
-  // midpoint displacement: fulmine frastagliato tra due punti, ricorsivo con decadimento
-  function bolt(x0, y0, x1, y1, depth, jag) {
-    if (depth <= 0) return [[x0, y0], [x1, y1]];
-    const mx = (x0 + x1) / 2 + rand(-jag, jag);
-    const my = (y0 + y1) / 2 + rand(-jag, jag);
-    return [
-      ...bolt(x0, y0, mx, my, depth - 1, jag * 0.55).slice(0, -1),
-      ...bolt(mx, my, x1, y1, depth - 1, jag * 0.55),
-    ];
-  }
-
-  function drawBolt(pts, alpha) {
-    ctx.beginPath();
-    pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = 'rgba(245,205,71,0.8)';
-    ctx.strokeStyle = `rgba(245,205,71,${(0.35 * alpha).toFixed(3)})`;
-    ctx.lineWidth = 4;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = `rgba(255,248,222,${alpha.toFixed(3)})`;
-    ctx.lineWidth = 1.3;
-    ctx.stroke();
-  }
-
-  let arcs = [];
-  const spawnArc = (big) => {
-    if (!w || !h) return;
-    const cx = w / 2, cy = h / 2;
-    const x0 = cx + rand(-w * 0.42, -w * 0.18), y0 = cy + rand(-h * 0.3, h * 0.3);
-    const x1 = cx + rand(w * 0.18, w * 0.42), y1 = cy + rand(-h * 0.3, h * 0.3);
-    arcs.push({ pts: bolt(x0, y0, x1, y1, big ? 4 : 3, big ? 14 : 9), life: 0, ttl: rand(0.12, 0.22) });
+    // filamento a spirale: zigzag verticale fitto tra i due montanti, ampiezza
+    // che si smorza agli estremi per innestarsi sui piedini
+    const x0 = W * 0.24, x1 = W * 0.76, midY = H * 0.52;
+    const amp = H * 0.16, loops = 8, N = 72;
+    const prev = pts.map((p) => p.heat);
+    pts = [];
+    for (let i = 0; i < N; i++) {
+      const u = i / (N - 1);
+      const x = x0 + (x1 - x0) * u;
+      const taper = Math.sin(u * Math.PI);
+      const y = midY - Math.sin(u * loops * Math.PI * 2) * amp * (0.4 + 0.6 * taper);
+      pts.push({ x, y, heat: prev[i] || 0 });
+    }
   };
 
-  let firedFinal = false;
-  const bigDischarge = () => {
-    firedFinal = true;
-    for (let i = 0; i < 5; i++) spawnArc(true);
-    setTimeout(stop, 480);
-  };
-
-  let nextIdleAt = rand(2.5, 4.5);
-  let visible = false, raf = 0, last = 0;
-  const frame = (now) => {
-    raf = requestAnimationFrame(frame);
-    if (!visible) { last = now; return; }
-    if (now - last < 1000 / 30) return;
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    const t = now * 0.001;
-
-    if (!firedFinal) {
-      if (cta.classList.contains('lit')) {
-        bigDischarge();
-      } else if (sw.classList.contains('charging')) {
-        if (Math.random() < dt * 7) spawnArc(false);   // crepitio intenso durante la carica
-      } else if (t > nextIdleAt) {
-        spawnArc(false);
-        nextIdleAt = t + rand(3, 5.5);                 // scariche ambient spontanee, si vede da fermo
+  // curva blackbody del tungsteno (r,g,b per livello di calore 0→1)
+  const STOPS = [
+    [0.00, 96, 100, 112], [0.12, 122, 60, 40], [0.28, 192, 56, 20],
+    [0.45, 240, 110, 26], [0.62, 255, 166, 62], [0.80, 255, 206, 122], [1.00, 255, 244, 214],
+  ];
+  const heatColor = (h) => {
+    h = Math.max(0, Math.min(1, h));
+    for (let i = 1; i < STOPS.length; i++) {
+      if (h <= STOPS[i][0]) {
+        const a = STOPS[i - 1], b = STOPS[i];
+        const k = (h - a[0]) / (b[0] - a[0]);
+        return [
+          Math.round(a[1] + (b[1] - a[1]) * k),
+          Math.round(a[2] + (b[2] - a[2]) * k),
+          Math.round(a[3] + (b[3] - a[3]) * k),
+        ];
       }
     }
-
-    ctx.clearRect(0, 0, w, h);
-    for (let i = arcs.length - 1; i >= 0; i--) {
-      const a = arcs[i];
-      a.life += dt;
-      const k = a.life / a.ttl;
-      const env = k < 0.3 ? k / 0.3 : 1 - (k - 0.3) / 0.7;
-      if (env <= 0 || k >= 1) { arcs.splice(i, 1); continue; }
-      drawBolt(a.pts, env);
-    }
+    return [255, 244, 214];
   };
-  const start = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
+  let fx = -1e4, fy = -1e4, feeding = false, lit = false, flash = 0, settleT = 0;
+
+  const toLocal = (e) => {
+    const r = canvas.getBoundingClientRect();
+    fx = e.clientX - r.left;
+    fy = e.clientY - r.top;
+  };
+
+  const ignite = () => {
+    if (lit) return;
+    lit = true;
+    for (const p of pts) p.heat = 1;
+    flash = 1;
+    settleT = performance.now() + 1500;
+    feeding = false;
+    igniteState(true);
+  };
+
+  const step = () => {
+    if (lit) return;
+    if (feeding) {
+      const R = W * 0.13;
+      for (const p of pts) {
+        const d = Math.hypot(p.x - fx, p.y - fy);
+        if (d < R) p.heat = Math.min(1, p.heat + (1 - d / R) * 0.07);
+      }
+    }
+    // diffusione lungo il filo + raffreddamento lento
+    const D = 0.16;
+    const nh = pts.map((p, i) => {
+      const l = i > 0 ? pts[i - 1].heat : p.heat;
+      const r = i < pts.length - 1 ? pts[i + 1].heat : p.heat;
+      return p.heat + D * (l + r - 2 * p.heat);
+    });
+    for (let i = 0; i < pts.length; i++) pts[i].heat = Math.max(0, nh[i] * 0.99);
+    if (pts.every((p) => p.heat > 0.5)) ignite();
+  };
+
+  const drawShell = () => {
+    ctx.strokeStyle = 'rgba(247,238,213,0.09)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(W / 2, H * 0.5, W * 0.35, H * 0.44, 0, 0, 6.2832);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(247,238,213,0.13)';
+    ctx.lineWidth = 2;
+    const a = pts[0], b = pts[pts.length - 1];
+    ctx.beginPath();
+    ctx.moveTo(a.x, H * 0.92); ctx.lineTo(a.x, a.y);
+    ctx.moveTo(b.x, H * 0.92); ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  };
+
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    drawShell();
+    // nucleo: un segmento per coppia di punti, colore = calore medio
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], h = (a.heat + b.heat) / 2;
+      const c = heatColor(h);
+      ctx.strokeStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
+      ctx.lineWidth = 2 + h * 1.3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+    // bloom additivo attorno ai punti caldi
+    ctx.globalCompositeOperation = 'lighter';
+    for (const p of pts) {
+      if (p.heat < 0.18) continue;
+      const c = heatColor(p.heat);
+      const rad = 4 + p.heat * 15;
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad);
+      g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${(p.heat * 0.5).toFixed(3)})`);
+      g.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rad, 0, 6.2832);
+      ctx.fill();
+    }
+    if (flash > 0) {
+      const g = ctx.createRadialGradient(W / 2, H * 0.5, 0, W / 2, H * 0.5, W * 0.62);
+      g.addColorStop(0, `rgba(255,244,214,${(flash * 0.9).toFixed(3)})`);
+      g.addColorStop(1, 'rgba(255,244,214,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  };
+
+  let raf = 0;
+  const frame = () => {
+    if (window.__eurekaLensOn) { raf = requestAnimationFrame(frame); return; }
+    step();
+    draw();
+    if (flash > 0) flash = Math.max(0, flash - 0.028);
+    if (lit && flash <= 0 && performance.now() > settleT) { raf = 0; return; }  // frame finale statico
+    raf = requestAnimationFrame(frame);
+  };
+  const start = () => {
+    if (lit && flash <= 0 && performance.now() > settleT) { draw(); return; }
+    if (!raf) raf = requestAnimationFrame(frame);
+  };
   const stop = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
 
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((es) => {
-      visible = es[0].isIntersecting;
-      if (visible && !firedFinal) start(); else if (!visible) stop();
-    }, { threshold: 0.1 }).observe(cta);
-  } else { visible = true; start(); }
-})();
-
-(() => {
-  // HOLD-TO-CHARGE — tieni premuto FERMO su una sezione: un anello d'energia oro
-  // cresce sotto il dito; al pieno (~850ms) una scarica accende quella sezione.
-  // Scroll-safe: qualunque movimento del dito > soglia annulla la carica (= sta scrollando).
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (RM) return;
-
-  const ring = document.createElement('div');
-  ring.id = 'charge-ring';
-  ring.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(ring);
-
-  // elementi con gesti propri o interattivi → niente carica
-  const SKIP = 'a,button,input,textarea,select,label,summary,[contenteditable],nav,' +
-               '.cta-switch,.card,.proj-card,.member,.bulb-rig,#bulb-rig,.ig-big,.marquee,.proj-card-link';
-  const HOLD = 850, MOVE_CANCEL = 14;
-  let raf = 0, t0 = 0, sx = 0, sy = 0, cx = 0, cy = 0, active = false, sec = null;
-
-  const place = () => {
-    const g = active ? (0.7 + 0.3 * Math.min(1, (performance.now() - t0) / HOLD)) : 0.7;
-    ring.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale(${g.toFixed(3)})`;
-  };
-  const setP = (p) => ring.style.setProperty('--p', p.toFixed(3));
-
-  const tick = (now) => {
-    if (!active) return;
-    const p = Math.min(1, (now - t0) / HOLD);
-    setP(p); place();
-    if (p >= 1) { fire(); return; }
-    raf = requestAnimationFrame(tick);
-  };
-  const stopRaf = () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } };
-  const start = (x, y, target) => {
-    if (active || window.__eurekaLensOn) return;
-    if (target && target.closest && target.closest(SKIP)) return;
-    sec = target && target.closest ? target.closest('section') : null;
-    if (!sec) return;
-    active = true; sx = cx = x; sy = cy = y; t0 = performance.now();
-    setP(0); place(); ring.classList.add('on');
-    raf = requestAnimationFrame(tick);
-  };
-  const cancel = () => {
-    if (!active) return;
-    active = false; ring.classList.remove('on'); stopRaf();
-  };
-  const fire = () => {
-    active = false; ring.classList.remove('on'); stopRaf();
-    if (window.__eurekaShockwave) window.__eurekaShockwave(cx, cy);
-    if (window.__eurekaBurst) window.__eurekaBurst(cx, cy, 16);
-    if (window.__eurekaWarp) window.__eurekaWarp(14);
-    if (navigator.vibrate) navigator.vibrate([10, 40, 10]);
-    if (sec) { sec.classList.remove('section-charged'); void sec.offsetWidth; sec.classList.add('section-charged'); }
-  };
-
-  addEventListener('pointerdown', (e) => { start(e.clientX, e.clientY, e.target); }, { passive: true });
-  addEventListener('pointermove', (e) => {
-    if (!active) return;
-    if (Math.abs(e.clientX - sx) > MOVE_CANCEL || Math.abs(e.clientY - sy) > MOVE_CANCEL) cancel();
-  }, { passive: true });
-  addEventListener('pointerup', cancel, { passive: true });
-  addEventListener('pointercancel', cancel, { passive: true });
-  addEventListener('scroll', cancel, { passive: true });
-  addEventListener('eureka-lens', cancel, { passive: true });  // lanterna aperta: niente carica
-  document.addEventListener('animationend', (e) => {
-    if (e.animationName === 'sectionCharge') e.target.classList.remove('section-charged');
+  wrap.addEventListener('pointerdown', (e) => {
+    if (lit) return;
+    e.preventDefault();
+    feeding = true;
+    toLocal(e);
+    try { wrap.setPointerCapture(e.pointerId); } catch (err) { /* no-op */ }
+    if (navigator.vibrate) navigator.vibrate(6);
   });
+  wrap.addEventListener('pointermove', (e) => { if (feeding) toLocal(e); });
+  addEventListener('pointerup', () => { feeding = false; }, { passive: true });
+  wrap.addEventListener('pointercancel', () => { feeding = false; });
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ignite(); }
+  });
+
+  build();
+  draw();
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { if (e.isIntersecting) start(); else stop(); }, { threshold: 0.15 }).observe(cta);
+  } else { start(); }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+  let rT = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(rT);
+    rT = setTimeout(() => { build(); draw(); }, 180);
+  }, { passive: true });
 })();
 
 (() => {
@@ -5028,7 +4753,7 @@ void main() {
   // ---- gesto: doppio tap, il secondo resta giù ----
   const TAP_MS = 280, GAP_MS = 400, NEAR = 60;
   // niente lanterna sopra elementi che hanno gesti/click propri
-  const SKIP = 'a,button,input,textarea,select,nav,.bridge-rig,.bulb-rig,.cta-switch,.mobile-menu';
+  const SKIP = 'a,button,input,textarea,select,nav,.bulb-rig,.filament-wrap,.mobile-menu';
   let downT = 0, downX = 0, downY = 0;
   let lastTapT = -1e4, lastTapX = 0, lastTapY = 0;
 
