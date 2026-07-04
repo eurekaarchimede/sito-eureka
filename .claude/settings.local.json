@@ -16,7 +16,8 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(chmod 644 \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/\"*.jpg)",
       "Bash(xattr -l \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/christian-bucalo.jpg\")",
-      "Bash(xattr -d com.apple.quarantine \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/\"*.jpg)"
+      "Bash(xattr -d com.apple.quarantine \"/Users/amielwarm/Desktop/Claude Code/sito eureka/foto/\"*.jpg)",
+      "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__send_later"
     ]
   }
 }
