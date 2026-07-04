@@ -1,10 +1,12 @@
 # Aggiorna il feed Instagram del sito: ogni 3 ore scarica i post nuovi,
 # rinnova il token Meta e committa assets/ig/feed.json + immagini.
-# Esecuzione manuale: tab Actions → "aggiorna feed instagram" → Run workflow.
+# Esecuzione manuale (facoltativa): tab Actions → "aggiorna feed instagram" → Run workflow.
 name: aggiorna feed instagram
 
 on:
-  workflow_dispatch: {}       # solo manuale — riattiva il cron quando hai il token Meta
+  schedule:
+    - cron: "0 */3 * * *"     # ogni 3 ore
+  workflow_dispatch: {}       # esecuzione manuale su richiesta
 
 permissions:
   contents: write
