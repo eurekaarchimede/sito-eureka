@@ -259,19 +259,15 @@ Sono anche candidato in lista (`giacomo warm`, classe 4E, n° 02 al consiglio d'
 
 ## 11. Stato attuale
 
-- ✅ Design completo (1 file HTML, ~2.900 righe)
-- ✅ Tutte le sezioni strutturate (progetti, eventi, candidati, storia, illuminated, cta)
-- ✅ Responsive
-- ✅ Lampadina 3D Three.js con toggle on/off, flicker, drag
-- ✅ Hero shader WebGL2 (clouds + glints)
-- ✅ Starfield globale con meteore (perf-optimized)
-- ✅ Cursor custom + reveal animations
-- ✅ Candidati reali (14 nomi su 3 organi) + foto in `foto/`
-- ⏳ Numero di lista (al sorteggio)
-- ⏳ Validazione contenuti (progetti, eventi, statistiche) con la lista
-- ✅ Open Graph / favicon / meta social (manca solo og:image)
-- ✅ Pacchetto animazioni 2026: neon ignition hero, scramble titoli, tilt 3D, magnetic buttons, filo di corrente, timeline luminosa, count-up, marquee velocity-aware, scintille click
-- ✅ Moduli wow (seconda ondata): shader Van Gogh hero, lampadina a pendolo, word illumination, costellazione candidati, scia di luce + shockwave, lettere magnetiche (interruttore lights-out RIMOSSO giugno 2026)
-- ⏳ Deploy
+- ✅ **Live su GitHub Pages**: `eurekaarchimede.github.io/sito-eureka/` — repo `eurekaarchimede/sito-eureka`, branch `main`, push = deploy automatico.
+- ✅ Design completo (1 file HTML, ~5.100 righe). Three.js rimosso da tempo: tutto canvas 2D + WebGL2 raw + SVG/CSS.
+- ✅ Tutte le sezioni strutturate (progetti, eventi, candidati, storia, illuminated, cta) + responsive.
+- ✅ **Feed Instagram live e reale**: 137 post veri di @eureka.archimede via API Meta, si aggiorna da solo ogni 3h (GitHub Action `.github/workflows/ig-feed.yml`), token si auto-rinnova, non scade mai. Setup completato luglio 2026 (vedi `SETUP-INSTAGRAM.md` se va rifatto da capo).
+- ✅ Candidati reali (14 nomi su 3 organi) + foto ottimizzate in `foto/`.
+- ✅ Moduli wow attivi: hero neon ignition + shader Van Gogh, lampadina a pendolo, costellazione candidati + **costellazioni che ricordi** (click candidato = stella permanente), scia di luce + shockwave, lettere magnetiche, **il filamento** (scalda il filo → accende la CTA), **circuito del programma** (6 punti), **la lanterna di Archimede** (doppio tap+hold = mondo invertito + inchiostro invisibile), easter egg hold sul "!" del logo, shake-to-eureka.
+- ✅ Audit animazioni (luglio 2026): rimossi scramble/decode sui titoli e flick-to-wish (troppo fragili/illeggibili), attenuato il warp starfield fuori dall'hero (depthFactor), rimossi hold-to-charge/circuito-a-ponte/plasma (gimmick deboli, sostituiti dal filamento).
+- ✅ Open Graph / favicon / meta social (manca solo og:image, serve un'immagine 1200×630).
+- ⏳ Numero di lista (al sorteggio).
+- ⏳ Validazione contenuti (progetti, eventi, statistiche) con la lista.
 
-**Prossimo step naturale**: validazione contenuti con la lista, meta OG, deploy su Netlify/Vercel.
+**Prossimo step naturale**: validazione contenuti con la lista, numero di lista al sorteggio, og:image. Il sito è già votabile/condivisibile così com'è.
