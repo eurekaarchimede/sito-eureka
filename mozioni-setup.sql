@@ -22,14 +22,15 @@ create table if not exists public.members (
 );
 
 create table if not exists public.motions (
-  id          uuid primary key default gen_random_uuid(),
-  title       text not null,
-  description text,
-  created_by  uuid references public.members(id) on delete set null,
-  opens_at    timestamptz not null,
-  closes_at   timestamptz not null,
-  anonymous   boolean not null default false,
-  created_at  timestamptz not null default now(),
+  id                 uuid primary key default gen_random_uuid(),
+  title              text not null,
+  description        text,
+  created_by         uuid references public.members(id) on delete set null,
+  opens_at           timestamptz not null,
+  closes_at          timestamptz not null,
+  anonymous          boolean not null default false,
+  results_published  boolean not null default false,
+  created_at         timestamptz not null default now(),
   check (closes_at > opens_at)
 );
 
@@ -201,7 +202,11 @@ begin
     return null;
   end if;
 
-  -- mozione chiusa: admin vede sempre i dettagli dei voti
+  -- mozione chiusa: non-admin vede risultati solo se pubblicati
+  if not is_adm and not m.results_published then
+    return json_build_object('closed', true, 'not_published', true, 'anonymous', m.anonymous);
+  end if;
+
   return json_build_object(
     'closed', true,
     'anonymous', m.anonymous,
@@ -360,15 +365,16 @@ on conflict (email) do update set role = 'admin', active = true, is_primary = tr
 -- ============================================================
 
 create table if not exists public.elections (
-  id          uuid primary key default gen_random_uuid(),
-  title       text,
-  organ       text not null check (organ in ('consiglio', 'garanzia')),
-  seats       int  not null check (seats > 0),
-  opens_at    timestamptz not null,
-  closes_at   timestamptz not null,
-  anonymous   boolean not null default false,
-  created_by  uuid references public.members(id) on delete set null,
-  created_at  timestamptz not null default now(),
+  id             uuid primary key default gen_random_uuid(),
+  title          text,
+  organ          text not null check (organ in ('consiglio', 'garanzia')),
+  seats          int  not null check (seats > 0),
+  opens_at       timestamptz not null,
+  closes_at      timestamptz not null,
+  anonymous      boolean not null default false,
+  candidate_ids  uuid[],
+  created_by     uuid references public.members(id) on delete set null,
+  created_at     timestamptz not null default now(),
   check (closes_at > opens_at)
 );
 
@@ -478,6 +484,7 @@ begin
         group by candidate_id
       ) vc on vc.candidate_id = m.id
       where m.active = true
+        and (el.candidate_ids is null or m.id = any(el.candidate_ids))
     ),
     'total_voted',  case when is_adm then (select count(distinct voter_id)::int from public.election_votes where election_id = p_election_id) else null end,
     'total_voters', case when is_adm then (select count(*)::int from public.members where active = true) else null end
@@ -519,6 +526,7 @@ begin
     select 1 from unnest(p_candidate_ids) as t(cid)
     where not exists (
       select 1 from public.members where id = t.cid and active = true
+      and (el.candidate_ids is null or t.cid = any(el.candidate_ids))
     )
   ) then
     return json_build_object('error', 'invalid_candidate');

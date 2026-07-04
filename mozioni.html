@@ -190,6 +190,49 @@ p { color: var(--beige-dim); margin-bottom: 0.8rem; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
 .btn-small { padding: 0.45rem 0.9rem; font-size: 11px; }
 
+/* ===== FEEDBACK AL TOCCO ===== */
+.btn, .vote, .candidate-item, .cand-checklist-item, .member-row[data-member-expand], a, summary {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+/* pressione: la superficie "affonda" */
+.btn:not(:disabled):active { transform: scale(0.95); transition: transform 0.08s ease; }
+.vote:not(:disabled):active { transform: scale(0.93); transition: transform 0.08s ease; }
+.candidate-item:not(.disabled):active,
+.cand-checklist-item:active,
+.member-row[data-member-expand]:active { transform: scale(0.98); transition: transform 0.08s ease; }
+.section-label a:active, summary:active { opacity: 0.6; }
+
+/* ripple */
+.btn, .vote { position: relative; overflow: hidden; }
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+  width: 12px; height: 12px;
+  animation: rippleGo 0.6s ease-out forwards;
+}
+.vote .ripple { background: rgba(255, 224, 122, 0.5); }
+@keyframes rippleGo {
+  to { transform: translate(-50%, -50%) scale(26); opacity: 0; }
+}
+
+/* canvas scintille al tocco (fullscreen, fixed) */
+#touch-spark {
+  position: fixed;
+  inset: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 200;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ripple { animation: none; display: none; }
+  #touch-spark { display: none; }
+}
+
 /* ===== FORMS ===== */
 .form { display: flex; flex-direction: column; gap: 1rem; }
 .form-row { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -225,14 +268,27 @@ p { color: var(--beige-dim); margin-bottom: 0.8rem; }
 
 /* ===== CARDS ===== */
 .card {
-  background: rgba(17, 32, 69, 0.4);
+  background: linear-gradient(145deg, rgba(26, 45, 90, 0.58), rgba(10, 20, 48, 0.52));
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 1.6rem 1.5rem;
   margin-bottom: 1.2rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 32px -8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(247,238,213,0.045);
 }
-.card:hover { border-color: var(--line-strong); }
+.card:hover { border-color: var(--line-strong); box-shadow: 0 6px 40px -8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(247,238,213,0.045); }
+.motion-card[data-status="open"] {
+  border-color: rgba(245, 205, 71, 0.38);
+  box-shadow: 0 0 0 1px rgba(245,205,71,0.07), 0 8px 48px -12px rgba(245,205,71,0.22), 0 20px 60px -20px rgba(0,0,0,0.5);
+  animation: cardGlow 3.5s ease-in-out infinite;
+}
+@keyframes cardGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(245,205,71,0.06), 0 6px 40px -12px rgba(245,205,71,0.16), 0 20px 60px -20px rgba(0,0,0,0.5); }
+  50%      { box-shadow: 0 0 0 1px rgba(245,205,71,0.14), 0 8px 50px -10px rgba(245,205,71,0.32), 0 20px 60px -20px rgba(0,0,0,0.5); }
+}
+@media (prefers-reduced-motion: reduce) { .motion-card[data-status="open"] { animation: none; } }
 
 .motion-card .head {
   display: flex;
@@ -287,23 +343,30 @@ p { color: var(--beige-dim); margin-bottom: 0.8rem; }
   min-width: 110px;
   font-family: inherit;
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  padding: 0.95rem 1rem;
-  border-radius: 100px;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 1.05rem 1rem;
+  border-radius: 14px;
   border: 1.5px solid;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: lowercase;
 }
-.vote.yes { color: var(--vote-yes); border-color: rgba(111, 179, 122, 0.4); }
-.vote.yes:hover:not(:disabled), .vote.yes.active { background: var(--vote-yes); color: var(--bg); border-color: var(--vote-yes); }
-.vote.no  { color: var(--vote-no);  border-color: rgba(217, 122, 107, 0.4); }
-.vote.no:hover:not(:disabled),  .vote.no.active  { background: var(--vote-no); color: var(--bg); border-color: var(--vote-no); }
-.vote.abs { color: var(--vote-abs); border-color: rgba(106, 125, 168, 0.4); }
-.vote.abs:hover:not(:disabled), .vote.abs.active { background: var(--vote-abs); color: var(--cream); border-color: var(--vote-abs); }
-.vote:disabled { opacity: 0.5; cursor: wait; }
+.vote.yes { color: var(--vote-yes); border-color: rgba(111, 179, 122, 0.35); background: rgba(111,179,122,0.04); }
+.vote.yes:hover:not(:disabled) { background: rgba(111,179,122,0.12); border-color: rgba(111,179,122,0.7); }
+.vote.yes.active { background: var(--vote-yes); color: var(--bg); border-color: var(--vote-yes); box-shadow: 0 0 28px rgba(111,179,122,0.5), inset 0 1px 0 rgba(255,255,255,0.2); }
+.vote.no  { color: var(--vote-no);  border-color: rgba(217, 122, 107, 0.35); background: rgba(217,122,107,0.04); }
+.vote.no:hover:not(:disabled)  { background: rgba(217,122,107,0.12); border-color: rgba(217,122,107,0.7); }
+.vote.no.active  { background: var(--vote-no); color: var(--bg); border-color: var(--vote-no); box-shadow: 0 0 28px rgba(217,122,107,0.5), inset 0 1px 0 rgba(255,255,255,0.2); }
+.vote.abs { color: var(--vote-abs); border-color: rgba(106, 125, 168, 0.35); background: rgba(106,125,168,0.04); }
+.vote.abs:hover:not(:disabled) { background: rgba(106,125,168,0.12); border-color: rgba(106,125,168,0.7); }
+.vote.abs.active { background: var(--vote-abs); color: var(--cream); border-color: var(--vote-abs); box-shadow: 0 0 28px rgba(106,125,168,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
+.vote:disabled { opacity: 0.45; cursor: wait; }
+@media (max-width: 600px) {
+  .vote-bar { flex-direction: column; gap: 0.5rem; }
+  .vote { min-width: unset; width: 100%; padding: 1.15rem 1rem; font-size: 14px; border-radius: 12px; }
+}
 
 .your-vote {
   font-size: 12px;
@@ -337,8 +400,8 @@ p { color: var(--beige-dim); margin-bottom: 0.8rem; }
 .result-bar .label.abs { color: var(--vote-abs); }
 .result-bar .track {
   flex: 1;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  height: 11px;
+  background: rgba(255, 255, 255, 0.07);
   border-radius: 100px;
   overflow: hidden;
 }
@@ -403,6 +466,122 @@ p { color: var(--beige-dim); margin-bottom: 0.8rem; }
   line-height: 1.7;
 }
 .anon-list b { color: var(--cream); display: block; margin-bottom: 0.4rem; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ===== VERDICT REVEAL ===== */
+.verdict {
+  position: relative;
+  margin: 0.2rem 0 1.4rem;
+  padding: 1.5rem 1.2rem 1.4rem;
+  border-radius: 14px;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgba(245,205,71,0.10), transparent 70%),
+    rgba(10, 22, 50, 0.55);
+  border: 1px solid var(--line-strong);
+  isolation: isolate;
+}
+.verdict::before {
+  /* sweep di luce */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,224,122,0.16) 48%, transparent 66%);
+  transform: translateX(-120%);
+  z-index: -1;
+}
+.verdict.go::before { animation: verdictSweep 1.1s 0.5s ease-out forwards; }
+.verdict .v-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.verdict .v-text {
+  display: block;
+  font-size: clamp(2.1rem, 8vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+.verdict .v-margin {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--beige-dim);
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+}
+.verdict.yes .v-text { color: var(--vote-yes); text-shadow: 0 0 28px rgba(111,179,122,0.55); }
+.verdict.no  .v-text { color: var(--vote-no);  text-shadow: 0 0 28px rgba(217,122,107,0.55); }
+.verdict.tie .v-text { color: var(--gold);     text-shadow: 0 0 28px rgba(245,205,71,0.5); }
+.verdict.go .v-text { animation: verdictStamp 0.7s cubic-bezier(0.2, 1.5, 0.35, 1) both; }
+.verdict.go .v-label  { animation: verdictFade 0.5s 0.15s both; }
+.verdict.go .v-margin { animation: verdictFade 0.5s 0.55s both; }
+.verdict .v-ring {
+  position: absolute;
+  top: 0; left: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  transform: translate(-50%, 50%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.verdict.go .v-ring { animation: verdictRing 0.9s 0.25s ease-out forwards; }
+
+@keyframes verdictStamp {
+  0%   { transform: scale(2.6) rotate(-9deg); opacity: 0; filter: blur(8px); }
+  55%  { opacity: 1; filter: blur(0); }
+  70%  { transform: scale(0.94) rotate(1.5deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes verdictFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes verdictSweep { to { transform: translateX(120%); } }
+@keyframes verdictRing {
+  0%   { width: 10px; height: 10px; opacity: 0.9; border-width: 3px; }
+  100% { width: 320px; height: 320px; opacity: 0; border-width: 1px; }
+}
+
+/* barre animate */
+.result-bar .fill.anim { width: 0 !important; transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+.result-bar .fill.shine { position: relative; overflow: hidden; }
+.result-bar .fill.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: barShine 2.6s 1.1s ease-in-out;
+}
+@keyframes barShine { to { transform: translateX(120%); } }
+
+/* canvas scintille */
+.spark-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict.go .v-text,
+  .verdict.go .v-label,
+  .verdict.go .v-margin,
+  .verdict.go::before,
+  .verdict.go .v-ring { animation: none; }
+  .result-bar .fill.anim { transition: none; }
+  .result-bar .fill.shine::after { animation: none; }
+}
 
 /* ===== ADMIN PANEL ===== */
 details.admin {
@@ -491,6 +670,103 @@ details.admin[open] > summary::after { transform: rotate(45deg); }
 .login-card { max-width: 440px; width: 100%; text-align: center; }
 .login-card h1 { font-size: clamp(2.4rem, 6vw, 3.4rem); margin-bottom: 0.4rem; }
 .login-card .lead { color: var(--beige-dim); margin-bottom: 2rem; line-height: 1.55; }
+
+/* ===== LOGIN — effetti "accensione" ===== */
+.login-screen { position: relative; overflow: hidden; }
+/* aura dorata che respira dietro la card */
+.login-screen::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 40%;
+  width: min(640px, 92vw); aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(245,205,71,0.18), rgba(245,205,71,0.05) 42%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+  animation: auraBreathe 6.5s ease-in-out infinite;
+}
+@keyframes auraBreathe {
+  0%, 100% { opacity: 0.5;  transform: translate(-50%, -50%) scale(0.94); }
+  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* luce che segue il mouse */
+#login-glow {
+  position: fixed;
+  width: 460px; height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,224,122,0.10), transparent 65%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s;
+  mix-blend-mode: screen;
+}
+
+/* card in vetro con anello di luce rotante */
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(26,45,94,0.40), rgba(10,22,50,0.40));
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  padding: 2.8rem 2.3rem;
+  box-shadow: 0 36px 90px -34px rgba(0,0,0,0.65), inset 0 1px 0 rgba(247,238,213,0.06);
+}
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--ring-a, 0deg),
+    transparent 0%, rgba(245,205,71,0.0) 8%,
+    rgba(255,224,122,0.85) 16%, rgba(245,205,71,0.1) 26%, transparent 34%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  animation: ringSpin 7s linear infinite;
+}
+@property --ring-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes ringSpin { to { --ring-a: 360deg; } }
+
+/* titolo neon */
+.login-card h1 { position: relative; }
+.login-card h1 .nl {
+  display: inline-block;
+  color: var(--cream);
+  text-shadow: 0 0 7px rgba(255,224,122,0.55), 0 0 24px rgba(245,205,71,0.4);
+}
+.login-card h1 .nl.sp { width: 0.28em; }
+.login-card h1.lit .nl { animation: neonBreathe 4.5s ease-in-out infinite; }
+.login-card h1 .nl.flick { animation: neonFlicker 0.95s steps(1, end) both; }
+@keyframes neonFlicker {
+  0%   { opacity: 0.15; text-shadow: none; }
+  9%   { opacity: 1;    text-shadow: 0 0 12px rgba(255,224,122,0.9), 0 0 34px rgba(245,205,71,0.6); }
+  12%  { opacity: 0.25; text-shadow: none; }
+  16%  { opacity: 1; }
+  21%  { opacity: 0.5; }
+  26%  { opacity: 1; }
+  33%  { opacity: 0.4; text-shadow: none; }
+  38%  { opacity: 1; text-shadow: 0 0 12px rgba(255,224,122,0.9), 0 0 34px rgba(245,205,71,0.55); }
+  100% { opacity: 1; text-shadow: 0 0 8px rgba(255,224,122,0.6), 0 0 26px rgba(245,205,71,0.42); }
+}
+@keyframes neonBreathe {
+  0%, 100% { text-shadow: 0 0 7px rgba(255,224,122,0.5),  0 0 22px rgba(245,205,71,0.34); }
+  50%      { text-shadow: 0 0 11px rgba(255,224,122,0.75), 0 0 34px rgba(245,205,71,0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-screen::before,
+  .login-card::before,
+  .login-card h1.lit .nl,
+  .login-card h1 .nl.flick { animation: none; }
+  #login-glow { display: none; }
+}
 
 /* ===== TOAST ===== */
 #toast-host {
@@ -648,6 +924,167 @@ footer a { color: var(--beige-dim); }
 }
 .member-row[data-member-expand]:hover .member-expand-hint { color: var(--beige-dim); }
 
+/* ===== HISTORY ===== */
+.history-item {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 0.7rem;
+}
+.history-item .htitle { font-weight: 700; color: var(--cream); font-size: 14px; margin-bottom: 0.3rem; }
+.history-item .hmeta { font-size: 11px; color: var(--muted); margin-bottom: 0.55rem; letter-spacing: 0.03em; }
+.history-counts { display: flex; flex-wrap: wrap; gap: 0.8rem 1.4rem; font-size: 12px; margin-bottom: 0.5rem; }
+.history-voter-table {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 1rem;
+  font-size: 12px;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+
+/* ===== CANDIDATE CHECKLIST (form elezione) ===== */
+.cand-checklist {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.cand-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 0.3rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cream);
+  user-select: none;
+}
+.cand-checklist-item:hover { background: rgba(247,238,213,0.05); }
+.cand-checklist-item input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; flex-shrink: 0; cursor: pointer; }
+.cand-checklist-note { font-size: 11px; color: var(--muted); margin-top: 0.35rem; }
+
+/* ===== OPT ROWS (mozione a scelta multipla) ===== */
+.opt-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
+.opt-row input { flex: 1; }
+.opt-row .opt-remove { flex-shrink: 0; padding: 0.4rem 0.65rem; font-size: 13px; line-height: 1; }
+#m-opts-container { margin-top: 0.4rem; }
+
+/* ===== PROPOSALS (raccolta proposte) ===== */
+.resp-area {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  background: rgba(10, 22, 50, 0.6);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  color: var(--cream);
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  display: block;
+  transition: border-color 0.2s ease;
+  text-transform: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.resp-area:focus { border-color: var(--gold); }
+.resp-item {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background: rgba(10, 22, 50, 0.35);
+}
+.resp-item .resp-name {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 0.3rem;
+}
+.resp-item .resp-text {
+  color: var(--cream); font-size: 14px; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-word; text-transform: none;
+}
+.resp-item .resp-time { font-size: 10px; color: var(--muted); margin-top: 0.35rem; letter-spacing: 0.04em; }
+
+/* ===== CARD CLOCK ===== */
+.card-clock {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.6rem 0 0.9rem;
+  padding: 0.65rem 1rem;
+  background: rgba(245, 205, 71, 0.055);
+  border: 1px solid rgba(245, 205, 71, 0.2);
+  border-radius: 12px;
+}
+.clock-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.clock-value {
+  font-size: clamp(1.55rem, 5.5vw, 2.1rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  line-height: 1;
+}
+.countdown.urgent {
+  color: #e8845c !important;
+  animation: urgentPulse 0.9s ease-in-out infinite;
+}
+@keyframes urgentPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ===== ADMIN PANEL — tweaks ===== */
+details.admin { margin-bottom: 1.4rem; }
+details.admin > summary { padding: 1rem 1.25rem; user-select: none; }
+.admin-body { padding: 0 1.25rem 1.25rem; }
+
+/* ===== QUICK NAV (admin) ===== */
+#admin-quick-nav { padding: 0.2rem 0 1.2rem; }
+#admin-quick-nav .btn { font-size: 12px; }
+
+/* ===== BOTTOM SECTIONS ===== */
+#section-members, #section-history {
+  background: rgba(17, 32, 69, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+}
+
+/* ===== CUSTOM DURATION ===== */
+.custom-dur-row { margin-top: -0.3rem; }
+.custom-dur-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.custom-dur-grid .dur-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.custom-dur-grid .dur-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: var(--beige-dim); text-transform: uppercase; }
+.custom-dur-grid input { font-family: inherit; font-size: 15px; background: rgba(10,22,50,0.6); border: 1px solid var(--line-strong); border-radius: 8px; padding: 0.7rem 0.9rem; color: var(--cream); outline: none; transition: border-color 0.2s ease; width: 100%; }
+.custom-dur-grid input:focus { border-color: var(--gold); }
+
+/* ===== MOBILE: card + form ===== */
+@media (max-width: 600px) {
+  .card { padding: 1.35rem 1.1rem; border-radius: 16px; }
+  .motion-card h3 { font-size: 1.2rem; }
+  .container { padding: 2rem 1rem; }
+  .result-bar .label { width: 78px; font-size: 10px; }
+  .result-bar .count { min-width: 58px; font-size: 11px; }
+  .form-row input, .form-row select, .form-row textarea { font-size: 16px; } /* iOS no-zoom */
+  .btn-primary { width: 100%; justify-content: center; }
+  #section-members, #section-history { padding: 1.1rem; border-radius: 12px; }
+}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -703,15 +1140,19 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
     <div class="login-card">
       <div class="section-label" style="justify-content:center">collettivo eureka!</div>
       <h1>mozioni</h1>
-      <p class="lead">accesso riservato ai membri del collettivo. inserisci la tua email per ricevere un link di accesso.</p>
-      <form id="login-form" class="form">
+      <p class="lead">accesso riservato ai membri del collettivo. inserisci email e password.</p>
+      <form id="login-form" class="form" style="text-align:left">
         <div class="form-row">
           <label for="email">email</label>
           <input type="email" id="email" name="email" required autocomplete="email" placeholder="nome@esempio.it">
         </div>
-        <button type="submit" class="btn btn-primary" id="login-btn">invia link →</button>
+        <div class="form-row">
+          <label for="password">password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" id="login-btn">accedi →</button>
       </form>
-      <p style="margin-top:2rem; font-size:11px; color:var(--muted); letter-spacing: 0.04em">dopo il primo accesso potrai completare la registrazione.</p>
+      <p style="margin-top:2rem; font-size:12px; color:var(--muted); letter-spacing: 0.04em">non hai un account? <a href="#" id="goto-register" style="color:var(--gold)">registrati</a></p>
     </div>
   </section>
 
@@ -722,6 +1163,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
       <h1>unisciti</h1>
       <p class="lead">completa la registrazione per entrare nel collettivo. l'admin approverà la tua richiesta.</p>
       <form id="register-form" class="form" style="text-align:left">
+        <div class="form-row">
+          <label for="reg-email">email</label>
+          <input type="email" id="reg-email" required autocomplete="email" placeholder="nome@esempio.it">
+        </div>
+        <div class="form-row">
+          <label for="reg-password">password</label>
+          <input type="password" id="reg-password" required autocomplete="new-password" minlength="6" placeholder="almeno 6 caratteri">
+        </div>
         <div class="form-grid">
           <div class="form-row">
             <label for="reg-nome">nome</label>
@@ -738,6 +1187,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
         </div>
         <button type="submit" class="btn btn-primary" id="reg-btn">invia richiesta →</button>
       </form>
+      <p style="margin-top:1.5rem; font-size:12px; color:var(--muted); letter-spacing: 0.04em">hai già un account? <a href="#" id="goto-login" style="color:var(--gold)">accedi</a></p>
     </div>
   </section>
 
@@ -757,6 +1207,56 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
     <h1>mozioni</h1>
     <p style="margin-bottom:2.5rem; max-width:580px">vota a favore, contrario o astenuto. le mozioni hanno una finestra temporale e possono essere anonime o nominali.</p>
 
+    <div class="admin hidden" id="admin-quick-nav" style="display:flex;gap:0.6rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <a href="#section-members" class="btn btn-ghost btn-small">gestione membri ↓</a>
+      <a href="#section-history" class="btn btn-ghost btn-small">cronologia mozioni ↓</a>
+    </div>
+
+    <details class="admin hidden" id="admin-panel-proposals">
+      <summary>nuova raccolta proposte</summary>
+      <div class="admin-body">
+        <form id="proposal-form" class="form" style="margin-top:1.2rem">
+          <div class="form-row">
+            <label for="p-title">titolo</label>
+            <input type="text" id="p-title" required maxlength="200" placeholder="es. proposte per il prossimo evento">
+          </div>
+          <div class="form-row">
+            <label for="p-desc">descrizione (opzionale)</label>
+            <textarea id="p-desc" placeholder="istruzioni, contesto, domanda specifica…" style="min-height:70px"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="p-duration">durata</label>
+            <select id="p-duration">
+              <option value="10">10 secondi</option>
+              <option value="15">15 secondi</option>
+              <option value="30">30 secondi</option>
+              <option value="45">45 secondi</option>
+              <option value="60" selected>1 minuto</option>
+              <option value="120">2 minuti</option>
+              <option value="180">3 minuti</option>
+              <option value="300">5 minuti</option>
+              <option value="600">10 minuti</option>
+              <option value="1200">20 minuti</option>
+              <option value="1800">30 minuti</option>
+              <option value="3600">1 ora</option>
+              <option value="7200">2 ore</option>
+              <option value="21600">6 ore</option>
+              <option value="86400">24 ore</option>
+              <option value="custom">personalizzata…</option>
+            </select>
+          </div>
+          <div class="form-row custom-dur-row hidden" id="p-custom-dur">
+            <label>durata personalizzata</label>
+            <div class="custom-dur-grid">
+              <div class="dur-field"><span class="dur-label">minuti</span><input type="number" id="p-custom-min" min="0" max="10080" step="1" placeholder="0"></div>
+              <div class="dur-field"><span class="dur-label">secondi</span><input type="number" id="p-custom-sec" min="0" max="59" step="1" placeholder="0"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="proposal-submit">apri raccolta →</button>
+        </form>
+      </div>
+    </details>
+
     <details class="admin hidden" id="admin-panel-motions">
       <summary>nuova mozione</summary>
       <div class="admin-body">
@@ -772,6 +1272,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
           <div class="form-row">
             <label for="m-duration">durata</label>
             <select id="m-duration">
+              <option value="10">10 secondi</option>
               <option value="15">15 secondi</option>
               <option value="30">30 secondi</option>
               <option value="45">45 secondi</option>
@@ -791,21 +1292,33 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
               <option value="7200">2 ore</option>
               <option value="21600">6 ore</option>
               <option value="86400">24 ore</option>
+              <option value="custom">personalizzata…</option>
             </select>
+          </div>
+          <div class="form-row custom-dur-row hidden" id="m-custom-dur">
+            <label>durata personalizzata</label>
+            <div class="custom-dur-grid">
+              <div class="dur-field"><span class="dur-label">minuti</span><input type="number" id="m-custom-min" min="0" max="10080" step="1" placeholder="0"></div>
+              <div class="dur-field"><span class="dur-label">secondi</span><input type="number" id="m-custom-sec" min="0" max="59" step="1" placeholder="0"></div>
+            </div>
           </div>
           <div class="form-row checkbox">
             <input type="checkbox" id="m-anon">
-            <label for="m-anon">votazione anonima — i membri non vedono chi ha votato cosa, solo i totali</label>
+            <label for="m-anon">votazione anonima — i voti sono segreti</label>
+          </div>
+          <div class="form-row checkbox">
+            <input type="checkbox" id="m-custom-opts">
+            <label for="m-custom-opts">opzioni personalizzate — invece di sì / no / astenuto</label>
+          </div>
+          <div id="m-opts-container" class="hidden">
+            <div class="form-row">
+              <label>opzioni di voto</label>
+              <div id="m-opts-list"></div>
+              <button type="button" class="btn btn-ghost btn-small" id="m-add-opt" style="margin-top:0.4rem">+ aggiungi opzione</button>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary" id="motion-submit">crea mozione →</button>
         </form>
-      </div>
-    </details>
-
-    <details class="admin hidden" id="admin-panel-members">
-      <summary>gestione membri</summary>
-      <div class="admin-body">
-        <div class="members-table" id="members-list" style="margin-top:1.2rem"></div>
       </div>
     </details>
 
@@ -825,12 +1338,20 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
             </select>
           </div>
           <div class="form-row">
+            <label>candidati</label>
+            <div id="e-candidates-list" class="cand-checklist">
+              <div style="color:var(--muted);font-size:12px;padding:0.2rem">caricamento membri…</div>
+            </div>
+            <div class="cand-checklist-note">lascia tutti deselezionati per includere tutti i membri attivi</div>
+          </div>
+          <div class="form-row">
             <label for="e-duration">durata</label>
             <select id="e-duration">
+              <option value="10">10 secondi</option>
               <option value="15">15 secondi</option>
               <option value="30">30 secondi</option>
               <option value="45">45 secondi</option>
-              <option value="60">1 minuto</option>
+              <option value="60" selected>1 minuto</option>
               <option value="75">1 min 15s</option>
               <option value="90">1 min 30s</option>
               <option value="105">1 min 45s</option>
@@ -842,23 +1363,48 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
               <option value="600">10 minuti</option>
               <option value="1200">20 minuti</option>
               <option value="1800">30 minuti</option>
-              <option value="3600" selected>1 ora</option>
+              <option value="3600">1 ora</option>
               <option value="7200">2 ore</option>
               <option value="21600">6 ore</option>
               <option value="86400">24 ore</option>
+              <option value="custom">personalizzata…</option>
             </select>
+          </div>
+          <div class="form-row custom-dur-row hidden" id="e-custom-dur">
+            <label>durata personalizzata</label>
+            <div class="custom-dur-grid">
+              <div class="dur-field"><span class="dur-label">minuti</span><input type="number" id="e-custom-min" min="0" max="10080" step="1" placeholder="0"></div>
+              <div class="dur-field"><span class="dur-label">secondi</span><input type="number" id="e-custom-sec" min="0" max="59" step="1" placeholder="0"></div>
+            </div>
           </div>
           <div class="form-row checkbox">
             <input type="checkbox" id="e-anon">
-            <label for="e-anon">anonima — i membri non vedono chi ha votato chi</label>
+            <label for="e-anon">anonima — i voti sono segreti</label>
           </div>
           <button type="submit" class="btn btn-primary" id="election-submit">avvia elezione →</button>
         </form>
       </div>
     </details>
 
+    <div id="proposals-list"></div>
     <div id="elections-list"></div>
     <div id="motions-list"></div>
+
+    <div class="admin hidden" id="section-members" style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+        <div class="section-label" style="margin-bottom:0">gestione membri</div>
+        <a href="#dashboard" class="btn btn-ghost btn-small">↑ su</a>
+      </div>
+      <div class="members-table" id="members-list"></div>
+    </div>
+
+    <div class="admin hidden" id="section-history" style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--line);margin-bottom:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+        <div class="section-label" style="margin-bottom:0">cronologia mozioni</div>
+        <a href="#dashboard" class="btn btn-ghost btn-small">↑ su</a>
+      </div>
+      <div id="history-list"></div>
+    </div>
   </section>
 </main>
 
@@ -908,6 +1454,16 @@ const fmtDuration = (ms) => {
   return Math.round(s / 86400) + 'g';
 };
 
+const fmtCountdown = (ms) => {
+  if (ms <= 0) return '00:00';
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+};
+
 const VOTE_LABEL = { favorevole: 'favorevole', contrario: 'contrario', astenuto: 'astenuto' };
 const VOTE_CLASS = { favorevole: 'yes', contrario: 'no', astenuto: 'abs' };
 
@@ -948,8 +1504,15 @@ let resultsCache  = {};     // motion_id -> motion_results json
 let allElections       = [];
 let electionResultsCache = {};
 let pendingSelections  = {};  // election_id -> Set of candidate_ids (UI state)
+let allMembers         = [];  // active approved members
+let _motionsSig    = '';
+let _electionsSig  = '';
+let revealedMotions = new Set();  // motion_id già "rivelati" (per non ripetere l'animazione)
 const ORGAN_SEATS = { consiglio: 8, garanzia: 2 };
 const ORGAN_LABEL = { consiglio: 'consiglio di istituto', garanzia: 'organo di garanzia' };
+let allProposals = [];
+let _proposalsSig = '';
+let proposalResponsesCache = {}; // proposal_id -> { my_response, responses?, total }
 
 // ============================================================
 // STARFIELD (lightweight)
@@ -1004,65 +1567,163 @@ const ORGAN_LABEL = { consiglio: 'consiglio di istituto', garanzia: 'organo di g
 // ============================================================
 // AUTH BOOTSTRAP
 // ============================================================
-async function bootstrap() {
-  // Supabase processa i token dal magic link in modo asincrono.
-  // Se l'URL contiene un hash con access_token, aspettiamo che
-  // onAuthStateChange emetta l'evento prima di procedere.
-  let session;
-  const hash = window.location.hash;
-  if (hash && (hash.includes('access_token') || hash.includes('type=magiclink') || hash.includes('type=signup'))) {
-    // magic link redirect — aspetta che Supabase processi i token
-    session = await new Promise((resolve) => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          subscription.unsubscribe();
-          resolve(s);
-        }
-      });
-      // timeout di sicurezza: se dopo 5s non arriva nulla, fallback a getSession
-      setTimeout(async () => {
-        subscription.unsubscribe();
-        const { data } = await supabase.auth.getSession();
-        resolve(data.session);
-      }, 5000);
-    });
-    // pulisci hash dall'URL
-    if (window.history.replaceState) {
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+// Mostra una delle schermate auth (login / register / pending), nasconde le altre.
+function showAuthScreen(id) {
+  for (const s of ['#loading', '#login', '#register', '#pending', '#dashboard']) hide($(s));
+  show($(id));
+  const glow = $('#login-glow');
+  const isAuth = id !== '#dashboard' && id !== '#loading';
+  if (glow) glow.style.opacity = isAuth ? '1' : '0';
+  if (isAuth) igniteNeon($(id)?.querySelector('h1'));
+}
+
+// splitta il titolo in lettere e le "accende" con flicker scaglionato
+function igniteNeon(h1) {
+  if (!h1) return;
+  if (!h1.dataset.split) {
+    const txt = h1.textContent;
+    h1.textContent = '';
+    for (const ch of txt) {
+      const span = document.createElement('span');
+      span.className = ch === ' ' ? 'nl sp' : 'nl';
+      span.textContent = ch === ' ' ? '' : ch;
+      h1.appendChild(span);
     }
-  } else {
-    const { data } = await supabase.auth.getSession();
-    session = data.session;
+    h1.dataset.split = '1';
   }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { h1.classList.add('lit'); return; }
+  h1.classList.remove('lit');
+  const letters = [...h1.querySelectorAll('.nl:not(.sp)')];
+  letters.forEach(l => { l.classList.remove('flick'); l.style.opacity = '0'; });
+  let lit = 0;
+  letters.forEach((l, i) => {
+    setTimeout(() => {
+      l.style.opacity = '';
+      l.classList.add('flick');
+      if (++lit === letters.length) setTimeout(() => h1.classList.add('lit'), 700);
+    }, 120 + i * 90 + Math.random() * 60);
+  });
+}
+
+// luce dorata che insegue il cursore sulle schermate d'accesso
+(function initLoginGlow() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!matchMedia('(hover: hover)').matches) return;
+  const glow = document.createElement('div');
+  glow.id = 'login-glow';
+  document.body.appendChild(glow);
+  let tx = innerWidth / 2, ty = innerHeight / 2, cx = tx, cy = ty, raf = null;
+  addEventListener('mousemove', (e) => {
+    tx = e.clientX; ty = e.clientY;
+    if (!raf) raf = requestAnimationFrame(loop);
+  });
+  function loop() {
+    cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
+    glow.style.left = cx + 'px'; glow.style.top = cy + 'px';
+    if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) raf = requestAnimationFrame(loop);
+    else raf = null;
+  }
+})();
+
+// vibrazione breve (se supportata)
+function buzz(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (_) {}
+}
+
+// ripple su bottoni e voti
+(function initRipple() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.addEventListener('pointerdown', (e) => {
+    const el = e.target.closest('.btn:not(:disabled), .vote:not(:disabled)');
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    r.style.left = (e.clientX - rect.left) + 'px';
+    r.style.top  = (e.clientY - rect.top) + 'px';
+    el.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  }, { passive: true });
+})();
+
+// scintille dorate dove tocchi/clicchi
+const touchSpark = (() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {};
+  const cv = document.createElement('canvas');
+  cv.id = 'touch-spark';
+  document.body.appendChild(cv);
+  const ctx = cv.getContext('2d');
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  let parts = [], raf = null;
+  function resize() { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  resize();
+  addEventListener('resize', resize);
+  const COLORS = ['#f5cd47', '#ffe07a', '#f7eed5'];
+  function spawn(x, y, n = 12) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 1.5 + Math.random() * 4;
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, life: 1,
+        dec: 0.02 + Math.random() * 0.02, size: 1.2 + Math.random() * 2.2,
+        c: COLORS[(Math.random() * COLORS.length) | 0] });
+    }
+    if (!raf) raf = requestAnimationFrame(draw);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    let alive = false;
+    for (const p of parts) {
+      if (p.life <= 0) continue;
+      alive = true;
+      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.vx *= 0.98; p.life -= p.dec;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (alive) raf = requestAnimationFrame(draw);
+    else { parts = []; raf = null; }
+  }
+  // ogni tocco/click "primario" sprigiona scintille
+  addEventListener('pointerdown', (e) => {
+    if (e.target.closest('input, textarea, select')) return;
+    spawn(e.clientX, e.clientY, e.pointerType === 'touch' ? 14 : 10);
+  }, { passive: true });
+  return spawn;
+})();
+
+async function bootstrap() {
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
 
   if (!session) {
-    hide($('#loading'));
-    show($('#login'));
+    showAuthScreen('#login');
     return;
   }
 
+  await enterApp(session);
+}
+
+// Dato un utente autenticato, decide cosa mostrare (registrazione / attesa / dashboard).
+async function enterApp(session) {
   const { data: regStatus, error } = await supabase.rpc('check_registration', {
     p_email: session.user.email.toLowerCase()
   });
 
   if (error) {
     toast('errore: ' + error.message, true);
-    hide($('#loading'));
-    show($('#login'));
+    showAuthScreen('#login');
     await supabase.auth.signOut();
     return;
   }
 
   if (!regStatus || regStatus.status === 'not_registered') {
     currentSession = session;
-    hide($('#loading'));
-    show($('#register'));
+    showAuthScreen('#register');
     return;
   }
 
   if (regStatus.status === 'pending') {
-    hide($('#loading'));
-    show($('#pending'));
+    showAuthScreen('#pending');
     return;
   }
 
@@ -1072,18 +1733,21 @@ async function bootstrap() {
   $('#user-role').classList.toggle('admin', regStatus.role === 'admin');
   show($('#user-strip'));
 
-  hide($('#loading'));
-  show($('#dashboard'));
+  showAuthScreen('#dashboard');
 
   if (regStatus.role === 'admin') {
+    show($('#admin-quick-nav'));
+    show($('#admin-panel-proposals'));
     show($('#admin-panel-motions'));
-    show($('#admin-panel-members'));
     show($('#admin-panel-elections'));
+    show($('#section-members'));
+    show($('#section-history'));
     await loadMembers();
   }
 
   await loadMotions();
   await loadElections();
+  await loadProposals();
 }
 
 
@@ -1092,28 +1756,34 @@ async function bootstrap() {
 // ============================================================
 $('#login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = $('#email').value.trim().toLowerCase();
+  const email    = $('#email').value.trim().toLowerCase();
+  const password = $('#password').value;
   const btn = $('#login-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>invio…';
+  btn.innerHTML = '<span class="spinner"></span>accesso…';
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: window.location.href.split('#')[0].split('?')[0],
-      shouldCreateUser: true, // auth user creato al primo accesso; il match con members.email è separato
-    },
-  });
-
-  btn.disabled = false;
-  btn.innerHTML = 'invia link →';
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    toast('errore: ' + error.message, true);
-  } else {
-    toast('controlla la tua email per il link di accesso.');
+    btn.disabled = false;
+    btn.innerHTML = 'accedi →';
+    if (/invalid login credentials/i.test(error.message)) {
+      toast('email o password errati.', true);
+    } else {
+      toast('errore: ' + error.message, true);
+    }
+    return;
   }
+
+  $('#password').value = '';
+  await enterApp(data.session);
+  btn.disabled = false;
+  btn.innerHTML = 'accedi →';
 });
+
+// switch login <-> registrazione
+$('#goto-register').addEventListener('click', (e) => { e.preventDefault(); showAuthScreen('#register'); });
+$('#goto-login').addEventListener('click',    (e) => { e.preventDefault(); showAuthScreen('#login'); });
 
 $('#logout-btn').addEventListener('click', async () => {
   await supabase.auth.signOut();
@@ -1125,34 +1795,55 @@ $('#logout-btn').addEventListener('click', async () => {
 // ============================================================
 $('#register-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const nome = $('#reg-nome').value.trim();
-  const cognome = $('#reg-cognome').value.trim();
-  const classe = $('#reg-classe').value.trim().toUpperCase();
-  const name = nome + ' ' + cognome;
+  const email    = $('#reg-email').value.trim().toLowerCase();
+  const password = $('#reg-password').value;
+  const nome     = $('#reg-nome').value.trim();
+  const cognome  = $('#reg-cognome').value.trim();
+  const classe   = $('#reg-classe').value.trim().toUpperCase();
+  const name     = nome + ' ' + cognome;
 
   const btn = $('#reg-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>invio…';
 
-  const { data, error } = await supabase.rpc('register_member', {
-    p_name: name,
-    p_classe: classe,
-  });
+  const fail = (msg) => { btn.disabled = false; btn.innerHTML = 'invia richiesta →'; toast(msg, true); };
+
+  // 1. crea l'account auth (o accedi se esiste già con la stessa password)
+  let { data: signUpData, error: signUpErr } = await supabase.auth.signUp({ email, password });
+
+  if (signUpErr) {
+    // utente già esistente → prova ad accedere con la password fornita
+    if (/already registered|already been registered|user already exists/i.test(signUpErr.message)) {
+      const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInErr) { fail('email già usata. accedi con la tua password dalla schermata di login.'); return; }
+      signUpData = signInData;
+    } else {
+      fail('errore: ' + signUpErr.message);
+      return;
+    }
+  }
+
+  // se la conferma email è attiva non c'è sessione: avvisa
+  if (!signUpData.session) {
+    fail('conferma email richiesta. disattiva "confirm email" in Supabase, poi riprova.');
+    return;
+  }
+
+  // 2. registra la riga member (stato in attesa di approvazione)
+  const { data, error } = await supabase.rpc('register_member', { p_name: name, p_classe: classe });
 
   btn.disabled = false;
   btn.innerHTML = 'invia richiesta →';
 
-  if (error) {
-    toast('errore: ' + error.message, true);
-    return;
-  }
+  if (error) { toast('errore: ' + error.message, true); return; }
   if (data && data.error === 'already_registered') {
-    toast('email già registrata.', true);
+    // già membro → entra normalmente
+    await enterApp(signUpData.session);
     return;
   }
 
-  hide($('#register'));
-  show($('#pending'));
+  $('#register-form').reset();
+  showAuthScreen('#pending');
   toast('registrazione inviata. attendi approvazione.');
 });
 
@@ -1183,17 +1874,27 @@ async function loadMotions() {
   // results: closed motions for everyone, open motions only for admin (turnout preview)
   resultsCache = {};
   const now = new Date();
+  const isAdminUser = currentMember.role === 'admin';
   const targetIds = allMotions
-    .filter(m => new Date(m.closes_at) <= now || (currentMember.role === 'admin' && new Date(m.opens_at) <= now))
+    .filter(m => {
+      const closed = new Date(m.closes_at) <= now;
+      const openPreview = isAdminUser && new Date(m.opens_at) <= now;
+      return (closed && (isAdminUser || m.results_published)) || openPreview;
+    })
     .map(m => m.id);
 
-  const promises = targetIds.map(id =>
-    supabase.rpc('motion_results', { p_motion_id: id }).then(({ data }) => [id, data])
-  );
-  const results = await Promise.all(promises);
-  for (const [id, data] of results) if (data) resultsCache[id] = data;
+  if (targetIds.length) {
+    const { data: bulk } = await supabase.rpc('bulk_motion_results', { p_ids: targetIds });
+    if (bulk) for (const [id, data] of Object.entries(bulk)) if (data) resultsCache[id] = data;
+  }
 
-  renderMotions();
+  const isAdmin = currentMember.role === 'admin';
+  const newSig = JSON.stringify({
+    ids: allMotions.map(m => m.id + statusOf(m) + (m.results_published ? '1' : '0')),
+    myVotes,
+    ...(isAdmin ? { preview: Object.entries(resultsCache).map(([id, r]) => id + (r?.total_voted ?? '')) } : {})
+  });
+  if (newSig !== _motionsSig) { _motionsSig = newSig; renderMotions(); }
 }
 
 function statusOf(m) {
@@ -1204,15 +1905,75 @@ function statusOf(m) {
 }
 const STATUS_LABEL = { scheduled: 'programmata', open: 'aperta', closed: 'chiusa' };
 
+function renderHistory() {
+  const container = $('#history-list');
+  if (!container) return;
+  const closed = allMotions
+    .filter(m => statusOf(m) === 'closed')
+    .sort((a, b) => new Date(b.closes_at) - new Date(a.closes_at));
+  if (!closed.length) {
+    container.innerHTML = '<div class="empty" style="padding:0.5rem 0">nessuna mozione chiusa ancora.</div>';
+    return;
+  }
+  container.innerHTML = closed.map(m => {
+    const r = resultsCache[m.id];
+    const counts = r?.counts || {};
+    const isCustom = m.options && m.options.length > 0;
+    let countHtml = '', total = 0;
+    if (isCustom) {
+      const opts = m.options;
+      total = opts.reduce((s, o) => s + (counts[o] || 0), 0);
+      const pct = n => total > 0 ? Math.round(n / total * 100) : 0;
+      countHtml = opts.map(o => {
+        const n = counts[o] || 0;
+        return `<span class="v abs">${escapeHtml(o)}: ${n} (${pct(n)}%)</span>`;
+      }).join('');
+    } else {
+      const yes = counts.favorevole || 0;
+      const no  = counts.contrario  || 0;
+      const abs = counts.astenuto   || 0;
+      total = yes + no + abs;
+      const pct = n => total > 0 ? Math.round(n / total * 100) : 0;
+      let hVClass, hVText;
+      if      (yes > no && yes > abs) { hVClass = 'yes'; hVText = 'approvata'; }
+      else if (no > yes && no > abs)  { hVClass = 'no';  hVText = 'respinta'; }
+      else if (yes === no)            { hVClass = 'abs'; hVText = 'parità'; }
+      else                            { hVClass = 'abs'; hVText = 'non determinante'; }
+      countHtml = `
+        <span class="v ${hVClass}" style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">${hVText}</span>
+        <span class="v yes">favorevoli ${yes} (${pct(yes)}%)</span>
+        <span class="v no">contrari ${no} (${pct(no)}%)</span>
+        <span class="v abs">astenuti ${abs} (${pct(abs)}%)</span>`;
+    }
+    const voterRows = (r?.voters || []).map(v => {
+      const cls = isCustom ? 'abs' : (VOTE_CLASS[v.choice] || 'abs');
+      const lbl = isCustom ? v.choice : (VOTE_LABEL[v.choice] || v.choice);
+      return `<div>${escapeHtml(v.name)}</div><div class="v ${cls}">${escapeHtml(lbl)}</div>`;
+    }).join('');
+    const anonLine = m.anonymous && r?.turnout_names?.length
+      ? `<div style="color:var(--muted);font-size:11px;margin-top:0.4rem">partecipanti: ${r.turnout_names.map(escapeHtml).join(', ')}</div>`
+      : '';
+    const typeTag = isCustom ? ' <span style="font-size:10px;color:var(--muted);font-weight:400;letter-spacing:0.06em;text-transform:uppercase">· scelta multipla</span>' : '';
+    return `<div class="history-item">
+      <div class="htitle">${escapeHtml(m.title)}${typeTag}</div>
+      <div class="hmeta">${fmtDate(m.opens_at)} → ${fmtDate(m.closes_at)} · ${m.anonymous ? 'anonima' : 'nominale'} · partecipazione ${r?.total_voted || 0}/${r?.total_voters || '?'}</div>
+      <div class="history-counts">${countHtml}</div>
+      ${voterRows ? `<div class="history-voter-table">${voterRows}</div>` : anonLine}
+    </div>`;
+  }).join('');
+}
+
 function renderMotions() {
   const list = $('#motions-list');
   if (!allMotions.length) {
     list.innerHTML = `<div class="empty">${currentMember.role === 'admin'
       ? 'nessuna mozione ancora. creane una dal pannello admin sopra.'
       : 'nessuna mozione ancora. attendi che l\'admin ne crei una.'}</div>`;
+    renderHistory();
     return;
   }
   list.innerHTML = allMotions.map(renderMotionCard).join('');
+  renderHistory();
 
   $$('.vote[data-motion]').forEach(btn => {
     btn.addEventListener('click', () => castVote(btn.dataset.motion, btn.dataset.choice));
@@ -1220,26 +1981,138 @@ function renderMotions() {
   $$('[data-delete-motion]').forEach(btn => {
     btn.addEventListener('click', () => deleteMotion(btn.dataset.deleteMotion));
   });
+  $$('[data-publish-motion]').forEach(btn => {
+    btn.addEventListener('click', () => publishResults(btn.dataset.publishMotion));
+  });
+
+  animateReveals();
+}
+
+function animateReveals() {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $$('.results[data-motion-results]').forEach(box => {
+    const id = box.dataset.motionResults;
+    const fills = [...box.querySelectorAll('.fill.anim')];
+    if (!fills.length) return;          // già rivelato
+    revealedMotions.add(id);
+
+    if (reduce) {
+      fills.forEach(f => { f.classList.remove('anim'); f.style.width = (f.dataset.w || 0) + '%'; });
+      box.querySelectorAll('.count[data-final]').forEach(c => { c.textContent = `${c.dataset.final} · ${c.dataset.pct}%`; });
+      return;
+    }
+
+    // barre: riempi in cascata
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fills.forEach((f, i) => {
+        f.style.transitionDelay = (0.45 + i * 0.18) + 's';
+        f.classList.remove('anim');
+        f.style.width = (f.dataset.w || 0) + '%';
+      });
+    }));
+
+    // numeri: count-up
+    box.querySelectorAll('.count[data-final]').forEach((c, i) => {
+      const final = parseInt(c.dataset.final) || 0;
+      const finalPct = parseInt(c.dataset.pct) || 0;
+      const dur = 1100, start = performance.now(), delay = 450 + i * 180;
+      const tick = (now) => {
+        const t = Math.min(1, Math.max(0, (now - start - delay) / dur));
+        const e = 1 - Math.pow(1 - t, 3);
+        c.textContent = `${Math.round(final * e)} · ${Math.round(finalPct * e)}%`;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+
+    // scintille dorate sulla card
+    const card = box.closest('.motion-card');
+    const verdict = box.querySelector('.verdict');
+    if (card && verdict) sparkBurst(card, 650);
+  });
+}
+
+function sparkBurst(cardEl, delayMs = 0) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  setTimeout(() => {
+    const rect = cardEl.getBoundingClientRect();
+    const cv = document.createElement('canvas');
+    cv.className = 'spark-canvas';
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = rect.width * dpr;
+    cv.height = rect.height * dpr;
+    if (getComputedStyle(cardEl).position === 'static') cardEl.style.position = 'relative';
+    cardEl.appendChild(cv);
+    const ctx = cv.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const verdict = cardEl.querySelector('.verdict');
+    const vr = verdict ? verdict.getBoundingClientRect() : rect;
+    const ox = vr.left - rect.left + vr.width / 2;
+    const oy = vr.top - rect.top + vr.height / 2;
+
+    const COLORS = ['#f5cd47', '#ffe07a', '#f7eed5', '#c9a531'];
+    const N = 56;
+    const parts = Array.from({ length: N }, () => {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 2.2 + Math.random() * 5.5;
+      return {
+        x: ox, y: oy,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 1.5,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.02,
+        size: 1.5 + Math.random() * 2.5,
+        color: COLORS[(Math.random() * COLORS.length) | 0],
+      };
+    });
+
+    let raf;
+    const draw = () => {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      let alive = false;
+      for (const p of parts) {
+        if (p.life <= 0) continue;
+        alive = true;
+        p.x += p.vx; p.y += p.vy;
+        p.vy += 0.14;       // gravità
+        p.vx *= 0.98;
+        p.life -= p.decay;
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (alive) raf = requestAnimationFrame(draw);
+      else cv.remove();
+    };
+    draw();
+    setTimeout(() => { cancelAnimationFrame(raf); cv.remove(); }, 4000);
+  }, delayMs);
 }
 
 function renderMotionCard(m) {
-  const st       = statusOf(m);
-  const myChoice = myVotes[m.id];
-  const isAdmin  = currentMember.role === 'admin';
+  const st          = statusOf(m);
+  const myChoice    = myVotes[m.id];
+  const isAdmin     = currentMember.role === 'admin';
+  const isCustomOpts = m.options && m.options.length > 0;
 
   let body = '';
 
   if (st === 'open') {
-    const choices = ['favorevole', 'contrario', 'astenuto'];
+    const choices = isCustomOpts ? m.options : ['favorevole', 'contrario', 'astenuto'];
+    const OPT_COLORS = ['yes', 'no', 'abs', 'yes', 'no', 'abs', 'yes', 'no'];
     const yourLine = myChoice
-      ? `<div class="your-vote">hai votato <span class="v ${VOTE_CLASS[myChoice]}">${VOTE_LABEL[myChoice]}</span> · puoi modificare finché la votazione è aperta</div>`
+      ? `<div class="your-vote">hai votato <span class="v ${isCustomOpts ? 'abs' : (VOTE_CLASS[myChoice] || 'abs')}">${escapeHtml(myChoice)}</span> · puoi modificare finché la votazione è aperta</div>`
       : `<div class="your-vote">non hai ancora votato. la votazione chiude ${fmtRel(m.closes_at)}.</div>`;
     body = `
       ${yourLine}
       <div class="vote-bar">
-        ${choices.map(c => `
-          <button class="vote ${VOTE_CLASS[c]} ${myChoice === c ? 'active' : ''}" data-motion="${m.id}" data-choice="${c}">
-            ${VOTE_LABEL[c]}
+        ${choices.map((c, i) => `
+          <button class="vote ${isCustomOpts ? OPT_COLORS[i % OPT_COLORS.length] : VOTE_CLASS[c]} ${myChoice === c ? 'active' : ''}" data-motion="${m.id}" data-choice="${escapeHtml(c)}">
+            ${escapeHtml(isCustomOpts ? c : VOTE_LABEL[c])}
           </button>
         `).join('')}
       </div>
@@ -1248,16 +2121,29 @@ function renderMotionCard(m) {
   } else if (st === 'scheduled') {
     body = `<div class="empty" style="margin-top:1rem; padding:1.2rem">apre ${fmtRel(m.opens_at)} · ${fmtDate(m.opens_at)}</div>`;
   } else {
-    body = renderResults(m);
+    if (isAdmin) {
+      body = renderResults(m);
+      if (!m.results_published) {
+        body += `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);text-align:right">
+          <button class="btn btn-primary btn-small" data-publish-motion="${m.id}">pubblica esito →</button>
+        </div>`;
+      }
+    } else if (!m.results_published) {
+      body = `<div class="results"><div class="empty" style="padding:1rem">esito non ancora pubblicato.</div></div>`;
+    } else {
+      body = renderResults(m);
+    }
   }
 
+  const remMs = new Date(m.closes_at).getTime() - Date.now();
   return `
-    <div class="card motion-card" data-motion-id="${m.id}">
+    <div class="card motion-card" data-motion-id="${m.id}" data-status="${st}">
       <div class="head">
         <h3>${escapeHtml(m.title)}</h3>
         <div class="badges">
           <span class="badge ${st}">${STATUS_LABEL[st]}</span>
           <span class="badge ${m.anonymous ? 'anon' : 'named'}">${m.anonymous ? 'anonima' : 'nominale'}</span>
+          ${isCustomOpts ? '<span class="badge named">scelta multipla</span>' : ''}
         </div>
       </div>
       ${m.description ? `<div class="desc">${escapeHtml(m.description)}</div>` : ''}
@@ -1265,6 +2151,7 @@ function renderMotionCard(m) {
         <span><b>durata</b> ${fmtDuration(new Date(m.closes_at) - new Date(m.opens_at))}</span>
         <span><b>chiude</b> ${fmtDate(m.closes_at)}</span>
       </div>
+      ${st === 'open' ? `<div class="card-clock"><span class="clock-label">rimane</span><span class="clock-value countdown${remMs < 30000 ? ' urgent' : ''}" data-closes="${m.closes_at}">${fmtCountdown(remMs)}</span></div>` : ''}
       ${body}
       ${isAdmin ? `<div style="margin-top:1rem; text-align:right; padding-top:1rem; border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-motion="${m.id}">elimina mozione</button></div>` : ''}
     </div>
@@ -1275,15 +2162,19 @@ function renderAdminPreview(m) {
   const r = resultsCache[m.id];
   if (!r || r.closed) return '';
   const voters = r.voters || [];
+  const isCustomOpts = m.options && m.options.length > 0;
   return `
     <div class="results">
       <div class="voters-list">
         <div class="hdr">preview admin · voti ${r.total_voted}/${r.total_voters}</div>
         ${voters.length
-          ? voters.map(v => `<div class="voter"><span>${escapeHtml(v.name)}</span><span class="v ${VOTE_CLASS[v.choice]}">${VOTE_LABEL[v.choice]}</span></div>`).join('')
+          ? voters.map(v => {
+              const cls = isCustomOpts ? 'abs' : (VOTE_CLASS[v.choice] || 'abs');
+              const lbl = isCustomOpts ? v.choice : (VOTE_LABEL[v.choice] || v.choice);
+              return `<div class="voter"><span>${escapeHtml(v.name)}</span><span class="v ${cls}">${escapeHtml(lbl)}</span></div>`;
+            }).join('')
           : '<div style="color:var(--muted); font-size:12px; padding:0.5rem 0">nessuno ha ancora votato.</div>'}
       </div>
-      ${m.anonymous ? '<div class="turnout-line" style="margin-top:0.5rem; color:var(--gold)">mozione anonima — dettagli visibili solo agli admin</div>' : ''}
     </div>
   `;
 }
@@ -1294,35 +2185,87 @@ function renderResults(m) {
     return `<div class="results"><div class="empty" style="padding:1rem">risultati non disponibili</div></div>`;
   }
   const counts = r.counts || {};
+  const firstReveal = !revealedMotions.has(m.id);
+  const animBar = firstReveal ? ' anim shine' : '';
+  const go = firstReveal ? ' go' : '';
+  const isCustomOpts = m.options && m.options.length > 0;
+
+  if (isCustomOpts) {
+    const opts = m.options;
+    const total = opts.reduce((s, o) => s + (counts[o] || 0), 0);
+    const pct = (n) => total > 0 ? Math.round(n / total * 100) : 0;
+    const OPT_COLORS = ['yes', 'no', 'abs', 'yes', 'no', 'abs', 'yes', 'no'];
+
+    const winnerIdx = opts.reduce((bi, o, i) => (counts[o] || 0) > (counts[opts[bi]] || 0) ? i : bi, 0);
+    const winnerOpt = opts[winnerIdx];
+    const winnerN = counts[winnerOpt] || 0;
+
+    let html = `<div class="results" data-motion-results="${m.id}">`;
+    if (total > 0) {
+      html += `<div class="verdict tie${go}">
+        <span class="v-ring"></span>
+        <span class="v-label">opzione più votata</span>
+        <span class="v-text" style="font-size:clamp(1.1rem,4vw,2.2rem);letter-spacing:-0.02em">${escapeHtml(winnerOpt)}</span>
+        <span class="v-margin">${winnerN} vot${winnerN === 1 ? 'o' : 'i'}</span>
+      </div>`;
+    }
+    html += opts.map((o, i) => {
+      const n = counts[o] || 0;
+      const cls = OPT_COLORS[i % OPT_COLORS.length];
+      return `<div class="result-bar">
+        <span class="label ${cls}" style="width:auto;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(o)}">${escapeHtml(o)}</span>
+        <div class="track"><div class="fill ${cls}${animBar}" data-w="${pct(n)}" style="width:${firstReveal ? 0 : pct(n)}%"></div></div>
+        <span class="count" data-final="${n}" data-pct="${pct(n)}">${firstReveal ? '0 · 0%' : `${n} · ${pct(n)}%`}</span>
+      </div>`;
+    }).join('');
+    html += `<div class="turnout-line">partecipazione · <b>${r.total_voted}/${r.total_voters}</b> membri</div>`;
+    if (r.voters && r.voters.length) {
+      html += `<div class="voters-list"><div class="hdr">come hanno votato</div>
+        ${r.voters.map(v => `<div class="voter"><span>${escapeHtml(v.name)}</span>
+          <span class="v abs" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(v.choice)}">${escapeHtml(v.choice)}</span></div>`).join('')}
+      </div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  // Standard sì / no / astenuto
   const yes = counts.favorevole || 0;
   const no  = counts.contrario  || 0;
   const abs = counts.astenuto   || 0;
   const total = yes + no + abs;
   const pct = (n) => total > 0 ? Math.round(n / total * 100) : 0;
 
+  let vClass, vText, vMargin;
+  if      (yes > no && yes > abs) { vClass = 'yes'; vText = 'approvata';       vMargin = `+${yes - no} vot${yes - no === 1 ? 'o' : 'i'} di scarto`; }
+  else if (no > yes && no > abs)  { vClass = 'no';  vText = 'respinta';        vMargin = `+${no - yes} vot${no - yes === 1 ? 'o' : 'i'} di scarto`; }
+  else if (yes === no)            { vClass = 'tie'; vText = 'parità';          vMargin = `${yes} a ${no}`; }
+  else                            { vClass = 'tie'; vText = 'non determinante'; vMargin = 'astenuti prevalenti'; }
+
+  const bar = (cls, label, n) =>
+    `<div class="result-bar">
+        <span class="label ${cls}">${label}</span>
+        <div class="track"><div class="fill ${cls}${animBar}" data-w="${pct(n)}" style="width:${firstReveal ? 0 : pct(n)}%"></div></div>
+        <span class="count" data-final="${n}" data-pct="${pct(n)}">${firstReveal ? '0 · 0%' : `${n} · ${pct(n)}%`}</span>
+      </div>`;
+
   let html = `
-    <div class="results">
-      <div class="result-bar">
-        <span class="label yes">favorevoli</span>
-        <div class="track"><div class="fill yes" style="width:${pct(yes)}%"></div></div>
-        <span class="count">${yes} · ${pct(yes)}%</span>
-      </div>
-      <div class="result-bar">
-        <span class="label no">contrari</span>
-        <div class="track"><div class="fill no" style="width:${pct(no)}%"></div></div>
-        <span class="count">${no} · ${pct(no)}%</span>
-      </div>
-      <div class="result-bar">
-        <span class="label abs">astenuti</span>
-        <div class="track"><div class="fill abs" style="width:${pct(abs)}%"></div></div>
-        <span class="count">${abs} · ${pct(abs)}%</span>
-      </div>
+    <div class="results" data-motion-results="${m.id}">
+      ${total > 0 ? `<div class="verdict ${vClass}${go}">
+        <span class="v-ring"></span>
+        <span class="v-label">esito</span>
+        <span class="v-text">${vText}</span>
+        <span class="v-margin">${vMargin}</span>
+      </div>` : ''}
+      ${bar('yes', 'favorevoli', yes)}
+      ${bar('no',  'contrari',   no)}
+      ${bar('abs', 'astenuti',   abs)}
       <div class="turnout-line">partecipazione · <b>${r.total_voted}/${r.total_voters}</b> membri</div>
   `;
 
   if (r.voters && r.voters.length) {
     html += `<div class="voters-list">
-      <div class="hdr">${m.anonymous ? 'dettaglio voti (visibile solo admin)' : 'come hanno votato'}</div>
+      <div class="hdr">come hanno votato</div>
       ${r.voters.map(v => `
         <div class="voter">
           <span>${escapeHtml(v.name)}</span>
@@ -1353,8 +2296,17 @@ async function castVote(motionId, choice) {
   buttons.forEach(b => b.disabled = false);
   if (error) { toast('errore voto: ' + error.message, true); return; }
   myVotes[motionId] = choice;
+  buzz(18);
   toast('voto registrato: ' + VOTE_LABEL[choice]);
   // ricarica per aggiornare admin preview se presente
+  await loadMotions();
+}
+
+async function publishResults(id) {
+  const { error } = await supabase.from('motions').update({ results_published: true }).eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  buzz([20, 40, 60]);
+  _motionsSig = '';
   await loadMotions();
 }
 
@@ -1373,17 +2325,27 @@ $('#motion-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const title       = $('#m-title').value.trim();
   const description = $('#m-desc').value.trim() || null;
-  const duration    = parseInt($('#m-duration').value);
+  const duration = $('#m-duration').value === 'custom'
+    ? (parseInt($('#m-custom-min').value) || 0) * 60 + (parseInt($('#m-custom-sec').value) || 0)
+    : parseInt($('#m-duration').value);
+  if (!duration || duration < 15) { toast('durata minima 15 secondi.', true); return; }
   const anonymous   = $('#m-anon').checked;
   const opens_at    = new Date().toISOString();
   const closes_at   = new Date(Date.now() + duration * 1000).toISOString();
+
+  let options = null;
+  if ($('#m-custom-opts').checked) {
+    const vals = [...$$('.opt-input')].map(el => el.value.trim()).filter(Boolean);
+    if (vals.length < 2) { toast('aggiungi almeno 2 opzioni di voto.', true); return; }
+    options = vals;
+  }
 
   const btn = $('#motion-submit');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>creazione…';
 
   const { error } = await supabase.from('motions').insert({
-    title, description, opens_at, closes_at, anonymous,
+    title, description, opens_at, closes_at, anonymous, options,
     created_by: currentMember.id,
   });
 
@@ -1394,9 +2356,42 @@ $('#motion-form').addEventListener('submit', async (e) => {
 
   toast('mozione creata.');
   e.target.reset();
-  $('#m-duration').value = '3600';
+  $('#m-duration').value = '60';
+  $('#m-custom-dur').classList.add('hidden');
+  $('#m-opts-container').classList.add('hidden');
+  $('#m-opts-list').innerHTML = '';
   await loadMotions();
 });
+
+$('#m-custom-opts').addEventListener('change', () => {
+  const on = $('#m-custom-opts').checked;
+  $('#m-opts-container').classList.toggle('hidden', !on);
+  if (on && !$('#m-opts-list').children.length) {
+    addOptionRow(); addOptionRow();
+  }
+});
+
+function addOptionRow() {
+  const list = $('#m-opts-list');
+  const row = document.createElement('div');
+  row.className = 'opt-row';
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'opt-input';
+  inp.placeholder = `opzione ${list.children.length + 1}`;
+  inp.maxLength = 100;
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'btn btn-ghost btn-small opt-remove';
+  del.textContent = '×';
+  del.addEventListener('click', () => row.remove());
+  row.appendChild(inp);
+  row.appendChild(del);
+  list.appendChild(row);
+  inp.focus();
+}
+
+$('#m-add-opt').addEventListener('click', addOptionRow);
 
 // ============================================================
 // ADMIN: members
@@ -1416,6 +2411,8 @@ async function loadMembers() {
 
   const pending = data.filter(m => !m.active && !m.is_primary);
   const active  = data.filter(m => m.active);
+  allMembers = active;
+  refreshElectionCandidatesList();
   let html = '';
 
   if (pending.length) {
@@ -1536,20 +2533,26 @@ async function loadElections() {
   allElections = elections || [];
 
   electionResultsCache = {};
-  const promises = allElections.map(el =>
-    supabase.rpc('election_results', { p_election_id: el.id }).then(({ data }) => [el.id, data])
-  );
-  const results = await Promise.all(promises);
-  for (const [id, data] of results) {
-    if (data) {
-      electionResultsCache[id] = data;
-      if (!pendingSelections[id]) {
-        pendingSelections[id] = new Set(data.my_votes || []);
+  const eIds = allElections.map(el => el.id);
+  if (eIds.length) {
+    const { data: bulk } = await supabase.rpc('bulk_election_results', { p_ids: eIds });
+    if (bulk) for (const [id, data] of Object.entries(bulk)) {
+      if (data) {
+        electionResultsCache[id] = data;
+        if (!pendingSelections[id]) {
+          pendingSelections[id] = new Set(data.my_votes || []);
+        }
       }
     }
   }
 
-  renderElections();
+  const isAdm = currentMember.role === 'admin';
+  const newSig = JSON.stringify({
+    ids: allElections.map(el => el.id + electionStatusOf(el)),
+    myV: Object.entries(electionResultsCache).map(([id, r]) => id + (r?.my_votes || []).join()),
+    ...(isAdm ? { preview: Object.entries(electionResultsCache).map(([id, r]) => id + (r?.total_voted ?? '')) } : {})
+  });
+  if (newSig !== _electionsSig) { _electionsSig = newSig; renderElections(); }
 }
 
 function electionStatusOf(el) {
@@ -1594,8 +2597,9 @@ function renderElectionCard(el) {
   else if (isAdmin)            body = renderElectionResults(el, r, seats);
   else                         body = renderElectionClosedMember(el, r);
 
+  const remMsEl = new Date(el.closes_at).getTime() - Date.now();
   return `
-    <div class="card motion-card" data-election-id="${el.id}">
+    <div class="card motion-card" data-election-id="${el.id}" data-status="${st}">
       <div class="head">
         <h3>${escapeHtml(title)}</h3>
         <div class="badges">
@@ -1608,6 +2612,7 @@ function renderElectionCard(el) {
         <span><b>durata</b> ${fmtDuration(new Date(el.closes_at) - new Date(el.opens_at))}</span>
         <span><b>chiude</b> ${fmtDate(el.closes_at)}</span>
       </div>
+      ${st === 'open' ? `<div class="card-clock"><span class="clock-label">rimane</span><span class="clock-value countdown${remMsEl < 30000 ? ' urgent' : ''}" data-closes="${el.closes_at}">${fmtCountdown(remMsEl)}</span></div>` : ''}
       ${body}
       ${isAdmin ? `<div style="margin-top:1rem;text-align:right;padding-top:1rem;border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-election="${el.id}">elimina elezione</button></div>` : ''}
     </div>
@@ -1666,7 +2671,6 @@ function renderElectionVoting(el, r, seats) {
               </div>
             `).join('')}
           </div>
-          ${el.anonymous ? '<div class="turnout-line" style="color:var(--gold);margin-top:.4rem">elezione anonima — chi ha votato chi visibile solo agli admin</div>' : ''}
         </div>
       `;
     }
@@ -1772,6 +2776,7 @@ async function confirmElectionVote(electionId) {
   }
 
   const n = data?.count ?? 0;
+  buzz(18);
   toast(n > 0 ? `${n} preferenz${n === 1 ? 'a' : 'e'} confermata${n === 1 ? '' : 'e'}.` : 'voto rimosso (astensione).');
   delete pendingSelections[electionId];
   await loadElections();
@@ -1785,22 +2790,241 @@ async function deleteElection(id) {
   await loadElections();
 }
 
+// ============================================================
+// PROPOSALS — load + render
+// ============================================================
+async function loadProposals() {
+  const { data: proposals, error } = await supabase
+    .from('proposals')
+    .select('*')
+    .order('opens_at', { ascending: false });
+  if (error) { toast('errore proposte: ' + error.message, true); return; }
+  allProposals = proposals || [];
+
+  proposalResponsesCache = {};
+  const pIds = allProposals.map(p => p.id);
+  if (pIds.length) {
+    const { data: bulk } = await supabase.rpc('bulk_proposal_results', { p_ids: pIds });
+    if (bulk) for (const [id, data] of Object.entries(bulk)) if (data) proposalResponsesCache[id] = data;
+  }
+
+  const isAdm = currentMember.role === 'admin';
+  const newSig = JSON.stringify({
+    ids: allProposals.map(p => p.id + proposalStatusOf(p)),
+    data: Object.entries(proposalResponsesCache).map(([id, r]) =>
+      id + (r?.total ?? 0) + (isAdm ? (r?.responses?.length ?? 0) : (r?.my_response ?? ''))
+    )
+  });
+  if (newSig !== _proposalsSig) { _proposalsSig = newSig; renderProposals(); }
+}
+
+function proposalStatusOf(p) {
+  const now = new Date();
+  if (now < new Date(p.opens_at))  return 'scheduled';
+  if (now < new Date(p.closes_at)) return 'open';
+  return 'closed';
+}
+
+function renderProposals() {
+  const list = $('#proposals-list');
+  if (!allProposals.length) { list.innerHTML = ''; return; }
+  // non ricostruire se l'utente sta scrivendo in una textarea
+  if (document.activeElement && document.activeElement.classList.contains('resp-area')) return;
+
+  list.innerHTML = allProposals.map(renderProposalCard).join('');
+
+  $$('[data-submit-proposal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pid = btn.dataset.submitProposal;
+      const ta  = document.querySelector(`.resp-area[data-proposal="${pid}"]`);
+      if (ta) submitProposalResponse(pid, ta.value);
+    });
+  });
+  $$('[data-delete-proposal]').forEach(btn => {
+    btn.addEventListener('click', () => deleteProposal(btn.dataset.deleteProposal));
+  });
+}
+
+function renderProposalCard(p) {
+  const st      = proposalStatusOf(p);
+  const isAdmin = currentMember.role === 'admin';
+  const r       = proposalResponsesCache[p.id];
+  const myResp  = r?.my_response || '';
+  let body = '';
+
+  if (st === 'open') {
+    const submitLabel = myResp ? 'aggiorna risposta →' : 'invia risposta →';
+    const hint = myResp
+      ? `<div class="your-vote">risposta già inviata. puoi modificarla fino alla chiusura.</div>`
+      : `<div class="your-vote">non hai ancora risposto. la raccolta chiude ${fmtRel(p.closes_at)}.</div>`;
+
+    body = `
+      ${hint}
+      <textarea class="resp-area" data-proposal="${p.id}" placeholder="scrivi la tua risposta…">${escapeHtml(myResp)}</textarea>
+      <button class="btn btn-primary btn-small" data-submit-proposal="${p.id}" style="margin-top:0.6rem">${submitLabel}</button>
+    `;
+    if (r?.total) {
+      body += `<div style="font-size:11px;color:var(--muted);margin-top:0.5rem">${r.total} risposta${r.total === 1 ? '' : 'e'} ricevuta${r.total === 1 ? '' : 'e'} finora.</div>`;
+    }
+
+    if (isAdmin && r?.responses?.length) {
+      body += `<div class="voters-list" style="margin-top:1rem">
+        <div class="hdr">risposte ricevute · ${r.total ?? 0}</div>
+        ${r.responses.map(resp => `
+          <div class="resp-item">
+            <div class="resp-name">${escapeHtml(resp.name)}</div>
+            <div class="resp-text">${escapeHtml(resp.text)}</div>
+            <div class="resp-time">${fmtDate(resp.created_at)}</div>
+          </div>
+        `).join('')}
+      </div>`;
+    } else if (isAdmin) {
+      body += `<div class="voters-list" style="margin-top:1rem">
+        <div class="hdr">risposte ricevute · 0</div>
+        <div style="color:var(--muted);font-size:12px;padding:0.5rem 0">nessuna risposta ancora.</div>
+      </div>`;
+    }
+
+  } else if (st === 'scheduled') {
+    body = `<div class="empty" style="margin-top:1rem;padding:1.2rem">apre ${fmtRel(p.opens_at)} · ${fmtDate(p.opens_at)}</div>`;
+  } else {
+    if (isAdmin) {
+      const responses = r?.responses || [];
+      body = `<div class="voters-list">
+        <div class="hdr">risposte raccolte · ${r?.total ?? responses.length}</div>
+        ${responses.length
+          ? responses.map(resp => `
+              <div class="resp-item">
+                <div class="resp-name">${escapeHtml(resp.name)}</div>
+                <div class="resp-text">${escapeHtml(resp.text)}</div>
+                <div class="resp-time">${fmtDate(resp.created_at)}</div>
+              </div>`).join('')
+          : '<div style="color:var(--muted);font-size:12px;padding:1rem 0">nessuna risposta.</div>'}
+      </div>`;
+    } else {
+      body = `<div class="results"><div class="empty" style="padding:1rem">raccolta chiusa. ${myResp ? 'la tua risposta è stata registrata.' : 'non hai risposto.'}</div>
+        ${myResp ? `<div class="resp-item" style="margin-top:0.8rem">
+          <div class="resp-name">la tua risposta</div>
+          <div class="resp-text">${escapeHtml(myResp)}</div>
+        </div>` : ''}
+      </div>`;
+    }
+  }
+
+  const remMsP = new Date(p.closes_at).getTime() - Date.now();
+  return `
+    <div class="card motion-card" data-proposal-id="${p.id}" data-status="${st}">
+      <div class="head">
+        <h3>${escapeHtml(p.title)}</h3>
+        <div class="badges">
+          <span class="badge ${st}">${STATUS_LABEL[st]}</span>
+          <span class="badge named">raccolta proposte</span>
+        </div>
+      </div>
+      ${p.description ? `<div class="desc">${escapeHtml(p.description)}</div>` : ''}
+      <div class="meta">
+        <span><b>chiude</b> ${fmtDate(p.closes_at)}</span>
+      </div>
+      ${st === 'open' ? `<div class="card-clock"><span class="clock-label">rimane</span><span class="clock-value countdown${remMsP < 30000 ? ' urgent' : ''}" data-closes="${p.closes_at}">${fmtCountdown(remMsP)}</span></div>` : ''}
+      ${body}
+      ${isAdmin ? `<div style="margin-top:1rem;text-align:right;padding-top:1rem;border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-proposal="${p.id}">elimina raccolta</button></div>` : ''}
+    </div>
+  `;
+}
+
+async function submitProposalResponse(proposalId, text) {
+  text = (text || '').trim();
+  if (!text) { toast('scrivi qualcosa prima di inviare.', true); return; }
+  const btn = $(`[data-submit-proposal="${proposalId}"]`);
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>invio…'; }
+
+  const { data, error } = await supabase.rpc('submit_proposal_response', {
+    p_proposal_id: proposalId, p_text: text,
+  });
+
+  if (btn) { btn.disabled = false; btn.innerHTML = 'invia risposta →'; }
+  if (error) { toast('errore: ' + error.message, true); return; }
+  if (data?.error) { toast('errore: ' + data.error, true); return; }
+
+  buzz(18);
+  toast('risposta inviata.');
+  _proposalsSig = '';
+  await loadProposals();
+}
+
+async function deleteProposal(id) {
+  if (!confirm('eliminare questa raccolta e tutte le risposte? operazione irreversibile.')) return;
+  const { error } = await supabase.from('proposals').delete().eq('id', id);
+  if (error) { toast('errore: ' + error.message, true); return; }
+  toast('raccolta eliminata.');
+  await loadProposals();
+}
+
+$('#proposal-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title       = $('#p-title').value.trim();
+  const description = $('#p-desc').value.trim() || null;
+  const duration = $('#p-duration').value === 'custom'
+    ? (parseInt($('#p-custom-min').value) || 0) * 60 + (parseInt($('#p-custom-sec').value) || 0)
+    : parseInt($('#p-duration').value);
+  if (!duration || duration < 15) { toast('durata minima 15 secondi.', true); return; }
+  const opens_at    = new Date().toISOString();
+  const closes_at   = new Date(Date.now() + duration * 1000).toISOString();
+
+  const btn = $('#proposal-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>avvio…';
+
+  const { error } = await supabase.from('proposals').insert({
+    title, description, opens_at, closes_at, created_by: currentMember.id,
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'apri raccolta →';
+  if (error) { toast('errore: ' + error.message, true); return; }
+
+  toast('raccolta aperta.');
+  e.target.reset();
+  $('#p-custom-dur').classList.add('hidden');
+  await loadProposals();
+});
+
+function refreshElectionCandidatesList() {
+  const container = $('#e-candidates-list');
+  if (!container) return;
+  if (!allMembers.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:0.2rem">nessun membro attivo</div>';
+    return;
+  }
+  container.innerHTML = allMembers.map(m =>
+    `<label class="cand-checklist-item">
+      <input type="checkbox" name="e-candidate" value="${m.id}">
+      <span>${escapeHtml(m.name)}${m.classe ? ' · <span style="color:var(--muted);font-size:11px">' + escapeHtml(m.classe) + '</span>' : ''}</span>
+    </label>`
+  ).join('');
+}
+
 $('#election-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const title     = $('#e-title').value.trim() || null;
   const organ     = $('#e-organ').value;
   const seats     = ORGAN_SEATS[organ];
-  const duration  = parseInt($('#e-duration').value);
+  const duration = $('#e-duration').value === 'custom'
+    ? (parseInt($('#e-custom-min').value) || 0) * 60 + (parseInt($('#e-custom-sec').value) || 0)
+    : parseInt($('#e-duration').value);
+  if (!duration || duration < 15) { toast('durata minima 15 secondi.', true); return; }
   const anonymous = $('#e-anon').checked;
   const opens_at  = new Date().toISOString();
   const closes_at = new Date(Date.now() + duration * 1000).toISOString();
+  const checked   = [...$$('input[name="e-candidate"]:checked')].map(el => el.value);
+  const candidate_ids = checked.length > 0 ? checked : null;
 
   const btn = $('#election-submit');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>avvio…';
 
   const { error } = await supabase.from('elections').insert({
-    title, organ, seats, opens_at, closes_at, anonymous,
+    title, organ, seats, opens_at, closes_at, anonymous, candidate_ids,
     created_by: currentMember.id,
   });
 
@@ -1810,6 +3034,7 @@ $('#election-form').addEventListener('submit', async (e) => {
   if (error) { toast('errore: ' + error.message, true); return; }
   toast('elezione avviata.');
   e.target.reset();
+  $('#e-custom-dur').classList.add('hidden');
   await loadElections();
 });
 
@@ -1818,21 +3043,67 @@ $('#election-form').addEventListener('submit', async (e) => {
 // ============================================================
 bootstrap();
 
-// auto-refresh on tab focus (refresh stati open/closed e nuovi voti)
-let lastRefresh = Date.now();
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && currentMember && Date.now() - lastRefresh > 5000) {
-    lastRefresh = Date.now();
-    loadMotions();
-    loadElections();
-    if (currentMember.role === 'admin') loadMembers();
-  }
+// auto-close altri details quando se ne apre uno
+document.querySelectorAll('details.admin').forEach(d => {
+  d.addEventListener('toggle', () => {
+    if (!d.open) return;
+    document.querySelectorAll('details.admin').forEach(other => {
+      if (other !== d) other.open = false;
+    });
+  });
 });
 
-// auto-refresh ogni 30s per status transitions
+// refresh coordinato: lock in-flight + spaziatura minima (evita pile-up e storm)
+let _loadingAll = false, _lastLoadAll = 0;
+async function refreshAll(force = false) {
+  if (!currentMember || _loadingAll) return;
+  if (!force && Date.now() - _lastLoadAll < 2500) return;
+  _loadingAll = true; _lastLoadAll = Date.now();
+  try {
+    await Promise.all([loadMotions(), loadElections(), loadProposals()]);
+    if (currentMember.role === 'admin') await loadMembers();
+  } finally { _loadingAll = false; }
+}
+
+// auto-refresh al ritorno sul tab
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refreshAll();
+});
+
+// countdown 1s tick — il reload alla scadenza scatta UNA volta per timestamp
+const firedExpiry = new Set();
 setInterval(() => {
-  if (!document.hidden && currentMember) { loadMotions(); loadElections(); }
-}, 30000);
+  const now = Date.now();
+  let newlyExpired = false;
+  document.querySelectorAll('.countdown[data-closes]').forEach(el => {
+    const closes = el.dataset.closes;
+    const rem = new Date(closes).getTime() - now;
+    if (rem <= 0) {
+      el.textContent = '00:00'; el.style.color = 'var(--muted)'; el.classList.remove('urgent');
+      if (!firedExpiry.has(closes)) { firedExpiry.add(closes); newlyExpired = true; }
+    } else {
+      el.textContent = fmtCountdown(rem);
+      el.classList.toggle('urgent', rem < 30000);
+      el.style.color = '';
+    }
+  });
+  if (newlyExpired) refreshAll(true);
+}, 1000);
+
+// custom duration: show/hide input row
+['m','e','p'].forEach(prefix => {
+  const sel = $(`#${prefix}-duration`);
+  const row = $(`#${prefix}-custom-dur`);
+  if (sel && row) sel.addEventListener('change', () => {
+    row.classList.toggle('hidden', sel.value !== 'custom');
+    if (sel.value === 'custom') $(`#${prefix}-custom-min`)?.focus();
+  });
+});
+
+// auto-refresh ogni 5s
+setInterval(() => {
+  if (!document.hidden) refreshAll();
+}, 5000);
 </script>
 </body>
 </html>
