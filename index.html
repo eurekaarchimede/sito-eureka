@@ -2096,7 +2096,7 @@ else reducedMotion.addListener(stopReveals);
     const zoomDistance = compact.matches ? Math.min(1, progress / .55) : progress;
     const zoomProgress = zoomDistance * zoomDistance * (3 - 2 * zoomDistance);
     const zoomAmount = compact.matches
-      ? Math.max(0, Math.min(.22, (window.innerWidth - 16) / schoolScene.offsetWidth - 1))
+      ? Math.max(0, Math.min(.22, (window.innerWidth - 1) / schoolScene.offsetWidth - 1))
       : .22;
     const schoolOffset = progress * schoolTravel;
     scene.style.setProperty('--sky-offset', `${(progress * Math.min(56, height * .08)).toFixed(1)}px`);
