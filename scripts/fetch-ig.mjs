@@ -89,23 +89,44 @@ const getJSON = async (url) => {
   return body;
 };
 
-// rinnovo: se fallisce (es. token più giovane di 24h) si continua col token attuale
-try {
-  const r = await getJSON(`${GRAPH}/refresh_access_token?grant_type=ig_refresh_token&access_token=${token}`);
-  if (r.access_token) {
-    token = r.access_token;
-    console.log(`token rinnovato, valido altri ${Math.round((r.expires_in || 0) / 86400)} giorni`);
+// Il token salvato può scadere se il workflow resta fermo. In quel caso usa
+// il secret IG_TOKEN aggiornato su GitHub, senza dover eliminare token.enc.
+const refresh = async (candidate) => {
+  try {
+    const r = await getJSON(`${GRAPH}/refresh_access_token?grant_type=ig_refresh_token&access_token=${candidate}`);
+    if (r.access_token) {
+      console.log(`token rinnovato, valido altri ${Math.round((r.expires_in || 0) / 86400)} giorni`);
+      return r.access_token;
+    }
+  } catch (e) {
+    console.warn(`rinnovo token non riuscito (${e.message})`);
   }
+  return candidate;
+};
+
+const getProfile = candidate => getJSON(`${GRAPH}/me?fields=username,followers_count&access_token=${candidate}`);
+let profile;
+try {
+  token = await refresh(token);
+  profile = await getProfile(token);
 } catch (e) {
-  console.warn(`rinnovo token non riuscito (${e.message}) — continuo con quello attuale`);
+  if (!BOOTSTRAP_TOKEN || BOOTSTRAP_TOKEN === token) {
+    throw new Error(`Token Instagram non valido (${e.message}). Genera un nuovo token Meta, aggiorna il secret IG_TOKEN su GitHub e rilancia il workflow.`);
+  }
+  console.warn('token salvato non valido: provo il secret IG_TOKEN');
+  token = await refresh(BOOTSTRAP_TOKEN);
+  try {
+    profile = await getProfile(token);
+  } catch (fallbackError) {
+    throw new Error(`Anche IG_TOKEN non è valido (${fallbackError.message}). Genera un nuovo token Meta e aggiorna il secret IG_TOKEN su GitHub.`);
+  }
 }
 
-// persisti subito il token (anche se il fetch dei media poi fallisse)
+// Persisti solo un token verificato, anche se il fetch dei media poi fallisse.
 mkdirSync(dirname(TOKEN_FILE), { recursive: true });
 writeFileSync(TOKEN_FILE, encrypt(token));
 
 // ---- profilo ----------------------------------------------------------
-const profile = await getJSON(`${GRAPH}/me?fields=username,followers_count&access_token=${token}`);
 console.log(`profilo: @${profile.username}, ${profile.followers_count} follower`);
 
 // ---- tutti i post (paginati) ------------------------------------------

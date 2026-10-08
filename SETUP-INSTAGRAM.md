@@ -1,12 +1,13 @@
 # Feed Instagram — setup (una volta sola)
 
-Il sito mostra **tutti** i post di @eureka.archimede e si aggiorna da solo ogni 3 ore.
+Il sito mostra **tutti** i post di @eureka.archimede e prova ad aggiornarsi ogni 3 ore.
 Funziona così: un robot gratuito di GitHub (una "Action") scarica i post dall'API
 ufficiale di Meta, salva immagini + dati dentro il sito, e li committa. I visitatori
 leggono solo un file statico — nessun limite di traffico, nessun servizio a pagamento.
 
-Devi fare questo setup **una volta**. Dopo, zero manutenzione: il token si rinnova
-da solo, i post si aggiornano da soli.
+Il token si rinnova automaticamente finché il workflow riesce a girare prima
+della sua scadenza. Se il workflow resta fermo per oltre 60 giorni o Meta
+revoca la sessione, occorre generare un nuovo token e aggiornare `IG_TOKEN`.
 
 Tempo: ~45 minuti. Fai con calma, è la parte più noiosa. Una volta finita, è per sempre.
 
@@ -48,8 +49,8 @@ Lo generi dal sito sviluppatori di Meta.
 6. **Tieni questo token da parte** (incollalo in una nota temporanea). Lo userai
    nella Parte C. Non condividerlo con nessuno: è come una password.
 
-Il robot rinnova questo token automaticamente a ogni esecuzione, quindi **non
-scadrà mai** finché il sito gira almeno una volta ogni 60 giorni.
+Il robot rinnova il token automaticamente quando il workflow riesce a eseguirsi
+con regolarità. Un token già scaduto non può essere rinnovato.
 
 ---
 
@@ -111,8 +112,13 @@ Due strade, entrambe gratis:
 
 ## Domande
 
-**Devo fare manutenzione?** No. Il token si rinnova da solo. I post si scaricano da
-soli. Pubblichi su Instagram → entro 3 ore appaiono sul sito.
+**Devo fare manutenzione?** Di norma no, ma controlla gli avvisi di GitHub Actions.
+Se ricevi un errore `Session has expired`, genera un nuovo token nella dashboard
+Meta, sostituisci il secret `IG_TOKEN` in GitHub → Settings → Secrets and variables
+→ Actions, poi avvia **aggiorna feed instagram** da Actions → Run workflow.
+Il workflow userà il nuovo secret anche se `data/token.enc` contiene quello scaduto.
+Quando il workflow va a buon fine, i nuovi post e i follower arrivano sul sito
+con la successiva pubblicazione di GitHub Pages.
 
 **E se non faccio in tempo a fare il setup Meta?** Il sito intanto funziona lo stesso:
 mostra gli ultimi 6 post tramite il servizio Behold (fallback automatico già attivo).
