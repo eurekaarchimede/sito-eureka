@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "project": {
+    "name": "sito eureka",
+    "productType": "Student representation website",
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Canvas 2D",
+      "SVG"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "index.html"
+    ],
+    "components": [],
+    "assets": [
+      "assets"
+    ],
+    "instructions": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ]
+  },
+  "design": {
+    "colorMode": "dark",
+    "colors": {
+      "background": "#0a1632",
+      "gold": "#f5cd47",
+      "cream": "#f7eed5"
+    },
+    "typography": {
+      "display": "DM Sans",
+      "body": "DM Sans"
+    },
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Keep index.html and eureka.html identical",
+      "Native mobile scroll",
+      "Respect reduced motion",
+      "Thin uniformly luminous gold trails",
+      "Stop animation loops when idle or hidden"
+    ],
+    "avoid": [
+      "React migration",
+      "Permanent WebGL loop",
+      "Pointer effects",
+      "Bulb-shaped star heads"
+    ]
+  },
+  "decisions": [
+    "Hero with a compact symmetric 3D school beneath the copy; no separate ARCHIMEDE sign; sky, copy and school move at different scroll rates, including performance-lite mode; tap toggles to a transparent 3D occupied-school diorama with the crane, smoke, flags, crowd and banners.",
+    "HyperspaceWarpDrive by dhileepkumargm (21st catalog 7943) is visual inspiration; implementation reuses the existing Canvas 2D starfield, not the Three.js shader.",
+    "Adaptive rendering lowers particle count then freezes decoration if measured frame work or delays exceed budget.",
+    "The old published Van Gogh style blue/gold shader is retained visually in a 72 KB mobile / 79 KB desktop still image; a reduced 3-octave WebGL2 version moves only briefly on capable devices and freezes after 30 mobile or 100 desktop frames. Phones reporting 2 or 4 GB RAM, data saver, and reduced motion use the static image without WebGL."
+  ],
+  "evidence": [
+    {
+      "fact": "project.instructions",
+      "source": "AGENTS.md"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "CLAUDE.md"
+    }
+  ],
+  "generatedAt": "2026-10-06T07:07:10.353Z"
+}

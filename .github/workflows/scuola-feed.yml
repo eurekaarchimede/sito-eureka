@@ -1,0 +1,38 @@
+name: aggiorna circolari e orari
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # GitHub esegue il controllo circa ogni 15 minuti; i job schedulati
+    # possono comunque partire con qualche minuto di ritardo.
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scuola-feed
+  cancel-in-progress: false
+
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: leggi il sito della scuola
+        run: python3 scripts/fetch-scuola.py
+      - name: salva i nuovi avvisi
+        run: |
+          git config user.name "scuola-feed-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/scuola/feed.json
+          if git diff --cached --quiet; then
+            echo "nessuna novità"
+          else
+            git commit -m "aggiorna circolari e orari"
+            git pull --rebase origin main
+            git push
+          fi

@@ -1,10 +1,12 @@
-# Aggiorna il feed Instagram del sito: ogni 3 ore scarica i post nuovi,
+# Aggiorna il feed Instagram ogni 3 ore: scarica i post nuovi,
 # rinnova il token Meta e committa assets/ig/feed.json + immagini.
 # Esecuzione manuale: tab Actions → "aggiorna feed instagram" → Run workflow.
 name: aggiorna feed instagram
 
 on:
-  workflow_dispatch: {}       # solo manuale — riattiva il cron quando hai il token Meta
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 */3 * * *'
 
 permissions:
   contents: write
@@ -29,11 +31,21 @@ jobs:
           ENC_KEY: ${{ secrets.ENC_KEY }}
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: prepara immagini leggere per mobile
+        run: |
+          python -m pip install Pillow==12.2.0
+          python scripts/optimize-images.py
+          python scripts/check-site.py
+
       - name: committa se c'è qualcosa di nuovo
         run: |
           git config user.name "ig-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add assets/ig assets/optimized data/token.enc
           if git diff --cached --quiet; then
             echo "nessuna novità"
           else
