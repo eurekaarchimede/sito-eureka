@@ -2746,9 +2746,9 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
       })).sort((a, b) => b.date.localeCompare(a.date));
       let filtered = items;
       let shown = 0;
-      const addPage = () => {
+      const addPage = (limit = 12) => {
         const fragment = document.createDocumentFragment();
-        for (const item of filtered.slice(shown, shown + 12)) {
+        for (const item of filtered.slice(shown, shown + limit)) {
           const li = document.createElement('li');
           const pdfs = Array.isArray(item.pdfs) ? item.pdfs.filter(isSchoolUrl) : [];
           const primary = isSchoolUrl(item.pdf) ? item.pdf : null;
@@ -2785,7 +2785,7 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
           fragment.append(li);
         }
         list.append(fragment);
-        shown = Math.min(shown + 12, filtered.length);
+        shown = Math.min(shown + limit, filtered.length);
         more.hidden = shown >= filtered.length;
       };
       const update = () => {
@@ -2805,7 +2805,7 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
         );
         list.replaceChildren();
         shown = 0;
-        addPage();
+        addPage(4);
         const active = terms.length || from.value || to.value;
         reset.hidden = !active;
         const count = active
@@ -2813,7 +2813,7 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
           : `${items.length} circolari`;
         status.textContent = `${count} · ultimo aggiornamento ${dateLabel(data.updated_at || '')}`;
       };
-      more.addEventListener('click', addPage);
+      more.addEventListener('click', () => addPage());
       let searchTimer;
       query.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(update, 150); });
       for (const field of [from, to]) field.addEventListener('input', update);
