@@ -347,7 +347,11 @@ nav .ig:hover {
     background-position: center 42%;
     opacity: .46;
   }
-  .school-scene { width: min(80vw, 480px); }
+  .school-scene { width: min(92vw, 520px); }
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .hero { justify-content: flex-start; gap: 0; }
+  .school-scene { margin-top: auto; margin-bottom: clamp(0rem, 2svh, 1rem); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-depth__shader { display: none; }
@@ -1408,7 +1412,7 @@ footer a { display: inline-flex; align-items: center; }
   </div>
   <div class="school-scene">
     <button class="school-egg" id="school-egg" type="button" aria-label="Mostra la scuola occupata" aria-pressed="false">
-      <img class="school-egg__base" src="assets/scuola/liceo-archimede-3d.webp" srcset="assets/scuola/liceo-archimede-3d-mobile.webp 960w, assets/scuola/liceo-archimede-3d.webp 2172w" sizes="(max-width: 600px) 300px, min(76vw, 720px)" width="2172" height="724" alt="" fetchpriority="high" decoding="async">
+      <img class="school-egg__base" src="assets/scuola/liceo-archimede-3d.webp" srcset="assets/scuola/liceo-archimede-3d-mobile.webp 960w, assets/scuola/liceo-archimede-3d.webp 2172w" sizes="(max-width: 600px) 92vw, min(76vw, 720px)" width="2172" height="724" alt="" fetchpriority="high" decoding="async">
       <img class="school-egg__occupied" data-src="assets/scuola/liceo-archimede-occupato-3d.webp" data-src-mobile="assets/scuola/liceo-archimede-occupato-3d-mobile.webp" width="2172" height="724" alt="" decoding="async">
     </button>
   </div>
@@ -2064,8 +2068,11 @@ else reducedMotion.addListener(stopReveals);
   if (!hero || !scene || !copy || !schoolScene || !school) return;
   let visible = true, frame = 0, height = hero.offsetHeight;
   let top = hero.getBoundingClientRect().top + window.scrollY;
-  let schoolTravel = Math.min(150, Math.max(70, school.offsetHeight * .7));
   const compact = matchMedia('(max-width: 600px)');
+  const getSchoolTravel = () => compact.matches
+    ? Math.min(200, Math.max(125, school.offsetHeight * 1.35))
+    : Math.min(150, Math.max(70, school.offsetHeight * .7));
+  let schoolTravel = getSchoolTravel();
   const reset = () => {
     if (frame) cancelAnimationFrame(frame);
     frame = 0;
@@ -2082,7 +2089,7 @@ else reducedMotion.addListener(stopReveals);
     if (!visible || document.hidden || reducedMotion.matches) return;
     const progress = Math.max(0, Math.min(1, (window.scrollY - top) / height));
     const zoomProgress = progress * progress * (3 - 2 * progress);
-    const zoomAmount = compact.matches ? .14 : .22;
+    const zoomAmount = compact.matches ? .55 : .22;
     const schoolOffset = progress * schoolTravel;
     scene.style.setProperty('--sky-offset', `${(progress * Math.min(56, height * .08)).toFixed(1)}px`);
     copy.style.setProperty('--copy-offset', `${(progress * Math.min(32, height * .05)).toFixed(1)}px`);
@@ -2106,7 +2113,7 @@ else reducedMotion.addListener(stopReveals);
   window.addEventListener('resize', () => {
     height = hero.offsetHeight;
     top = hero.getBoundingClientRect().top + window.scrollY;
-    schoolTravel = Math.min(150, Math.max(70, school.offsetHeight * .7));
+    schoolTravel = getSchoolTravel();
     request();
   }, { passive: true });
   document.addEventListener('visibilitychange', () => { if (document.hidden) reset(); else request(); });
