@@ -347,11 +347,10 @@ nav .ig:hover {
     background-position: center 42%;
     opacity: .46;
   }
-  .school-scene { width: min(92vw, 520px); }
+  .school-scene { width: min(84vw, 520px); }
 }
 @media (max-width: 600px) and (orientation: portrait) {
-  .hero { justify-content: flex-start; gap: 0; }
-  .school-scene { margin-top: auto; margin-bottom: clamp(0rem, 2svh, 1rem); }
+  .hero { justify-content: space-evenly; gap: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-depth__shader { display: none; }
@@ -478,15 +477,17 @@ nav .ig:hover {
   padding: 1.3rem 0;
 }
 .marquee-track {
-  display: inline-flex;
-  gap: .65rem 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0 1rem;
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   font-size: clamp(1.3rem, 2.8vw, 2.2rem);
   font-weight: 700;
   letter-spacing: -0.02em;
+  animation: marquee-scroll 24s linear infinite;
 }
+.marquee-segment { display: flex; flex: none; align-items: center; gap: 1.5rem; padding-right: 1.5rem; }
+@keyframes marquee-scroll { to { transform: translateX(-50%); } }
 .marquee-track span, .marquee-track a.marquee-link { display: inline-flex; align-items: center; gap: 1rem; }
 .marquee-link { color: inherit; text-decoration: none; cursor: pointer; }
 .marquee-link:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -496,6 +497,9 @@ nav .ig:hover {
   content: '◆';
   color: var(--bg);
   font-size: 0.7em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
 }
 
 /* ===== SECTION COMMONS ===== */
@@ -1412,7 +1416,7 @@ footer a { display: inline-flex; align-items: center; }
   </div>
   <div class="school-scene">
     <button class="school-egg" id="school-egg" type="button" aria-label="Mostra la scuola occupata" aria-pressed="false">
-      <img class="school-egg__base" src="assets/scuola/liceo-archimede-3d.webp" srcset="assets/scuola/liceo-archimede-3d-mobile.webp 960w, assets/scuola/liceo-archimede-3d.webp 2172w" sizes="(max-width: 600px) 92vw, min(76vw, 720px)" width="2172" height="724" alt="" fetchpriority="high" decoding="async">
+      <img class="school-egg__base" src="assets/scuola/liceo-archimede-3d.webp" srcset="assets/scuola/liceo-archimede-3d-mobile.webp 960w, assets/scuola/liceo-archimede-3d.webp 2172w" sizes="(max-width: 600px) 84vw, min(76vw, 720px)" width="2172" height="724" alt="" fetchpriority="high" decoding="async">
       <img class="school-egg__occupied" data-src="assets/scuola/liceo-archimede-occupato-3d.webp" data-src-mobile="assets/scuola/liceo-archimede-occupato-3d-mobile.webp" width="2172" height="724" alt="" decoding="async">
     </button>
   </div>
@@ -1421,7 +1425,8 @@ footer a { display: inline-flex; align-items: center; }
 <!-- ============ MARQUEE ============ -->
 <div class="marquee" aria-label="eureka, scoperta, archimede, messina, idee accese">
   <div class="marquee-track">
-    <span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span>
+    <div class="marquee-segment"><span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span></div>
+    <div class="marquee-segment" aria-hidden="true"><span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span></div>
   </div>
 </div>
 
@@ -2088,15 +2093,18 @@ else reducedMotion.addListener(stopReveals);
     frame = 0;
     if (!visible || document.hidden || reducedMotion.matches) return;
     const progress = Math.max(0, Math.min(1, (window.scrollY - top) / height));
-    const zoomProgress = progress * progress * (3 - 2 * progress);
-    const zoomAmount = compact.matches ? .55 : .22;
+    const zoomDistance = compact.matches ? Math.min(1, progress / .55) : progress;
+    const zoomProgress = zoomDistance * zoomDistance * (3 - 2 * zoomDistance);
+    const zoomAmount = compact.matches
+      ? Math.max(0, Math.min(.22, (window.innerWidth - 16) / schoolScene.offsetWidth - 1))
+      : .22;
     const schoolOffset = progress * schoolTravel;
     scene.style.setProperty('--sky-offset', `${(progress * Math.min(56, height * .08)).toFixed(1)}px`);
     copy.style.setProperty('--copy-offset', `${(progress * Math.min(32, height * .05)).toFixed(1)}px`);
     schoolScene.style.setProperty('--school-glow-offset', `${(schoolOffset * .45).toFixed(1)}px`);
     school.style.setProperty('--school-offset', `${schoolOffset.toFixed(1)}px`);
     school.style.setProperty('--school-tilt', `${(3 + progress * 5).toFixed(1)}deg`);
-    school.style.setProperty('--school-depth', `${(progress * 50).toFixed(1)}px`);
+    school.style.setProperty('--school-depth', `${(compact.matches ? 0 : progress * 50).toFixed(1)}px`);
     school.style.setProperty('--school-scale', (1 + zoomProgress * zoomAmount).toFixed(3));
   };
   const request = () => {

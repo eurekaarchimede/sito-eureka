@@ -62,7 +62,8 @@
     ]
   },
   "decisions": [
-    "Hero with a compact symmetric 3D school beneath the copy; no separate ARCHIMEDE sign; sky, copy and school move at different scroll rates, including performance-lite mode; tap toggles to a transparent 3D occupied-school diorama with the crane, smoke, flags, crowd and banners.",
+    "Hero with a symmetric 3D school beneath the copy; on portrait phones the copy and school share the vertical space, while scroll zoom stops at an 8 px side margin by 55% of the hero. Desktop retains the deeper perspective. No separate ARCHIMEDE sign; sky, copy and school move at different scroll rates, including performance-lite mode; tap toggles to a transparent 3D occupied-school diorama with the crane, smoke, flags, crowd and banners.",
+    "The gold marquee is one unwrapped, continuously scrolling line with a hidden duplicate for a seamless loop; reduced-motion preference stops it.",
     "HyperspaceWarpDrive by dhileepkumargm (21st catalog 7943) is visual inspiration; implementation reuses the existing Canvas 2D starfield, not the Three.js shader.",
     "Adaptive rendering lowers particle count then freezes decoration if measured frame work or delays exceed budget.",
     "The old published Van Gogh style blue/gold shader is retained visually in a 72 KB mobile / 79 KB desktop still image; a reduced 3-octave WebGL2 version moves only briefly on capable devices and freezes after 30 mobile or 100 desktop frames. Phones reporting 2 or 4 GB RAM, data saver, and reduced motion use the static image without WebGL."
