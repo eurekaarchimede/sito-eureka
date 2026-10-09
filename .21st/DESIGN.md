@@ -6,6 +6,8 @@ L’apertura dispone cielo, testo e facciata su livelli distinti. La scuola è n
 
 La fascia oro è una sola riga in movimento continuo. Duplica visivamente le cinque parole per ottenere un ciclo senza salto; la copia è nascosta agli screen reader e il movimento si ferma con “movimento ridotto”.
 
+La chiusura mobile allinea al centro il link Instagram su due righe deliberate e dispone i sei collegamenti del footer in una griglia regolare di tre colonne e due righe. Il nome della scuola e la città stanno su righe separate.
+
 Il campo HyperspaceWarpDrive riproduce i raggi prospettici 21st.dev su un solo Canvas 2D: persistenza dorata uniforme, accelerazione allo scroll su tutta la pagina, ritmo adattato a mobile e dispositivi a basso consumo. Niente Three.js extra o tracking del cursore; pausa in background e con movimento ridotto.
 
 ## Vortici blu e oro (7 ottobre 2026)

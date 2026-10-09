@@ -1241,6 +1241,7 @@ footer a {
 }
 footer a:hover { color: var(--gold); }
 footer .right { text-align: right; }
+footer .footer-location::before { content: ' · '; }
 @media (max-width: 700px) {
   footer .row { grid-template-columns: 1fr; text-align: center; }
   footer .right, footer .center { justify-content: center; text-align: center; }
@@ -1332,6 +1333,28 @@ footer a { display: inline-flex; align-items: center; }
 @media (max-width: 600px) {
   section { padding: 4rem 1rem; }
   .hero { padding: 6rem 1rem 3rem; }
+  .cta a.ig-big {
+    flex-direction: column;
+    justify-content: center;
+    gap: .15rem;
+    text-align: center;
+    font-size: clamp(1.1rem, 5vw, 1.3rem);
+  }
+  .cta a.ig-big::before { display: none; }
+  .cta a.ig-big span:last-child { color: var(--gold); font-size: .8em; }
+  footer .row { gap: 1.4rem; letter-spacing: .07em; }
+  footer .row .center {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .3rem .2rem;
+    width: min(100%, 360px);
+    margin-inline: auto;
+    justify-items: center;
+  }
+  footer .row .center a { justify-content: center; min-height: 44px; }
+  footer .right .school-link, footer .footer-location { display: block; }
+  footer .right .school-link { width: fit-content; margin-inline: auto; }
+  footer .footer-location::before { content: none; }
   .card { padding: 1.5rem; min-height: 0; }
   .progetti .head .note { text-align: left; }
   .event { padding: 1.5rem 0; }
@@ -1842,7 +1865,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="super">● vota. condividi. accendi.</div>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">
-      @eureka.archimede su instagram
+      <span>@eureka.archimede</span><span>su instagram ↗</span>
     </a>
   </div>
 </section>
@@ -1860,7 +1883,7 @@ footer a { display: inline-flex; align-items: center; }
       <a href="#candidati">candidati</a>
       <a href="#storia">storia</a>
     </div>
-    <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a> · messina, it</div>
+    <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a><span class="footer-location">messina, it</span></div>
   </div>
 </footer>
 
