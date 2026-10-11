@@ -1257,9 +1257,9 @@ footer a { display: inline-flex; align-items: center; }
 .shop .head > p { max-width: 620px; margin-inline: auto; color: var(--beige-dim); }
 .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: stretch; }
 .shop-product { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); box-shadow: 0 0 12px rgba(245, 205, 71, .12); }
-.shop-gallery { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
+.shop-gallery { display: grid; place-items: center; position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
 .shop-product__image { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
-.shop-product__image[data-original-mask="true"] { -webkit-mask-image: url("assets/shop/dreams-silhouette.svg"); mask-image: url("assets/shop/dreams-silhouette.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.shop-product__image[data-original-mask="true"] { width: 92%; height: 92%; margin: auto; -webkit-mask-image: url("assets/shop/dreams-silhouette-v2.svg"); mask-image: url("assets/shop/dreams-silhouette-v2.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
