@@ -295,12 +295,16 @@ nav .ig:hover {
   background: radial-gradient(ellipse 60% 48% at 50% 45%, var(--bg) 0%, transparent 90%);
   opacity: .55;
 }
-.hero-depth__shader {
-  position: absolute; inset: 0; display: block; width: 100%; height: 100%;
-  opacity: 0; transition: opacity .45s ease;
+@keyframes nebula-drift {
+  0%, 100% { transform: scale(1.06) translate3d(-.6%, -.4%, 0) rotate(-.3deg); }
+  50% { transform: scale(1.10) translate3d(.6%, .4%, 0) rotate(.3deg); }
 }
-.hero-swirl-live .hero-depth__shader { opacity: 1; }
-.hero-swirl-live .hero-depth__swirl { opacity: 0; }
+.hero-depth__swirl {
+  animation: nebula-drift 32s ease-in-out infinite;
+  animation-play-state: paused;
+  transform-origin: center;
+}
+.nebula-moving .hero-depth__swirl { animation-play-state: running; }
 .hero-depth__sky {
   position: absolute; inset: -100px 0;
   background: url("assets/stars.svg") repeat;
@@ -368,7 +372,7 @@ nav .ig:hover {
   .hero { justify-content: space-evenly; gap: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-depth__shader { display: none; }
+  .hero-depth__swirl { animation: none; transform: none; }
   .hero-depth__sky { transform: none; }
   .school-egg { transform: perspective(900px) rotateX(3deg); }
   .hero-inner, .school-scene::before { transform: none; }
@@ -1351,7 +1355,6 @@ footer a { display: inline-flex; align-items: center; }
 <section class="hero" id="top">
   <div class="hero-depth" aria-hidden="true">
     <div class="hero-depth__swirl"></div>
-    <canvas class="hero-depth__shader" id="hero-swirl" data-mode="static"></canvas>
     <div class="hero-depth__sky"></div>
   </div>
   <div class="hero-inner">
@@ -2081,158 +2084,16 @@ else reducedMotion.addListener(stopReveals);
   request();
 })();
 
-// ===== VORTICI DELL'HERO: breve movimento solo sui dispositivi capaci =====
+// ===== NEBULOSA ORIGINALE: movimento lieve, senza sostituire la texture =====
 (() => {
-  const canvas = document.getElementById('hero-swirl');
-  const hero = canvas?.closest('.hero');
-  if (!canvas || !hero) return;
-  const mobile = matchMedia('(max-width: 700px)').matches;
-  const memory = navigator.deviceMemory || 0;
-  const cores = navigator.hardwareConcurrency || 0;
-  const saveData = navigator.connection?.saveData || false;
-  if (reducedMotion.matches || saveData) {
-    canvas.dataset.mode = 'static-low-power';
-    return;
-  }
-
-  const VERT = `#version 300 es
-in vec2 a_pos;
-void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
-  // Adapted from Nebula by chamaac, 21st.dev catalog 18470.
-  const FRAG = `#version 300 es
-precision highp float;
-uniform float u_time;
-uniform vec2 u_res;
-out vec4 outColor;
-float random(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-  vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(random(i), random(i + vec2(1., 0.)), u.x),
-    mix(random(i + vec2(0., 1.)), random(i + vec2(1.)), u.x), u.y);
-}
-float fbm(vec2 p) {
-  float value = 0., amplitude = .5;
-  for (int i = 0; i < 5; i++) {
-    value += amplitude * noise(p);
-    p = mat2(.8, .6, -.6, .8) * p * 2. + 7.1;
-    amplitude *= .5;
-  }
-  return value;
-}
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_res;
-  vec2 st = (gl_FragCoord.xy - .5 * u_res) / u_res.y * 3.;
-  float t = u_time * .28;
-  vec2 q = vec2(fbm(st), fbm(st + vec2(1.)));
-  vec2 r = vec2(fbm(st + q + vec2(1.7,9.2) + .15*t),
-    fbm(st + q + vec2(8.3,2.8) + .126*t));
-  float f = fbm(st + 2.2*r);
-  vec3 night = vec3(.039,.086,.196);
-  vec3 blue = vec3(.22,.38,.64);
-  vec3 gold = vec3(.961,.804,.278);
-  float cloud = smoothstep(.27,.78,f);
-  float filament = pow(1. - abs(2.*f - 1.), 12.) * smoothstep(.6,.95,length(r));
-  vec3 color = mix(night, blue, cloud);
-  color = mix(color, gold, filament * .32);
-  float edge = smoothstep(0.,.1,uv.y) * (1.-smoothstep(.86,1.,uv.y));
-  outColor = vec4(color * .78, edge * .78);
-}`;
-
-  let gl, program, resolution, time, raf = 0, timer = 0, bootScheduled = false;
-  let visible = false, scrolling = false, frames = 0, last = 0, slowFrames = 0;
-  const interval = mobile ? 50 : 33;
-  const stop = () => {
-    if (raf) cancelAnimationFrame(raf);
-    if (timer) clearTimeout(timer);
-    raf = timer = 0;
-    last = 0;
-    if (canvas.dataset.mode === 'animated') canvas.dataset.mode = 'paused';
-  };
-  const fail = () => {
-    stop();
-    hero.classList.remove('hero-swirl-live');
-    canvas.dataset.mode = 'static-fallback';
-  };
-  const compile = (type, source) => {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
-    gl.deleteShader(shader);
-    return null;
-  };
-  const init = () => {
-    if (gl || !visible || scrolling || document.hidden || reducedMotion.matches) return;
-    try {
-      gl = canvas.getContext('webgl2', { alpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' });
-      if (!gl) { fail(); return; }
-      const vs = compile(gl.VERTEX_SHADER, VERT);
-      const fs = compile(gl.FRAGMENT_SHADER, FRAG);
-      if (!vs || !fs) { fail(); return; }
-      program = gl.createProgram();
-      gl.attachShader(program, vs); gl.attachShader(program, fs);
-      gl.linkProgram(program);
-      gl.deleteShader(vs); gl.deleteShader(fs);
-      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { fail(); return; }
-      gl.useProgram(program);
-      const buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-      const position = gl.getAttribLocation(program, 'a_pos');
-      gl.enableVertexAttribArray(position);
-      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      resolution = gl.getUniformLocation(program, 'u_res');
-      time = gl.getUniformLocation(program, 'u_time');
-      canvas.addEventListener('webglcontextlost', fail, { once: true });
-    } catch { fail(); }
-  };
-  const draw = now => {
-    raf = 0;
-    if (!visible || scrolling || document.hidden || reducedMotion.matches) {
-      stop();
-      return;
-    }
-    if (last && now - last > 180) slowFrames++;
-    else slowFrames = Math.max(0, slowFrames - 1);
-    if (slowFrames >= 3) { fail(); return; }
-    last = now;
-    const bounds = canvas.getBoundingClientRect();
-    const scale = mobile ? .38 : .55;
-    const width = Math.max(1, Math.round(bounds.width * scale));
-    const height = Math.max(1, Math.round(bounds.height * scale));
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width; canvas.height = height;
-      gl.viewport(0, 0, width, height);
-    }
-    gl.uniform1f(time, now / 1000);
-    gl.uniform2f(resolution, width, height);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    if (!frames) hero.classList.add('hero-swirl-live');
-    frames++;
-    canvas.dataset.mode = 'animated';
-    timer = setTimeout(() => { raf = requestAnimationFrame(draw); }, interval);
-  };
-  const start = () => {
-    if (!visible || scrolling || document.hidden || reducedMotion.matches || raf || timer || canvas.dataset.mode === 'static-fallback') return;
-    if (!gl) {
-      if (bootScheduled) return;
-      bootScheduled = true;
-      const boot = () => { bootScheduled = false; init(); if (gl && program) start(); };
-      if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
-      else setTimeout(boot, 450);
-      return;
-    }
-    if (gl && program) raf = requestAnimationFrame(draw);
-  };
-  const observer = new IntersectionObserver(entries => {
-    visible = entries[0].isIntersecting;
-    if (visible) start(); else stop();
-  });
-  observer.observe(hero);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
-  const motionChange = () => { if (reducedMotion.matches) fail(); else start(); };
-  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', motionChange);
-  else reducedMotion.addListener(motionChange);
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  let visible = false;
+  const sync = () => hero.classList.toggle('nebula-moving', visible && !document.hidden && !reducedMotion.matches);
+  new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }).observe(hero);
+  document.addEventListener('visibilitychange', sync);
+  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', sync);
+  else reducedMotion.addListener(sync);
 })();
 
 // ===== EASTER EGG: il secondo quadro viene caricato solo al primo tocco =====
