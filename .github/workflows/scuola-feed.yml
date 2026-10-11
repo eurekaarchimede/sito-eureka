@@ -3,9 +3,10 @@ name: aggiorna circolari e orari
 on:
   workflow_dispatch: {}
   schedule:
-    # GitHub esegue il controllo circa ogni 15 minuti; i job schedulati
-    # possono comunque partire con qualche minuto di ritardo.
-    - cron: '*/15 * * * *'
+    # Controlla ogni 5 minuti dalle 08:00 alle 21:55 (ora italiana).
+    # I job schedulati possono comunque partire con qualche minuto di ritardo.
+    - cron: '*/5 8-21 * * *'
+      timezone: "Europe/Rome"
 
 permissions:
   contents: write
