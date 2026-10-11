@@ -549,6 +549,165 @@ section { padding: 7rem 2rem; position: relative; }
   font-style: normal;
 }
 
+/* ===== PROJ GALLERY (JS-driven) ===== */
+.proj-gallery {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--line);
+}
+.proj-gallery-head { margin-bottom: 2.5rem; }
+.proj-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+@media (max-width: 1000px) { .proj-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px)  { .proj-gallery-grid { grid-template-columns: 1fr; } }
+
+.proj-card {
+  background: rgba(17, 32, 69, 0.45);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.proj-card .proj-card-img { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.proj-card:hover .proj-card-img { transform: scale(1.045); }
+.proj-card:hover {
+  background: rgba(17, 32, 69, 0.85);
+  transform: translateY(-3px);
+}
+.proj-card-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--line);
+}
+.proj-card.image-missing::before { content: "immagine non disponibile"; display: grid; place-items: center; aspect-ratio: 1; color: var(--beige-dim); }
+.proj-card-body { padding: 1.4rem 1.3rem; }
+.proj-card-date {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+.proj-card-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 0.6rem;
+}
+.proj-card-desc {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--beige-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.proj-editions {
+  padding: 0.8rem 1.3rem 1.2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.proj-editions-label {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.proj-editions a {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--beige-dim);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+  transition: color 0.2s;
+}
+.proj-editions a:hover { color: var(--gold); border-color: var(--gold); }
+.proj-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+.proj-empty a {
+  color: var(--gold);
+  text-decoration: none;
+  font-style: normal;
+  font-weight: 600;
+}
+/* le card del feed sono <a>: stesso look delle vecchie card */
+a.proj-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.proj-ig-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-decoration: none;
+}
+.proj-ig-link #proj-ig-followers {
+  color: var(--beige-dim);
+  font-weight: 500;
+}
+.proj-card-type {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 21px;
+  height: 21px;
+  color: var(--cream);
+  filter: drop-shadow(0 1px 4px rgba(3, 7, 18, 0.7));
+  pointer-events: none;
+}
+.proj-card-type svg { width: 100%; height: 100%; display: block; }
+.proj-more {
+  display: block;
+  margin: 2.5rem auto 0;
+  padding: 0.85em 2.2em;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--gold);
+  background: rgba(17, 32, 69, 0.45);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.proj-more:hover {
+  background: rgba(17, 32, 69, 0.9);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.instagram { border-top: 1px solid var(--line); }
+.instagram .proj-gallery { margin-top: 0; padding-top: 0; border-top: 0; }
+
 /* ===== SCUOLA: ORARI E CIRCOLARI ===== */
 .scuola {
   border-top: 1px solid var(--line);
@@ -1220,6 +1379,22 @@ footer a { display: inline-flex; align-items: center; }
     <div class="marquee-segment" aria-hidden="true"><span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span></div>
   </div>
 </div>
+
+<!-- ============ INSTAGRAM ============ -->
+<section class="instagram" id="instagram">
+  <div class="container">
+    <!-- gallery progetti — archivio locale Instagram, fallback Behold -->
+    <div class="proj-gallery" id="proj-gallery">
+      <div class="proj-gallery-head reveal">
+        <div class="section-label">in diretta da instagram</div>
+        <h2 class="h2">i progetti. <em>documentati</em>.</h2>
+        <a class="proj-ig-link" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">@eureka.archimede <span id="proj-ig-followers"></span> <span class="arrow">→</span></a>
+      </div>
+      <div class="proj-gallery-grid" id="proj-gallery-grid" aria-busy="false"></div>
+      <noscript><p>consulta i progetti su <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram ↗</a>.</p></noscript>
+    </div>
+  </div>
+</section>
 
 <!-- ============ CIRCOLARI E ORARI ============ -->
 <section class="scuola" id="scuola">
@@ -2337,6 +2512,209 @@ void main() {
 // ===== year =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
+
+// =====================================================================
+// ===== PROGETTI GALLERY — archivio Instagram ======================
+// =====================================================================
+// Behold fornisce gli ultimi post e il numero attuale di follower.
+// Il JSON locale conserva l'archivio completo e resta disponibile offline.
+const LOCAL_FEED = 'assets/ig/feed.json';
+const BEHOLD_FEED = 'https://feeds.behold.so/LUPhA0MWLASmG03Yef0U';
+const IG_PROFILE = 'https://instagram.com/eureka.archimede';
+
+(() => {
+  const grid = document.getElementById('proj-gallery-grid');
+  const gallery = document.getElementById('proj-gallery');
+  if (!grid || !gallery) return;
+
+  const PAGE = 6; // post per blocco: il resto arriva con "mostra altri"
+  const fmtData = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+  // separatore migliaia manuale: niente dipendenza dai dati locale del browser
+  const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  const ICONS = {
+    CAROUSEL_ALBUM: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 3h11a2 2 0 0 1 2 2v11h-2V5H8V3zM5 7h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>',
+    VIDEO: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>'
+  };
+
+  const fallback = (msg) => {
+    gallery.querySelectorAll('.proj-more').forEach(button => button.remove());
+    grid.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'proj-empty';
+    d.innerHTML = `${msg} <a href="${IG_PROFILE}" target="_blank" rel="noopener">vai al profilo →</a>`;
+    grid.appendChild(d);
+  };
+
+  const postUrl = value => {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' && !url.username && !url.password && !url.port && ['instagram.com', 'www.instagram.com'].includes(url.hostname) ? url.href : IG_PROFILE;
+    } catch { return IG_PROFILE; }
+  };
+  // schema unico per le due sorgenti (Action locale / Behold)
+  const normalize = (feed, source) => ({
+    followersCount: feed.followersCount || 0,
+    updatedAt: feed.updatedAt || '',
+    posts: (Array.isArray(feed.posts) ? feed.posts : []).filter(p => p && typeof p === 'object').map(p => {
+      const s = p.sizes || {};
+      return {
+        permalink: postUrl(p.permalink),
+        timestamp: p.timestamp,
+        likeCount: typeof p.likeCount === 'number' ? p.likeCount : null,
+        mediaType: p.mediaType,
+        caption: String(source === 'behold' ? (p.prunedCaption || p.caption || '') : (p.caption || '')).trim().slice(0, 360),
+        image: source === 'behold'
+          ? (p.mediaUrl || (s.medium || s.large || s.full || {}).mediaUrl)
+          : p.image,
+        bg: p.colorPalette && p.colorPalette.dominant ? `rgb(${p.colorPalette.dominant})` : null
+      };
+    }).filter(p => typeof p.image === 'string' && (p.image.startsWith('assets/ig/') || /^https:\/\//.test(p.image)))
+  });
+
+  let optimized = {};
+
+  const buildCard = post => {
+    const a = document.createElement('a');
+    a.className = 'proj-card reveal';
+    a.href = post.permalink;
+    a.target = '_blank';
+    a.rel = 'noopener';
+
+    const img = document.createElement('img');
+    img.className = 'proj-card-img';
+    const copy = optimized[post.image];
+    const variant = copy && typeof copy.src === 'string' && copy.src.startsWith('assets/optimized/ig/') ? copy : null;
+    img.src = variant?.src || post.image;
+    if (variant) { img.width = variant.width; img.height = variant.height; }
+    img.alt = post.caption ? post.caption.slice(0, 90) : 'post instagram di @eureka.archimede';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    if (post.bg) img.style.background = post.bg; // placeholder mentre carica
+    img.onerror = () => {
+      if (variant && img.getAttribute('src') === variant.src) img.src = post.image;
+      else { img.hidden = true; a.classList.add('image-missing'); a.setAttribute('aria-label', post.caption.slice(0, 90) || 'post instagram'); }
+    };
+    a.appendChild(img);
+
+    if (ICONS[post.mediaType]) {
+      const t = document.createElement('span');
+      t.className = 'proj-card-type';
+      t.innerHTML = ICONS[post.mediaType];
+      a.appendChild(t);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'proj-card-body';
+
+    const meta = document.createElement('div');
+    meta.className = 'proj-card-date';
+    const parts = [];
+    const date = new Date(post.timestamp);
+    if (!Number.isNaN(date.getTime())) parts.push(fmtData.format(date));
+    if (post.likeCount !== null) parts.push('♥ ' + fmtNum(post.likeCount));
+    meta.textContent = parts.join(' · ');
+    body.appendChild(meta);
+
+    if (post.caption) {
+      const desc = document.createElement('div');
+      desc.className = 'proj-card-desc';
+      desc.textContent = post.caption; // textContent: le caption non possono iniettare HTML
+      body.appendChild(desc);
+    }
+
+    a.appendChild(body);
+    return a;
+  };
+
+  const showFollowerCount = data => {
+    const fol = document.getElementById('proj-ig-followers');
+    if (fol) {
+      const recent = data.updatedAt && Date.now() - new Date(data.updatedAt).getTime() < 7 * 86400000;
+      fol.textContent = data.followersCount && recent ? '· ' + fmtNum(data.followersCount) + ' follower' : '';
+    }
+  };
+
+  const render = (data) => {
+    if (!data.posts.length) { fallback('nessun post per ora.'); return; }
+    showFollowerCount(data);
+    // Il feed locale viene mostrato subito e può essere sostituito dai dati live.
+    // Rimuovi il pulsante del render precedente prima di ricreare la paginazione.
+    gallery.querySelectorAll('.proj-more').forEach(button => button.remove());
+
+    let shown = 0;
+    let moreBtn = null;
+
+    const addBatch = () => {
+      const batch = data.posts.slice(shown, shown + PAGE);
+      const frag = document.createDocumentFragment();
+      const els = batch.map(p => {
+        const card = buildCard(p);
+        frag.appendChild(card);
+        return card;
+      });
+      grid.appendChild(frag);
+      shown += batch.length;
+      observeReveals(els);
+
+      const left = data.posts.length - shown;
+      if (left > 0) {
+        if (!moreBtn) {
+          moreBtn = document.createElement('button');
+          moreBtn.type = 'button';
+          moreBtn.className = 'proj-more';
+          moreBtn.addEventListener('click', addBatch);
+          gallery.appendChild(moreBtn);
+        }
+        moreBtn.textContent = `mostra altri (${left})`;
+      } else if (moreBtn) {
+        moreBtn.remove();
+        moreBtn = null;
+      }
+    };
+
+    grid.replaceChildren();
+    addBatch();
+  };
+
+  const load = async () => {
+    grid.setAttribute('aria-busy', 'true');
+    const liveRequest = fetchJSON(BEHOLD_FEED).catch(() => null);
+    try {
+      const [localResult, manifestResult] = await Promise.allSettled([
+        fetchJSON(LOCAL_FEED), fetchJSON('assets/optimized/manifest.json')
+      ]);
+      const feed = localResult.status === 'fulfilled' ? localResult.value : { posts: [] };
+      const manifest = manifestResult.status === 'fulfilled' ? manifestResult.value : {};
+      optimized = manifest && typeof manifest === 'object' ? manifest : {};
+      const archive = normalize(feed, 'local');
+      if (archive.posts.length) {
+        render(archive);
+        grid.setAttribute('aria-busy', 'false');
+      }
+      const live = await liveRequest || { posts: [] };
+      const current = normalize(live, 'behold');
+      const archivedByUrl = new Map(archive.posts.map(p => [p.permalink, p]));
+      current.posts.forEach(p => {
+        const saved = archivedByUrl.get(p.permalink);
+        if (saved) p.image = saved.image;
+      });
+      const known = new Set(current.posts.map(p => p.permalink));
+      const data = {
+        followersCount: current.posts.length ? current.followersCount : archive.followersCount,
+        updatedAt: current.posts.length ? new Date().toISOString() : archive.updatedAt,
+        posts: [...current.posts, ...archive.posts.filter(p => !known.has(p.permalink))]
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      };
+      if (!data.posts.length) throw new Error('archivio vuoto');
+      if (!archive.posts.length || current.posts.some(p => !archivedByUrl.has(p.permalink))) render(data);
+      else showFollowerCount(data);
+    } catch {
+      fallback('instagram non risponde.');
+    } finally { grid.setAttribute('aria-busy', 'false'); }
+  };
+  onApproach(gallery, load);
+})();
 
 </script>
 
