@@ -295,10 +295,6 @@ nav .ig:hover {
   background: radial-gradient(ellipse 60% 48% at 50% 45%, var(--bg) 0%, transparent 90%);
   opacity: .55;
 }
-.nebula-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
-.nebula-ready .nebula-canvas { opacity: .56; }
-.nebula-ready .hero-depth__swirl { opacity: 0; }
-@media (max-width: 600px) { .nebula-ready .nebula-canvas { opacity: .46; } }
 .hero-depth__sky {
   position: absolute; inset: -100px 0;
   background: url("assets/stars.svg") repeat;
@@ -1349,7 +1345,6 @@ footer a { display: inline-flex; align-items: center; }
 <section class="hero" id="top">
   <div class="hero-depth" aria-hidden="true">
     <div class="hero-depth__swirl"></div>
-    <canvas class="nebula-canvas" aria-hidden="true"></canvas>
     <div class="hero-depth__sky"></div>
   </div>
   <div class="hero-inner">
@@ -2077,97 +2072,6 @@ else reducedMotion.addListener(stopReveals);
   if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', change);
   else reducedMotion.addListener(change);
   request();
-})();
-
-// ===== NEBULOSA ORIGINALE: base ferma con filamenti di fumo sovrapposti =====
-(() => {
-  const hero = document.querySelector('.hero');
-  const canvas = hero?.querySelector('.nebula-canvas');
-  if (!canvas || reducedMotion.matches) return;
-  const gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
-  if (!gl) return;
-  const compile = (type, source) => {
-    const shader = gl.createShader(type); gl.shaderSource(shader, source); gl.compileShader(shader);
-    return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
-  };
-  const vs = compile(gl.VERTEX_SHADER, 'attribute vec2 p; varying vec2 uv; void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}');
-  const fs = compile(gl.FRAGMENT_SHADER, `precision highp float;
-    varying vec2 uv; uniform sampler2D image; uniform vec2 crop; uniform float t;
-    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-    float noise(vec2 p){
-      vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
-      return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);
-    }
-    float potential(vec2 p){
-      float n=0.,a=.5;
-      for(int i=0;i<4;i++){n+=a*noise(p);p=mat2(.8,.6,-.6,.8)*p*2.03+13.7;a*=.5;}
-      return n;
-    }
-    vec2 vortex(vec2 p,vec2 center,float strength,float radius){
-      vec2 d=p-center;
-      float angle=strength*exp(-dot(d,d)/(radius*radius));
-      float sn=sin(angle),cs=cos(angle);
-      return center+mat2(cs,-sn,sn,cs)*d;
-    }
-    void main(){
-      vec2 p=.5+(uv-.5)*crop;
-      vec3 base=texture2D(image,p).rgb;
-      // Four independent, counter-rotating currents make each smoke plume curl locally.
-      vec2 smokeUV=p;
-      smokeUV=vortex(smokeUV,vec2(.17,.24), t*.14,.22);
-      smokeUV=vortex(smokeUV,vec2(.82,.29),-t*.12,.24);
-      smokeUV=vortex(smokeUV,vec2(.25,.76),-t*.13,.25);
-      smokeUV=vortex(smokeUV,vec2(.78,.72), t*.15,.23);
-      vec3 moving=texture2D(image,clamp(smokeUV,vec2(.001),vec2(.999))).rgb;
-      float goldBase=smoothstep(.025,.16,base.r-base.b*.55);
-      float goldMoving=smoothstep(.025,.16,moving.r-moving.b*.55);
-      float mask=max(goldBase,goldMoving);
-      vec3 result=mix(base,moving,mask);
-      // Match the original vignette over the title and keep the blue stable.
-      float vignette=1.-.55*(1.-smoothstep(.0,.70,length((uv-.5)*vec2(1.,1.3))));
-      gl_FragColor=vec4(result*vignette,1.);
-    }`);
-  if (!vs || !fs) return;
-  const program=gl.createProgram();gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);
-  if (!gl.getProgramParameter(program,gl.LINK_STATUS)) return;
-  gl.useProgram(program);
-  const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
-  const position=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
-  const time=gl.getUniformLocation(program,'t'),crop=gl.getUniformLocation(program,'crop');
-  let loaded=false,visible=false,frame=0,last=0,elapsed=0;
-  const source=new Image();
-  source.onload=()=>{
-    const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-    loaded=true;sync();
-  };
-  source.src=matchMedia('(max-width:600px)').matches?'assets/hero/starry-swirls-mobile.webp':'assets/hero/starry-swirls-wide.webp';
-  function draw(now){
-    frame=0;if(!visible||document.hidden||reducedMotion.matches)return;
-    if(now-last>=40){
-      elapsed+=last?Math.min(now-last,80)/1000:0;last=now;
-      const w=Math.round(hero.clientWidth*.65),h=Math.round(hero.clientHeight*.65);
-      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}
-      const ratio=(w/h)/(source.width/source.height);
-      gl.uniform2f(crop,Math.min(1,ratio),Math.min(1,1/ratio));
-      gl.uniform1f(time,elapsed);gl.drawArrays(gl.TRIANGLES,0,6);canvas.dataset.animationTime=elapsed.toFixed(2);hero.classList.add('nebula-ready');
-    }
-    frame=requestAnimationFrame(draw);
-  }
-  function sync(){
-    if(frame)cancelAnimationFrame(frame);frame=0;last=0;
-    if(loaded&&visible&&!document.hidden&&!reducedMotion.matches)frame=requestAnimationFrame(draw);
-    if(reducedMotion.matches)hero.classList.remove('nebula-ready');
-  }
-  new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();}).observe(hero);
-  document.addEventListener('visibilitychange',sync);
-  reducedMotion.addEventListener('change',sync);
 })();
 
 // ===== EASTER EGG: il secondo quadro viene caricato solo al primo tocco =====
