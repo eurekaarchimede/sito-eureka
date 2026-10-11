@@ -1390,6 +1390,7 @@ footer a { display: inline-flex; align-items: center; }
 .shop-product { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); box-shadow: 0 0 12px rgba(245, 205, 71, .12); }
 .shop-gallery { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
 .shop-product__image { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.shop-product__image[data-screen-blend="true"] { mix-blend-mode: screen; }
 .shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
@@ -1694,7 +1695,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="shop-grid">
       <article class="shop-product reveal" data-shop-gallery data-product="Dreams / occupazione" data-label="Stop making dreams" data-color="nero">
         <div class="shop-gallery">
-          <img class="shop-product__image" src="assets/shop/dreams-nero-retro-site.webp" data-nero-fronte="assets/shop/dreams-nero-fronte-site.webp" data-nero-retro="assets/shop/dreams-nero-retro-site.webp" data-bianco-fronte="assets/shop/dreams-bianco-fronte-site.webp" data-bianco-retro="assets/shop/dreams-bianco-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con grafica stop making dreams">
+          <img class="shop-product__image" src="assets/shop/dreams-nero-retro-crop.webp" data-screen-blend="true" data-nero-fronte="assets/shop/dreams-nero-fronte-crop.webp" data-nero-retro="assets/shop/dreams-nero-retro-crop.webp" data-bianco-fronte="assets/shop/dreams-bianco-fronte-site.webp" data-bianco-retro="assets/shop/dreams-bianco-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con grafica stop making dreams">
         </div>
         <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
           <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
@@ -2592,6 +2593,7 @@ void main() {
       const src = image.dataset[`${chosenColor}${sideLabel}`];
       if (!src) return;
       image.src = src;
+      image.dataset.screenBlend = String(src.endsWith('-crop.webp'));
       image.alt = `Maglietta ${chosenColor}, vista ${chosenSide}, ${gallery.dataset.label}`;
       const orderButton = gallery.querySelector('[data-shop-product]');
       if (orderButton) orderButton.dataset.shopColor = chosenColor;
