@@ -54,6 +54,9 @@
   --cream:      #f7eed5;     /* highlight testo */
   --muted:      #6a7da8;     /* blu-grigio per microcopy, leggibile su blu notte */
   --line:       rgba(237, 224, 184, 0.10);
+  --shop-deep:  #07112a;
+  --shop-soft:  #0d1a3b;
+  --shop-outline: rgba(255, 224, 72, 0.86);
 
   --display: "DM Sans", system-ui, sans-serif;
 }
@@ -1378,6 +1381,62 @@ footer a { display: inline-flex; align-items: center; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ===== SHOP ===== */
+.shop { scroll-margin-top: 8rem; border-top: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 48%, transparent), color-mix(in srgb, var(--bg) 72%, transparent)); }
+.shop .head { max-width: 820px; margin: 0 auto 2.5rem; text-align: center; }
+.shop .head > p { max-width: 620px; margin-inline: auto; color: var(--beige-dim); }
+.shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: stretch; }
+.shop-product { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); box-shadow: 0 0 12px rgba(245, 205, 71, .12); }
+.shop-gallery { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
+.shop-product__image { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
+.shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
+.shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
+.shop-product__body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 1.25rem; }
+.shop-product__meta { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: .6rem; margin-bottom: .7rem; }
+.shop-badge { display: inline-flex; align-items: center; min-height: 28px; border-radius: 999px; padding: .25rem .65rem; background: rgba(245, 205, 71, .12); color: var(--gold); font-size: .68rem; font-weight: 700; letter-spacing: .08em; }
+.shop-product h3 { color: var(--cream); font-size: 1.1rem; line-height: 1.2; }
+.shop-product__description { margin-top: .5rem; color: var(--beige-dim); font-size: .86rem; line-height: 1.5; }
+.shop-product__price { margin-top: auto; padding-top: 1rem; color: var(--gold); font-weight: 700; }
+.shop-colors { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1rem; }
+.shop-colors button { min-height: 44px; border: 1px solid var(--line); border-radius: 999px; padding: .4rem .75rem; background: transparent; color: var(--beige); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
+.shop-colors button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.shop-select { width: 100%; min-height: 48px; margin-top: 1rem; border: 1px solid var(--gold); border-radius: 999px; background: var(--gold); color: var(--bg); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.shop-select:hover, .shop-select:focus-visible { filter: brightness(1.06); outline: 2px solid var(--cream); outline-offset: 2px; }
+.shop-order { max-width: 850px; margin: 2.5rem auto 0; padding: clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--line); border-radius: 20px; background: rgba(10, 22, 50, .84); }
+.shop-order h3 { color: var(--cream); font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.shop-order > p { margin-top: .45rem; color: var(--beige-dim); font-size: .9rem; }
+.shop-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.35rem; }
+.shop-form label { display: grid; gap: .45rem; color: var(--beige); font-size: .78rem; font-weight: 600; }
+.shop-form input, .shop-form select { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--bg-soft); color: var(--cream); font: inherit; font-size: 1rem; text-transform: none; }
+.shop-form input:focus, .shop-form select:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+.shop-form option { color: var(--cream); background: var(--bg); }
+.shop-form .shop-form__wide { grid-column: 1 / -1; }
+.shop-total { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 0; color: var(--beige-dim); border-top: 1px solid var(--line); }
+.shop-total strong { color: var(--gold); font-size: 1.2rem; }
+.shop-submit, .shop-whatsapp { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1px solid var(--gold); border-radius: 999px; padding: .75rem 1.2rem; background: var(--gold); color: var(--bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.shop-submit { width: 100%; }
+.shop-submit:focus-visible, .shop-whatsapp:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+.shop-note { margin-top: .75rem; color: var(--muted); font-size: .75rem; text-align: center; }
+.shop-success { margin-top: 1.25rem; padding: 1.2rem; border: 1px solid rgba(245, 205, 71, .42); border-radius: 14px; background: rgba(245, 205, 71, .07); }
+.shop-success h4 { color: var(--gold); font-size: 1.2rem; }
+.shop-success p { margin: .4rem 0 1rem; color: var(--beige); }
+.shop-success[hidden] { display: none; }
+@media (max-width: 1050px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .shop-grid { grid-template-columns: 1fr; gap: .9rem; }
+  .shop-product { display: flex; }
+  .shop-product__image { height: 100%; }
+  .shop-product__body { padding: 1rem; }
+  .shop-product h3 { font-size: 1rem; }
+  .shop-product__description { font-size: .78rem; }
+  .shop-form { grid-template-columns: 1fr; }
+  .shop-form .shop-form__wide { grid-column: auto; }
+}
+@media (max-width: 380px) {
+  .shop-product__body { padding: .85rem; }
+}
 </style>
 </head>
 <body>
@@ -1393,6 +1452,7 @@ footer a { display: inline-flex; align-items: center; }
     <li><a href="#progetti">progetti</a></li>
     <li><a href="#eventi">eventi</a></li>
     <li><a href="#scuola">circolari</a></li>
+    <li><a href="#shop">shop</a></li>
     <li><a href="#candidati">candidati</a></li>
     <li><a href="#storia">storia</a></li>
   </ul>
@@ -1403,13 +1463,14 @@ footer a { display: inline-flex; align-items: center; }
     </button>
   </div>
 </nav>
-<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#progetti">progetti</a><a href="#eventi">eventi</a><a href="#scuola">circolari</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
+<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#progetti">progetti</a><a href="#eventi">eventi</a><a href="#scuola">circolari</a><a href="#shop">shop</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
 
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="menu di navigazione" hidden>
   <button class="menu-close" id="menu-close" type="button" aria-label="chiudi menu">chiudi ×</button>
   <a href="#progetti">progetti</a>
   <a href="#eventi">eventi</a>
   <a href="#scuola">circolari</a>
+  <a href="#shop">shop</a>
   <a href="#candidati">candidati</a>
   <a href="#storia">storia</a>
   <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="mobile-ig">@eureka.archimede</a>
@@ -1621,11 +1682,125 @@ footer a { display: inline-flex; align-items: center; }
   </div>
 </section>
 
+<!-- ============ SHOP ============ -->
+<section class="shop" id="shop">
+  <div class="container">
+    <div class="head reveal">
+      <div class="section-label">04 / shop</div>
+      <h2 class="h2">la collezione <em>eureka!</em></h2>
+      <p>tre modelli, disponibili in taglie dalla XS alla XL. seleziona colore e vista per scoprire ogni dettaglio.</p>
+    </div>
+
+    <div class="shop-grid">
+      <article class="shop-product reveal" data-shop-gallery data-product="Dreams / occupazione" data-label="Stop making dreams" data-color="nero">
+        <div class="shop-gallery">
+          <img class="shop-product__image" src="assets/shop/dreams-nero-retro-site.webp" data-nero-fronte="assets/shop/dreams-nero-fronte-site.webp" data-nero-retro="assets/shop/dreams-nero-retro-site.webp" data-bianco-fronte="assets/shop/dreams-bianco-fronte-site.webp" data-bianco-retro="assets/shop/dreams-bianco-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con grafica stop making dreams">
+        </div>
+        <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
+          <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
+          <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
+        </div>
+        <div class="shop-product__body">
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <h3>stop making dreams.</h3>
+          <p class="shop-product__description">fronte con lampadina e retro con la grafica “occupazione”.</p>
+          <div class="shop-colors" role="group" aria-label="Colore della maglietta">
+            <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
+            <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
+          </div>
+          <button class="shop-select" type="button" data-shop-product="Dreams / occupazione" data-shop-color="nero">seleziona modello</button>
+        </div>
+      </article>
+      <article class="shop-product reveal" data-shop-gallery data-product="The worst list ever" data-label="The worst list ever" data-color="nero">
+        <div class="shop-gallery">
+          <img class="shop-product__image" src="assets/shop/worst-nero-retro-clean.webp" data-nero-fronte="assets/shop/worst-nero-fronte-clean.webp" data-nero-retro="assets/shop/worst-nero-retro-clean.webp" data-bianco-fronte="assets/shop/worst-bianco-fronte-site.webp" data-bianco-retro="assets/shop/worst-bianco-retro-site.webp" width="1150" height="1368" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con la scritta The worst list ever to vote">
+        </div>
+        <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
+          <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
+          <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
+        </div>
+        <div class="shop-product__body">
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <h3>the worst list ever.</h3>
+          <p class="shop-product__description">fronte con lampadina e retro con la grafica “the worst list ever”.</p>
+          <div class="shop-colors" role="group" aria-label="Colore della maglietta">
+            <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
+            <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
+          </div>
+          <button class="shop-select" type="button" data-shop-product="The worst list ever" data-shop-color="nero">seleziona modello</button>
+        </div>
+      </article>
+      <article class="shop-product reveal" data-shop-gallery data-product="Look up, the stars" data-label="Look up, the stars" data-color="fucsia">
+        <div class="shop-gallery">
+          <img class="shop-product__image" src="assets/shop/stars-fucsia-retro-site.webp" data-fucsia-fronte="assets/shop/stars-fucsia-fronte-site.webp" data-fucsia-retro="assets/shop/stars-fucsia-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta fucsia, vista retro, con la frase Look up, the stars are lighting up">
+        </div>
+        <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
+          <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
+          <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
+        </div>
+        <div class="shop-product__body">
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <h3>look up, the stars.</h3>
+          <p class="shop-product__description">modello fucsia, disponibile solo in questo colore.</p>
+          <div class="shop-colors" role="group" aria-label="Colore della maglietta">
+            <button type="button" data-shop-color-choice="fucsia" aria-pressed="true">fucsia</button>
+          </div>
+          <button class="shop-select" type="button" data-shop-product="Look up, the stars" data-shop-color="fucsia">seleziona modello</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="shop-order reveal" id="shop-order">
+      <h3>completa l’ordine.</h3>
+      <p>seleziona la variante e inserisci i dati richiesti. potrai inviare il riepilogo su WhatsApp e concordare il pagamento in contanti con un rappresentante.</p>
+      <form class="shop-form" id="shop-form">
+        <label class="shop-form__wide">modello
+          <select id="shop-model" name="model" required>
+            <option value="">seleziona una t-shirt</option>
+            <option value="Dreams / occupazione" data-colors="nero,bianco">stop making dreams</option>
+            <option value="The worst list ever" data-colors="nero,bianco">the worst list ever</option>
+            <option value="Look up, the stars" data-colors="fucsia">look up, the stars</option>
+          </select>
+        </label>
+        <label>colore
+          <select id="shop-color" name="color" required disabled>
+            <option value="">prima scegli un modello</option>
+          </select>
+        </label>
+        <label>taglia
+          <select id="shop-size" name="size" required>
+            <option value="">seleziona</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+          </select>
+        </label>
+        <label>nome
+          <input name="firstName" type="text" autocomplete="given-name" maxlength="40" required>
+        </label>
+        <label>cognome
+          <input name="lastName" type="text" autocomplete="family-name" maxlength="50" required>
+        </label>
+        <label class="shop-form__wide">classe (es. 5A)
+          <input name="className" type="text" autocomplete="off" maxlength="12" placeholder="5A" required>
+        </label>
+        <div class="shop-form__wide">
+          <div class="shop-total"><span>totale per 1 t-shirt</span><strong>15 €</strong></div>
+          <button class="shop-submit" type="submit">procedi al riepilogo <span aria-hidden="true">→</span></button>
+          <p class="shop-note">l’ordine viene confermato dopo l’invio del messaggio e il pagamento in contanti a un rappresentante.</p>
+        </div>
+      </form>
+      <div class="shop-success" id="shop-success" role="status" tabindex="-1" hidden>
+        <h4>riepilogo ordine.</h4>
+        <p>per inviare la richiesta, apri WhatsApp e invia il messaggio precompilato. l’ordine sarà confermato dopo il pagamento di 15 € in contanti a un rappresentante.</p>
+        <a class="shop-whatsapp" id="shop-whatsapp" href="https://wa.me/393396484444" target="_blank" rel="noopener">invia richiesta su WhatsApp ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ CANDIDATI ============ -->
 <section class="candidati" id="candidati">
   <div class="container">
     <div class="head reveal">
-      <div class="section-label">04 / candidati</div>
+      <div class="section-label">05 / candidati</div>
       <h2 class="h2">le persone <em>dietro</em> la lista.</h2>
       <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
     </div>
@@ -1778,7 +1953,7 @@ footer a { display: inline-flex; align-items: center; }
 <section class="storia" id="storia">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">05 / storia</div>
+      <div class="section-label">06 / storia</div>
       <h2 class="h2">dal 2018. ancora <em>accesi</em>.</h2>
     </div>
 
@@ -1880,6 +2055,7 @@ footer a { display: inline-flex; align-items: center; }
       <a href="#progetti">progetti</a>
       <a href="#eventi">eventi</a>
       <a href="#scuola">circolari</a>
+      <a href="#shop">shop</a>
       <a href="#candidati">candidati</a>
       <a href="#storia">storia</a>
     </div>
@@ -2359,6 +2535,100 @@ void main() {
     school.classList.toggle('is-occupied', occupied);
     school.setAttribute('aria-pressed', String(occupied));
     school.setAttribute('aria-label', occupied ? 'Scuola occupata con gru, striscioni e fumogeni. Ripristina la facciata' : 'Mostra la scuola occupata');
+  });
+})();
+
+// ===== SHOP: varianti prodotto e riepilogo WhatsApp =====
+(() => {
+  const form = document.getElementById('shop-form');
+  const model = document.getElementById('shop-model');
+  const color = document.getElementById('shop-color');
+  const success = document.getElementById('shop-success');
+  const whatsapp = document.getElementById('shop-whatsapp');
+  if (!form || !model || !color || !success || !whatsapp) return;
+
+  const setColors = (colors, selected = '') => {
+    color.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = colors.length ? 'seleziona' : 'prima scegli un modello';
+    color.append(placeholder);
+    for (const value of colors) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      if (value === selected) option.selected = true;
+      color.append(option);
+    }
+    color.disabled = colors.length === 0;
+    color.required = colors.length > 0;
+  };
+
+  model.addEventListener('change', () => {
+    const option = model.selectedOptions[0];
+    const colors = (option?.dataset.colors || '').split(',').filter(Boolean);
+    setColors(colors, colors.length === 1 ? colors[0] : '');
+  });
+  document.querySelectorAll('[data-shop-product]').forEach(button => {
+    button.addEventListener('click', () => {
+      const option = [...model.options].find(item => item.value === button.dataset.shopProduct);
+      if (!option) return;
+      model.value = option.value;
+      model.dispatchEvent(new Event('change', { bubbles: true }));
+      color.value = button.dataset.shopColor || '';
+      document.getElementById('shop-order')?.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'center' });
+      color.focus({ preventScroll: true });
+    });
+  });
+
+  document.querySelectorAll('[data-shop-gallery]').forEach(gallery => {
+    const image = gallery.querySelector('.shop-product__image');
+    const chooseButtons = gallery.querySelectorAll('[data-shop-color-choice]');
+    const sideButtons = gallery.querySelectorAll('[data-shop-side]');
+    let chosenColor = gallery.dataset.color || 'nero';
+    let chosenSide = 'retro';
+    const refreshImage = () => {
+      const sideLabel = chosenSide === 'fronte' ? 'Fronte' : 'Retro';
+      const src = image.dataset[`${chosenColor}${sideLabel}`];
+      if (!src) return;
+      image.src = src;
+      image.alt = `Maglietta ${chosenColor}, vista ${chosenSide}, ${gallery.dataset.label}`;
+      const orderButton = gallery.querySelector('[data-shop-product]');
+      if (orderButton) orderButton.dataset.shopColor = chosenColor;
+    };
+    chooseButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        chosenColor = button.dataset.shopColorChoice;
+        chooseButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        refreshImage();
+      });
+    });
+    sideButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        chosenSide = button.dataset.shopSide;
+        sideButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        refreshImage();
+      });
+    });
+  });
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const data = new FormData(form);
+    const order = [
+      'Ciao, vorrei ordinare una t-shirt eureka!',
+      `Modello: ${data.get('model')}`,
+      `Colore: ${data.get('color')}`,
+      `Taglia: ${data.get('size')}`,
+      `Nome: ${data.get('firstName')} ${data.get('lastName')}`,
+      `Classe: ${data.get('className')}`,
+      'Prezzo: 15 €',
+    ].join('\n');
+    whatsapp.href = `https://wa.me/393396484444?text=${encodeURIComponent(order)}`;
+    form.hidden = true;
+    success.hidden = false;
+    success.focus();
   });
 })();
 

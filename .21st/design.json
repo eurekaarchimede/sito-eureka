@@ -67,7 +67,8 @@
     "On mobile the closing Instagram link is centered on two deliberate lines; footer navigation uses an even three-column, two-row grid, with school and city on separate lines.",
     "HyperspaceWarpDrive by dhileepkumargm (21st catalog 7943) is visual inspiration; implementation reuses the existing Canvas 2D starfield, not the Three.js shader.",
     "Adaptive rendering lowers particle count then freezes decoration if measured frame work or delays exceed budget.",
-    "The old published Van Gogh style blue/gold shader is retained visually in a 72 KB mobile / 79 KB desktop still image; a reduced 3-octave WebGL2 version moves only briefly on capable devices and freezes after 30 mobile or 100 desktop frames. Phones reporting 2 or 4 GB RAM, data saver, and reduced motion use the static image without WebGL."
+    "The old published Van Gogh style blue/gold shader is retained visually in a 72 KB mobile / 79 KB desktop still image; a reduced 3-octave WebGL2 version moves only briefly on capable devices and freezes after 30 mobile or 100 desktop frames. Phones reporting 2 or 4 GB RAM, data saver, and reduced motion use the static image without WebGL.",
+    "Shop product previews use transparent apparel cutouts on a slightly deeper midnight blue than the page, with a single fine, translucent bright-gold border around each card. The black The Worst List Ever mockup has a fully transparent hanger gap and no cream source fringe."
   ],
   "evidence": [
     {
