@@ -2103,15 +2103,22 @@ else reducedMotion.addListener(stopReveals);
       for(int i=0;i<4;i++){n+=a*noise(p);p=mat2(.8,.6,-.6,.8)*p*2.03+13.7;a*=.5;}
       return n;
     }
+    vec2 vortex(vec2 p,vec2 center,float strength,float radius){
+      vec2 d=p-center;
+      float angle=strength*exp(-dot(d,d)/(radius*radius));
+      float sn=sin(angle),cs=cos(angle);
+      return center+mat2(cs,-sn,sn,cs)*d;
+    }
     void main(){
       vec2 p=.5+(uv-.5)*crop;
       vec3 base=texture2D(image,p).rgb;
-      // Slowly circulate the source filaments around the image center.
-      float angle=t*.075;
-      mat2 orbit=mat2(cos(angle),-sin(angle),sin(angle),cos(angle));
-      vec2 orbitUV=.5+orbit*(p-.5);
-      vec2 driftUV=p-vec2(t*.0015,-t*.0008);
-      vec3 moving=texture2D(image,clamp(orbitUV+driftUV-p,vec2(.001),vec2(.999))).rgb;
+      // Four independent, counter-rotating currents make each smoke plume curl locally.
+      vec2 smokeUV=p;
+      smokeUV=vortex(smokeUV,vec2(.17,.24), t*.14,.22);
+      smokeUV=vortex(smokeUV,vec2(.82,.29),-t*.12,.24);
+      smokeUV=vortex(smokeUV,vec2(.25,.76),-t*.13,.25);
+      smokeUV=vortex(smokeUV,vec2(.78,.72), t*.15,.23);
+      vec3 moving=texture2D(image,clamp(smokeUV,vec2(.001),vec2(.999))).rgb;
       float goldBase=smoothstep(.025,.16,base.r-base.b*.55);
       float goldMoving=smoothstep(.025,.16,moving.r-moving.b*.55);
       float mask=max(goldBase,goldMoving);
