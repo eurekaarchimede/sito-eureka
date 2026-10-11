@@ -2091,13 +2091,30 @@ else reducedMotion.addListener(stopReveals);
     return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
   };
   const vs = compile(gl.VERTEX_SHADER, 'attribute vec2 p; varying vec2 uv; void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}');
-  const fs = compile(gl.FRAGMENT_SHADER, `precision mediump float;
+  const fs = compile(gl.FRAGMENT_SHADER, `precision highp float;
     varying vec2 uv; uniform sampler2D image; uniform vec2 crop; uniform float t;
+    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float noise(vec2 p){
+      vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
+      return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);
+    }
+    float potential(vec2 p){
+      float n=0.,a=.5;
+      for(int i=0;i<4;i++){n+=a*noise(p);p=mat2(.8,.6,-.6,.8)*p*2.03+13.7;a*=.5;}
+      return n;
+    }
+    vec2 flow(vec2 p,float time){
+      p=p*2.6+vec2(time*.018,-time*.011);
+      float e=.025;
+      return vec2(potential(p+vec2(0.,e))-potential(p-vec2(0.,e)),
+        potential(p-vec2(e,0.))-potential(p+vec2(e,0.)))/(2.*e);
+    }
     void main(){
+      // Trace a slowly evolving, divergence-free gas flow. No periodic wave.
       vec2 p=uv;
-      vec2 flow=vec2(sin(p.y*8.+t*.7)+sin(p.x*5.-t*.43),cos(p.x*7.+t*.55)+sin(p.y*6.-t*.37));
-      p += flow*.018;
-      p=.5+(p-.5)*.94;
+      for(int i=0;i<5;i++){p-=flow(p,t)*.006;}
+      p+=vec2(t*.0007,-t*.0004);
+      p=.5+(p-.5)*.84;
       p=.5+(p-.5)*crop;
       gl_FragColor=texture2D(image,p);
     }`);
