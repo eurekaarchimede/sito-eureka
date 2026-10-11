@@ -1,4 +1,5 @@
-# Aggiorna il feed Instagram ogni 3 ore: scarica i post nuovi,
+# Aggiorna il feed Instagram ogni 30 minuti (ai minuti :10 e :40),
+# includendo gli orari richiesti 15:10, 16:10, 20:10, 20:40 e 21:10,
 # rinnova il token Meta e committa assets/ig/feed.json + immagini.
 # Esecuzione manuale: tab Actions → "aggiorna feed instagram" → Run workflow.
 name: aggiorna feed instagram
@@ -6,7 +7,8 @@ name: aggiorna feed instagram
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: '17 */3 * * *'
+    - cron: '10,40 * * * *'
+      timezone: "Europe/Rome"
 
 permissions:
   contents: write
