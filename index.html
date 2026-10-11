@@ -62,12 +62,22 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: auto; }
+html { scroll-behavior: auto; overflow-x: hidden; overscroll-behavior-x: none; }
+
+/* Contiene il parallax e impedisce lo scorrimento laterale su touch. */
+@supports (overflow: clip) {
+  html, body { overflow-x: clip; }
+}
 
 /* selezione personalizzata (allineata: oro pieno, testo blu notte) */
 ::-moz-selection { background: var(--gold); color: var(--bg); }
 
 body {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
   background:
     radial-gradient(ellipse 90% 55% at 50% -10%, rgba(36, 63, 122, 0.55) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 85% 30%, rgba(74, 109, 181, 0.18) 0%, transparent 60%),
