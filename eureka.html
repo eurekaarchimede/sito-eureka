@@ -2103,19 +2103,15 @@ else reducedMotion.addListener(stopReveals);
       for(int i=0;i<4;i++){n+=a*noise(p);p=mat2(.8,.6,-.6,.8)*p*2.03+13.7;a*=.5;}
       return n;
     }
-    vec3 driftingCloud(vec2 p,vec2 direction,float phase){
-      return texture2D(image,clamp(p-direction*(phase-.5),vec2(.001),vec2(.999))).rgb;
-    }
     void main(){
       vec2 p=.5+(uv-.5)*crop;
       vec3 base=texture2D(image,p).rgb;
-      // Two overlapping transport phases move the original gold filaments,
-      // without oscillation or stretching the whole background.
-      float phase=fract(t/18.);
-      float second=fract(phase+.5);
-      float weight=abs(phase*2.-1.);
-      vec2 direction=vec2(.18,.075)*crop;
-      vec3 moving=mix(driftingCloud(p,direction,phase),driftingCloud(p,direction,second),weight);
+      // Slowly circulate the source filaments around the image center.
+      float angle=t*.075;
+      mat2 orbit=mat2(cos(angle),-sin(angle),sin(angle),cos(angle));
+      vec2 orbitUV=.5+orbit*(p-.5);
+      vec2 driftUV=p-vec2(t*.0015,-t*.0008);
+      vec3 moving=texture2D(image,clamp(orbitUV+driftUV-p,vec2(.001),vec2(.999))).rgb;
       float goldBase=smoothstep(.025,.16,base.r-base.b*.55);
       float goldMoving=smoothstep(.025,.16,moving.r-moving.b*.55);
       float mask=max(goldBase,goldMoving);
