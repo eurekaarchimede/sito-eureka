@@ -2111,10 +2111,10 @@ else reducedMotion.addListener(stopReveals);
       vec3 base=texture2D(image,p).rgb;
       // Two overlapping transport phases move the original gold filaments,
       // without oscillation or stretching the whole background.
-      float phase=fract(t/24.);
+      float phase=fract(t/18.);
       float second=fract(phase+.5);
       float weight=abs(phase*2.-1.);
-      vec2 direction=vec2(.055,.023)*crop;
+      vec2 direction=vec2(.18,.075)*crop;
       vec3 moving=mix(driftingCloud(p,direction,phase),driftingCloud(p,direction,second),weight);
       float goldBase=smoothstep(.025,.16,base.r-base.b*.55);
       float goldMoving=smoothstep(.025,.16,moving.r-moving.b*.55);
@@ -2153,7 +2153,7 @@ else reducedMotion.addListener(stopReveals);
       if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}
       const ratio=(w/h)/(source.width/source.height);
       gl.uniform2f(crop,Math.min(1,ratio),Math.min(1,1/ratio));
-      gl.uniform1f(time,elapsed);gl.drawArrays(gl.TRIANGLES,0,6);hero.classList.add('nebula-ready');
+      gl.uniform1f(time,elapsed);gl.drawArrays(gl.TRIANGLES,0,6);canvas.dataset.animationTime=elapsed.toFixed(2);hero.classList.add('nebula-ready');
     }
     frame=requestAnimationFrame(draw);
   }
