@@ -8,7 +8,7 @@
 
 <!-- open graph / social -->
 <meta property="og:title" content="eureka! — liceo scientifico archimede, messina">
-<meta property="og:description" content="la lista di rappresentanza del liceo archimede. progetti, eventi, candidati. dal 2018.">
+<meta property="og:description" content="la lista di rappresentanza del liceo archimede. circolari, shop e candidati. dal 2018.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="it_IT">
 <meta name="twitter:card" content="summary">
@@ -539,303 +539,6 @@ section { padding: 7rem 2rem; position: relative; }
   font-style: normal;
 }
 
-/* ===== PROGETTI ===== */
-.progetti {
-  border-top: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(10, 22, 50, 0.55) 0%, rgba(17, 32, 69, 0.65) 100%);
-}
-.progetti .head {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-bottom: 3.5rem;
-}
-.progetti .head .h2 { max-width: 720px; }
-.progetti .head .note {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  color: var(--beige-dim);
-  text-align: right;
-  max-width: 280px;
-  line-height: 1.7;
-}
-.progetti .grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-}
-@media (max-width: 1000px) { .progetti .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .progetti .grid { grid-template-columns: 1fr; } }
-
-.card {
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 2.4rem 1.9rem 2.1rem;
-  transition: background 0.4s ease;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-.card:hover { background: rgba(17, 32, 69, 0.85); }
-
-.card .num {
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  margin-bottom: 1.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.card h3 {
-  font-weight: 700;
-  font-size: 1.7rem;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  margin-bottom: 0.9rem;
-  color: var(--cream);
-}
-.card h3 em {
-  color: var(--gold);
-  font-style: normal;
-}
-.card p {
-  font-size: 0.98rem;
-  line-height: 1.55;
-  color: var(--beige-dim);
-  margin-top: auto;
-}
-
-/* ===== PROJ GALLERY (JS-driven) ===== */
-.proj-gallery {
-  margin-top: 4rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--line);
-}
-.proj-gallery-head { margin-bottom: 2.5rem; }
-.proj-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
-}
-@media (max-width: 1000px) { .proj-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px)  { .proj-gallery-grid { grid-template-columns: 1fr; } }
-
-.proj-card {
-  background: rgba(17, 32, 69, 0.45);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-.proj-card .proj-card-img { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.proj-card:hover .proj-card-img { transform: scale(1.045); }
-.proj-card:hover {
-  background: rgba(17, 32, 69, 0.85);
-  transform: translateY(-3px);
-}
-.proj-card-img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid var(--line);
-}
-.proj-card.image-missing::before { content: "immagine non disponibile"; display: grid; place-items: center; aspect-ratio: 1; color: var(--beige-dim); }
-.proj-card-body { padding: 1.4rem 1.3rem; }
-.proj-card-date {
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  margin-bottom: 0.6rem;
-}
-.proj-card-title {
-  font-weight: 700;
-  font-size: 1.3rem;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--cream);
-  margin-bottom: 0.6rem;
-}
-.proj-card-desc {
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--beige-dim);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.proj-editions {
-  padding: 0.8rem 1.3rem 1.2rem;
-  border-top: 1px solid var(--line);
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.proj-editions-label {
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-}
-.proj-editions a {
-  font-size: .75rem;
-  font-weight: 600;
-  color: var(--beige-dim);
-  text-decoration: none;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 1px;
-  transition: color 0.2s;
-}
-.proj-editions a:hover { color: var(--gold); border-color: var(--gold); }
-.proj-empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-  font-style: italic;
-}
-.proj-empty a {
-  color: var(--gold);
-  text-decoration: none;
-  font-style: normal;
-  font-weight: 600;
-}
-/* le card del feed sono <a>: stesso look delle vecchie card */
-a.proj-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-.proj-ig-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  margin-top: 0.9rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--gold);
-  text-decoration: none;
-}
-.proj-ig-link #proj-ig-followers {
-  color: var(--beige-dim);
-  font-weight: 500;
-}
-.proj-card-type {
-  position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
-  width: 21px;
-  height: 21px;
-  color: var(--cream);
-  filter: drop-shadow(0 1px 4px rgba(3, 7, 18, 0.7));
-  pointer-events: none;
-}
-.proj-card-type svg { width: 100%; height: 100%; display: block; }
-.proj-more {
-  display: block;
-  margin: 2.5rem auto 0;
-  padding: 0.85em 2.2em;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
-  color: var(--gold);
-  background: rgba(17, 32, 69, 0.45);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
-}
-.proj-more:hover {
-  background: rgba(17, 32, 69, 0.9);
-  border-color: var(--gold);
-  transform: translateY(-2px);
-}
-
-/* ===== EVENTI ===== */
-.eventi {
-  border-top: 1px solid var(--line);
-  background: rgba(10, 22, 50, 0.45);
-}
-.eventi .head { margin-bottom: 3rem; max-width: 800px; }
-.eventi .timeline {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--line);
-  position: relative;
-  padding-left: 2.2rem;
-}
-/* binario spento */
-.eventi .timeline::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--line);
-}
-@media (max-width: 800px) {
-  .eventi .timeline { padding-left: 1.4rem; }
-}
-.event {
-  display: grid;
-  grid-template-columns: 160px 1fr auto;
-  gap: 2rem;
-  align-items: baseline;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--line);
-  transition: background 0.3s ease;
-}
-.event:hover { background: var(--bg-soft); }
-.event .date {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--gold);
-}
-.event .body h3 {
-  font-weight: 700;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--cream);
-  margin-bottom: 0.4rem;
-}
-.event .body p {
-  color: var(--beige-dim);
-  font-size: 0.98rem;
-}
-.event .tag {
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--gold);
-  border: 1px solid var(--gold);
-  padding: 0.3rem 0.7rem;
-  border-radius: 100px;
-}
-@media (max-width: 800px) {
-  .event { grid-template-columns: 1fr; gap: 0.6rem; }
-  .event:hover { padding-left: 0; padding-right: 0; }
-  .event .tag { justify-self: start; }
-}
-
 /* ===== SCUOLA: ORARI E CIRCOLARI ===== */
 .scuola {
   border-top: 1px solid var(--line);
@@ -1294,11 +997,11 @@ footer .footer-location::before { content: ' · '; }
 [hidden] { display: none !important; }
 html { scroll-padding-top: 6rem; }
 section[id] { scroll-margin-top: 1rem; }
-main, .container, .hero-inner, .card, .member, .event > *, .stat-cell { min-width: 0; }
+main, .container, .hero-inner, .member, .stat-cell { min-width: 0; }
 img { max-width: 100%; }
 h1, h2, h3, p, .name, .scuola-circolare strong { overflow-wrap: break-word; }
 button, input { font-family: inherit; }
-button, .btn, nav a, footer a, .proj-more, .scuola-more, .scuola-reset, .scuola-source, .scuola-actions a { min-height: 44px; }
+button, .btn, nav a, footer a, .scuola-more, .scuola-reset, .scuola-source, .scuola-actions a { min-height: 44px; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a:focus-visible, button:focus-visible, input:focus-visible {
   outline: 2px solid var(--gold);
@@ -1317,7 +1020,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .skip-link:focus { transform: none; }
 nav .brand, nav ul a { display: flex; align-items: center; }
 body.menu-open { overflow: hidden; }
-.proj-ig-link, .scuola-card > span { min-width: 0; flex-wrap: wrap; }
+.scuola-card > span { min-width: 0; flex-wrap: wrap; }
 .scuola-filters input { font-size: 1rem; min-height: 48px; }
 .scuola-source { display: inline-flex; align-items: center; }
 .scuola-source, .scuola-circolare strong { overflow-wrap: anywhere; }
@@ -1358,9 +1061,6 @@ footer a { display: inline-flex; align-items: center; }
   footer .right .school-link, footer .footer-location { display: block; }
   footer .right .school-link { width: fit-content; margin-inline: auto; }
   footer .footer-location::before { content: none; }
-  .card { padding: 1.5rem; min-height: 0; }
-  .progetti .head .note { text-align: left; }
-  .event { padding: 1.5rem 0; }
   .illuminated { padding: 0 1rem 4rem; }
   .illuminated-content h2 { font-size: clamp(1.85rem, 8vw, 3rem); line-height: 1.12; }
   .cta { padding: 4rem 1rem; }
@@ -1373,8 +1073,8 @@ footer a { display: inline-flex; align-items: center; }
 }
 /* Touch: niente hover persistenti né variazioni del layout durante lo scroll. */
 @media (hover: none) {
-  .member:hover, .proj-card:hover, .btn:hover, .proj-more:hover { transform: none; }
-  .member:hover .photo img, .proj-card:hover .proj-card-img { transform: none; filter: none; }
+  .member:hover, .btn:hover { transform: none; }
+  .member:hover .photo img { transform: none; filter: none; }
   .scuola-card:hover, .scuola-circolare:hover { padding-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1450,8 +1150,6 @@ footer a { display: inline-flex; align-items: center; }
 <nav aria-label="navigazione principale">
   <a href="#top" class="brand">eureka<span class="bang">!</span></a>
   <ul>
-    <li><a href="#progetti">progetti</a></li>
-    <li><a href="#eventi">eventi</a></li>
     <li><a href="#scuola">circolari</a></li>
     <li><a href="#shop">shop</a></li>
     <li><a href="#candidati">candidati</a></li>
@@ -1464,12 +1162,10 @@ footer a { display: inline-flex; align-items: center; }
     </button>
   </div>
 </nav>
-<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#progetti">progetti</a><a href="#eventi">eventi</a><a href="#scuola">circolari</a><a href="#shop">shop</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
+<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#scuola">circolari</a><a href="#shop">shop</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
 
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="menu di navigazione" hidden>
   <button class="menu-close" id="menu-close" type="button" aria-label="chiudi menu">chiudi ×</button>
-  <a href="#progetti">progetti</a>
-  <a href="#eventi">eventi</a>
   <a href="#scuola">circolari</a>
   <a href="#shop">shop</a>
   <a href="#candidati">candidati</a>
@@ -1494,7 +1190,7 @@ footer a { display: inline-flex; align-items: center; }
         un'idea. un'aula. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
       </p>
       <div class="hero-cta">
-        <a href="#progetti" class="btn btn-primary">i progetti <span class="arrow">→</span></a>
+        <a href="#candidati" class="btn btn-primary">i candidati <span class="arrow">→</span></a>
         <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="btn btn-ghost">seguici</a>
       </div>
     </div>
@@ -1515,142 +1211,11 @@ footer a { display: inline-flex; align-items: center; }
   </div>
 </div>
 
-<!-- ============ PROGETTI ============ -->
-<section class="progetti" id="progetti">
-  <div class="container">
-    <div class="head reveal">
-      <div>
-        <div class="section-label">01 / progetti</div>
-        <h2 class="h2">cose <em>fatte</em>. cose da <em>fare</em>.</h2>
-      </div>
-      <div class="note">
-        ogni progetto nasce in classe. cresce nei corridoi. arriva in consiglio d'istituto.
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card reveal">
-        <div class="num"><span>01 — spazi</span></div>
-        <h3>aule studio <em>aperte</em>. anche di pomeriggio.</h3>
-        <p>spazi liberi. per ripassare. per recuperare. per stare. apertura fino alle 17.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="num"><span>02 — cultura</span></div>
-        <h3>cineforum. dibattiti. <em>autori</em>.</h3>
-        <p>un calendario fisso. ogni mese un appuntamento. cinema. ospiti. parole vere.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="num"><span>03 — sport</span></div>
-        <h3>tornei <em>veri</em>. non simbolici.</h3>
-        <p>calcetto. basket. pallavolo. scacchi. classifiche pubbliche. finali in palestra.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="num"><span>04 — ascolto</span></div>
-        <h3>sportello <em>accessibile</em>. senza fila.</h3>
-        <p>ascolto vero. nessun giudizio. un orario chiaro. un posto dove andare.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="num"><span>05 — trasparenza</span></div>
-        <h3>verbali <em>leggibili</em>. in 7 giorni.</h3>
-        <p>ogni consiglio. un riassunto chiaro. cosa si è detto. cosa si è deciso.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="num"><span>06 — eventi</span></div>
-        <h3>una festa <em>d'istituto</em>. che vale.</h3>
-        <p>fine anno. musica. food. la scuola fuori dalla scuola. organizzata da noi.</p>
-      </div>
-    </div>
-
-    <!-- gallery progetti — archivio locale Instagram, fallback Behold -->
-    <div class="proj-gallery" id="proj-gallery">
-      <div class="proj-gallery-head reveal">
-        <div class="section-label">in diretta da instagram</div>
-        <h2 class="h2">i progetti. <em>documentati</em>.</h2>
-        <a class="proj-ig-link" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">@eureka.archimede <span id="proj-ig-followers"></span> <span class="arrow">→</span></a>
-      </div>
-      <div class="proj-gallery-grid" id="proj-gallery-grid" aria-busy="false"></div>
-      <noscript><p>consulta i progetti su <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram ↗</a>.</p></noscript>
-    </div>
-
-  </div>
-</section>
-
-<!-- ============ EVENTI ============ -->
-<section class="eventi" id="eventi">
-  <div class="container">
-    <div class="head reveal">
-      <div class="section-label">02 / eventi</div>
-      <h2 class="h2">il calendario. <em>acceso</em>.</h2>
-    </div>
-
-    <div class="timeline" id="timeline">
-      <div class="event reveal">
-        <div class="date">ottobre 2025</div>
-        <div class="body">
-          <h3>assemblea d'apertura.</h3>
-          <p>presentazione della lista. domande aperte. risposte vere.</p>
-        </div>
-        <div class="tag">passato</div>
-      </div>
-
-      <div class="event reveal">
-        <div class="date">novembre 2025</div>
-        <div class="body">
-          <h3>cineforum n° 01. visioni di scuola.</h3>
-          <p>un film. due ore. una discussione. in aula magna.</p>
-        </div>
-        <div class="tag">passato</div>
-      </div>
-
-      <div class="event reveal">
-        <div class="date">dicembre 2025</div>
-        <div class="body">
-          <h3>torneo invernale. <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">archimede</a> cup.</h3>
-          <p>calcetto e pallavolo. tutte le classi. una sola palestra.</p>
-        </div>
-        <div class="tag">passato</div>
-      </div>
-
-      <div class="event reveal">
-        <div class="date">marzo 2026</div>
-        <div class="body">
-          <h3>incontro con l'autore.</h3>
-          <p>uno scrittore. un'ora. domande senza copione.</p>
-        </div>
-        <div class="tag">in corso</div>
-      </div>
-
-      <div class="event reveal">
-        <div class="date">maggio 2026</div>
-        <div class="body">
-          <h3>festa d'istituto. eureka day.</h3>
-          <p>musica. food truck. stand. il cortile come non l'avete mai visto.</p>
-        </div>
-        <div class="tag">in arrivo</div>
-      </div>
-
-      <div class="event reveal">
-        <div class="date">giugno 2026</div>
-        <div class="body">
-          <h3>chiusura. assemblea finale.</h3>
-          <p>cosa abbiamo fatto. cosa non abbiamo fatto. cosa lasciamo.</p>
-        </div>
-        <div class="tag">in arrivo</div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ CIRCOLARI E ORARI ============ -->
 <section class="scuola" id="scuola">
   <div class="container">
     <div class="head reveal">
-      <div class="section-label">03 / scuola</div>
+      <div class="section-label">01 / circolari</div>
       <h2 class="h2">l'archimede. <em>in chiaro</em>.</h2>
       <p>orari e circolari, dal sito ufficiale della scuola. tutto in ordine, dalla novità più recente.</p>
     </div>
@@ -1687,7 +1252,7 @@ footer a { display: inline-flex; align-items: center; }
 <section class="shop" id="shop">
   <div class="container">
     <div class="head reveal">
-      <div class="section-label">04 / shop</div>
+      <div class="section-label">02 / shop</div>
       <h2 class="h2">la collezione <em>eureka!</em></h2>
       <p>tre modelli, disponibili in taglie dalla XS alla XL. seleziona colore e vista per scoprire ogni dettaglio.</p>
     </div>
@@ -1801,7 +1366,7 @@ footer a { display: inline-flex; align-items: center; }
 <section class="candidati" id="candidati">
   <div class="container">
     <div class="head reveal">
-      <div class="section-label">05 / candidati</div>
+      <div class="section-label">03 / candidati</div>
       <h2 class="h2">le persone <em>dietro</em> la lista.</h2>
       <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
     </div>
@@ -1954,7 +1519,7 @@ footer a { display: inline-flex; align-items: center; }
 <section class="storia" id="storia">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">06 / storia</div>
+      <div class="section-label">04 / storia</div>
       <h2 class="h2">dal 2018. ancora <em>accesi</em>.</h2>
     </div>
 
@@ -1984,8 +1549,8 @@ footer a { display: inline-flex; align-items: center; }
           <div class="label">anno di fondazione</div>
         </div>
         <div class="stat-cell">
-          <div class="big">06</div>
-          <div class="label">progetti attivi</div>
+          <div class="big">14</div>
+          <div class="label">candidati in lista</div>
         </div>
         <div class="stat-cell">
           <div class="big">0<em>0</em></div>
@@ -2053,8 +1618,6 @@ footer a { display: inline-flex; align-items: center; }
     <div>© <span id="year"></span> <span class="glow-mini">eureka<span class="bang">!</span></span></div>
     <div class="center">
       <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram</a>
-      <a href="#progetti">progetti</a>
-      <a href="#eventi">eventi</a>
       <a href="#scuola">circolari</a>
       <a href="#shop">shop</a>
       <a href="#candidati">candidati</a>
@@ -2254,7 +1817,7 @@ const revealObserver = !reducedMotion.matches && 'IntersectionObserver' in windo
 const observeReveals = elements => {
   if (revealObserver && !reducedMotion.matches) elements.forEach(element => revealObserver.observe(element));
 };
-observeReveals(document.querySelectorAll('.head.reveal, .card.reveal, .member.reveal, .event.reveal, .stats.reveal, .scuola-panel.reveal'));
+observeReveals(document.querySelectorAll('.head.reveal, .member.reveal, .stats.reveal, .scuola-panel.reveal'));
 const stopReveals = () => {
   if (!reducedMotion.matches) return;
   revealObserver?.disconnect();
@@ -2764,208 +2327,6 @@ void main() {
 // ===== year =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// =====================================================================
-// ===== PROGETTI GALLERY — archivio Instagram ======================
-// =====================================================================
-// Behold fornisce gli ultimi post e il numero attuale di follower.
-// Il JSON locale conserva l'archivio completo e resta disponibile offline.
-const LOCAL_FEED = 'assets/ig/feed.json';
-const BEHOLD_FEED = 'https://feeds.behold.so/LUPhA0MWLASmG03Yef0U';
-const IG_PROFILE = 'https://instagram.com/eureka.archimede';
-
-(() => {
-  const grid = document.getElementById('proj-gallery-grid');
-  const gallery = document.getElementById('proj-gallery');
-  if (!grid || !gallery) return;
-
-  const PAGE = 6; // post per blocco: il resto arriva con "mostra altri"
-  const fmtData = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-  // separatore migliaia manuale: niente dipendenza dai dati locale del browser
-  const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-  const ICONS = {
-    CAROUSEL_ALBUM: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 3h11a2 2 0 0 1 2 2v11h-2V5H8V3zM5 7h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>',
-    VIDEO: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>'
-  };
-
-  const fallback = (msg) => {
-    gallery.querySelectorAll('.proj-more').forEach(button => button.remove());
-    grid.innerHTML = '';
-    const d = document.createElement('div');
-    d.className = 'proj-empty';
-    d.innerHTML = `${msg} <a href="${IG_PROFILE}" target="_blank" rel="noopener">vai al profilo →</a>`;
-    grid.appendChild(d);
-  };
-
-  const postUrl = value => {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' && !url.username && !url.password && !url.port && ['instagram.com', 'www.instagram.com'].includes(url.hostname) ? url.href : IG_PROFILE;
-    } catch { return IG_PROFILE; }
-  };
-  // schema unico per le due sorgenti (Action locale / Behold)
-  const normalize = (feed, source) => ({
-    followersCount: feed.followersCount || 0,
-    updatedAt: feed.updatedAt || '',
-    posts: (Array.isArray(feed.posts) ? feed.posts : []).filter(p => p && typeof p === 'object').map(p => {
-      const s = p.sizes || {};
-      return {
-        permalink: postUrl(p.permalink),
-        timestamp: p.timestamp,
-        likeCount: typeof p.likeCount === 'number' ? p.likeCount : null,
-        mediaType: p.mediaType,
-        caption: String(source === 'behold' ? (p.prunedCaption || p.caption || '') : (p.caption || '')).trim().slice(0, 360),
-        image: source === 'behold'
-          ? (p.mediaUrl || (s.medium || s.large || s.full || {}).mediaUrl)
-          : p.image,
-        bg: p.colorPalette && p.colorPalette.dominant ? `rgb(${p.colorPalette.dominant})` : null
-      };
-    }).filter(p => typeof p.image === 'string' && (p.image.startsWith('assets/ig/') || /^https:\/\//.test(p.image)))
-  });
-
-  let optimized = {};
-
-  const buildCard = post => {
-    const a = document.createElement('a');
-    a.className = 'proj-card reveal';
-    a.href = post.permalink;
-    a.target = '_blank';
-    a.rel = 'noopener';
-
-    const img = document.createElement('img');
-    img.className = 'proj-card-img';
-    const copy = optimized[post.image];
-    const variant = copy && typeof copy.src === 'string' && copy.src.startsWith('assets/optimized/ig/') ? copy : null;
-    img.src = variant?.src || post.image;
-    if (variant) { img.width = variant.width; img.height = variant.height; }
-    img.alt = post.caption ? post.caption.slice(0, 90) : 'post instagram di @eureka.archimede';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    if (post.bg) img.style.background = post.bg; // placeholder mentre carica
-    img.onerror = () => {
-      if (variant && img.getAttribute('src') === variant.src) img.src = post.image;
-      else { img.hidden = true; a.classList.add('image-missing'); a.setAttribute('aria-label', post.caption.slice(0, 90) || 'post instagram'); }
-    };
-    a.appendChild(img);
-
-    if (ICONS[post.mediaType]) {
-      const t = document.createElement('span');
-      t.className = 'proj-card-type';
-      t.innerHTML = ICONS[post.mediaType];
-      a.appendChild(t);
-    }
-
-    const body = document.createElement('div');
-    body.className = 'proj-card-body';
-
-    const meta = document.createElement('div');
-    meta.className = 'proj-card-date';
-    const parts = [];
-    const date = new Date(post.timestamp);
-    if (!Number.isNaN(date.getTime())) parts.push(fmtData.format(date));
-    if (post.likeCount !== null) parts.push('♥ ' + fmtNum(post.likeCount));
-    meta.textContent = parts.join(' · ');
-    body.appendChild(meta);
-
-    if (post.caption) {
-      const desc = document.createElement('div');
-      desc.className = 'proj-card-desc';
-      desc.textContent = post.caption; // textContent: le caption non possono iniettare HTML
-      body.appendChild(desc);
-    }
-
-    a.appendChild(body);
-    return a;
-  };
-
-  const showFollowerCount = data => {
-    const fol = document.getElementById('proj-ig-followers');
-    if (fol) {
-      const recent = data.updatedAt && Date.now() - new Date(data.updatedAt).getTime() < 7 * 86400000;
-      fol.textContent = data.followersCount && recent ? '· ' + fmtNum(data.followersCount) + ' follower' : '';
-    }
-  };
-
-  const render = (data) => {
-    if (!data.posts.length) { fallback('nessun post per ora.'); return; }
-    showFollowerCount(data);
-    // Il feed locale viene mostrato subito e può essere sostituito dai dati live.
-    // Rimuovi il pulsante del render precedente prima di ricreare la paginazione.
-    gallery.querySelectorAll('.proj-more').forEach(button => button.remove());
-
-    let shown = 0;
-    let moreBtn = null;
-
-    const addBatch = () => {
-      const batch = data.posts.slice(shown, shown + PAGE);
-      const frag = document.createDocumentFragment();
-      const els = batch.map(p => {
-        const card = buildCard(p);
-        frag.appendChild(card);
-        return card;
-      });
-      grid.appendChild(frag);
-      shown += batch.length;
-      observeReveals(els);
-
-      const left = data.posts.length - shown;
-      if (left > 0) {
-        if (!moreBtn) {
-          moreBtn = document.createElement('button');
-          moreBtn.type = 'button';
-          moreBtn.className = 'proj-more';
-          moreBtn.addEventListener('click', addBatch);
-          gallery.appendChild(moreBtn);
-        }
-        moreBtn.textContent = `mostra altri (${left})`;
-      } else if (moreBtn) {
-        moreBtn.remove();
-        moreBtn = null;
-      }
-    };
-
-    grid.replaceChildren();
-    addBatch();
-  };
-
-  const load = async () => {
-    grid.setAttribute('aria-busy', 'true');
-    const liveRequest = fetchJSON(BEHOLD_FEED).catch(() => null);
-    try {
-      const [localResult, manifestResult] = await Promise.allSettled([
-        fetchJSON(LOCAL_FEED), fetchJSON('assets/optimized/manifest.json')
-      ]);
-      const feed = localResult.status === 'fulfilled' ? localResult.value : { posts: [] };
-      const manifest = manifestResult.status === 'fulfilled' ? manifestResult.value : {};
-      optimized = manifest && typeof manifest === 'object' ? manifest : {};
-      const archive = normalize(feed, 'local');
-      if (archive.posts.length) {
-        render(archive);
-        grid.setAttribute('aria-busy', 'false');
-      }
-      const live = await liveRequest || { posts: [] };
-      const current = normalize(live, 'behold');
-      const archivedByUrl = new Map(archive.posts.map(p => [p.permalink, p]));
-      current.posts.forEach(p => {
-        const saved = archivedByUrl.get(p.permalink);
-        if (saved) p.image = saved.image;
-      });
-      const known = new Set(current.posts.map(p => p.permalink));
-      const data = {
-        followersCount: current.posts.length ? current.followersCount : archive.followersCount,
-        updatedAt: current.posts.length ? new Date().toISOString() : archive.updatedAt,
-        posts: [...current.posts, ...archive.posts.filter(p => !known.has(p.permalink))]
-          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      };
-      if (!data.posts.length) throw new Error('archivio vuoto');
-      if (!archive.posts.length || current.posts.some(p => !archivedByUrl.has(p.permalink))) render(data);
-      else showFollowerCount(data);
-    } catch {
-      fallback('instagram non risponde.');
-    } finally { grid.setAttribute('aria-busy', 'false'); }
-  };
-  onApproach(gallery, load);
-})();
 
 </script>
 
