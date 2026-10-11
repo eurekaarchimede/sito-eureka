@@ -106,7 +106,8 @@ body {
 .scroll-stars {
   position: fixed;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
+  opacity: .65;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -2127,14 +2128,14 @@ void main() {
     fbm(st + q + vec2(8.3,2.8) + .126*t));
   float f = fbm(st + 2.2*r);
   vec3 night = vec3(.039,.086,.196);
-  vec3 blue = vec3(.12,.23,.46);
+  vec3 blue = vec3(.22,.38,.64);
   vec3 gold = vec3(.961,.804,.278);
   float cloud = smoothstep(.27,.78,f);
   float filament = pow(1. - abs(2.*f - 1.), 12.) * smoothstep(.6,.95,length(r));
   vec3 color = mix(night, blue, cloud);
   color = mix(color, gold, filament * .32);
   float edge = smoothstep(0.,.1,uv.y) * (1.-smoothstep(.86,1.,uv.y));
-  outColor = vec4(color, edge);
+  outColor = vec4(color * .78, edge * .78);
 }`;
 
   let gl, program, resolution, time, raf = 0, timer = 0, bootScheduled = false;
