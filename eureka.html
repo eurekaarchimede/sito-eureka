@@ -2036,8 +2036,8 @@ else reducedMotion.addListener(stopReveals);
     frame = 0;
     if (!visible || document.hidden || reducedMotion.matches) return;
     const progress = Math.max(0, Math.min(1, (window.scrollY - top) / height));
-    // Raggiunge la stessa scala massima con metà dello scroll.
-    const zoomDistance = Math.min(1, progress / (compact.matches ? .275 : .5));
+    // Zoom rapido, con la stessa scala massima e il limite mobile.
+    const zoomDistance = Math.min(1, progress / (compact.matches ? .1375 : .25));
     const zoomProgress = zoomDistance * zoomDistance * (3 - 2 * zoomDistance);
     const zoomAmount = compact.matches
       ? Math.max(0, Math.min(.22, (window.innerWidth - 1) / schoolScene.offsetWidth - 1))
