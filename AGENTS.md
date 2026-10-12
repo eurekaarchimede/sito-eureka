@@ -6,7 +6,7 @@ Documento di contesto per Codex. Stato del progetto e decisioni di design.
 
 ## 1. Il progetto
 
-Sito web one-page per **eureka!**, lista di rappresentanza d'istituto del **Liceo Scientifico Archimede** di Messina (~1.500 studenti, fondata nel 2018, Instagram: [@eureka.archimede](https://instagram.com/eureka.archimede)).
+Sito web one-page per **eureka!**, lista di rappresentanza d'istituto del **Liceo Scientifico Archimede** di Messina (~1.500 studenti, nata come Way Out nel 2016 e diventata eureka! nell'estate del 2018, Instagram: [@eureka.archimede](https://instagram.com/eureka.archimede)).
 
 **Obiettivo**: presenza online della lista durante la campagna elettorale studentesca per l'edizione **2025–2026**. Comunica progetti, eventi, candidati, storia. Indirizza verso Instagram.
 
@@ -121,7 +121,7 @@ Codici visivi presi da Oryzo:
   <section.progetti #progetti>     ← 01 / 6 card numerate (spazi, cultura, sport, ascolto, trasparenza, eventi)
   <section.eventi #eventi>         ← 02 / timeline 6 eventi (ott 2025 → giu 2026)
   <section.candidati #candidati>   ← 03 / 3 organi (consiglio 8, consulta 4, garanzia 2) — 14 candidati totali
-  <section.storia #storia>         ← 04 / stats (1.500 studenti, 2018, ecc.)
+  <section.storia #storia>         ← 04 / origini (Way Out 2016, eureka! 2018, primi seggi)
   <section.illuminated>            ← pull quote luminosa con glow CSS animato
   <section.cta #contatti>          ← canvas#shader-canvas + "vota eureka!" + link IG
   <footer>                         ← copyright + location
@@ -158,7 +158,7 @@ Codici visivi presi da Oryzo:
 
 ### Media priorità
 - [ ] **Eventi reali**: la timeline (ott 2025 → giu 2026) ha eventi plausibili. Aggiornare con date e contenuti veri, e con i tag `passato / in corso / in arrivo`.
-- [ ] **Statistiche storia**: i numeri in `.storia` (1.500 studenti, 2018, ecc.) — verificare che siano corretti.
+- [x] **Origini e primi seggi**: dati in `.storia` aggiornati dal racconto del fondatore Dario Cannata.
 - [ ] **Pull quote** (sezione `.illuminated`): rivedere con la lista.
 
 ### Bassa priorità
