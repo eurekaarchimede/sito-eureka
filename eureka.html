@@ -13,6 +13,10 @@
 <meta property="og:locale" content="it_IT">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#0a1632">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="eureka!">
+<link rel="manifest" href="site.webmanifest">
+<link rel="apple-touch-icon" href="assets/notifications/icon-180.png">
 
 <!-- favicon: lampadina su blu notte -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a1632'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23f5cd47' font-family='sans-serif' font-weight='bold'%3E!%3C/text%3E%3C/svg%3E">
@@ -790,6 +794,22 @@ a.proj-card {
 .scuola-more[hidden] { display: none; }
 .scuola-reset { border: 0; background: none; color: var(--gold); font: inherit; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
 .scuola-reset[hidden] { display: none; }
+.scuola-notify {
+  border: 1px solid var(--gold-dim);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  color: var(--cream);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+.scuola-notify:hover { border-color: var(--gold); background: rgba(245, 205, 71, 0.1); color: var(--gold); }
+.scuola-notify:disabled { cursor: default; opacity: 0.75; }
+.scuola-notify[hidden], .scuola-notify-status[hidden] { display: none; }
+.scuola-notify-status { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
 /* ===== CANDIDATI ===== */
@@ -1451,7 +1471,9 @@ footer a { display: inline-flex; align-items: center; }
         <div class="scuola-actions">
           <button class="scuola-more" id="scuola-more" type="button" hidden>mostra altre circolari ↓</button>
           <button class="scuola-reset" id="scuola-reset" type="button" hidden>azzera filtri</button>
+          <button class="scuola-notify" id="scuola-notify" type="button" hidden>attiva notifiche circolari</button>
           <a href="https://www.liceoarchimedeme.edu.it/circolare/" target="_blank" rel="noopener">archivio ufficiale ↗</a>
+          <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
         </div>
       </div>
     </div>
@@ -2731,6 +2753,8 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
   });
 })();
 </script>
+
+<script src="assets/notifications/push.js" defer></script>
 
 </body>
 </html>

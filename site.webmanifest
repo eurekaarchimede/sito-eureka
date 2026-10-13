@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "eureka! — Liceo Archimede",
+  "short_name": "eureka!",
+  "description": "Circolari e progetti del Liceo Archimede di Messina.",
+  "start_url": "./#scuola",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a1632",
+  "theme_color": "#0a1632",
+  "icons": [
+    { "src": "assets/notifications/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/notifications/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
