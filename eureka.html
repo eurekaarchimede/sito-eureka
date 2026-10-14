@@ -842,7 +842,7 @@ a.proj-card {
 .scuola-notify:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .scuola-notify:disabled { cursor: default; opacity: 0.75; }
 .scuola-install { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
-.scuola-install summary { color: var(--cream); cursor: pointer; }
+.scuola-install-title { color: var(--cream); }
 .scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
 .scuola-install li + li { margin-top: 0.4rem; }
 .scuola-install p { margin: 0; }
@@ -1482,8 +1482,8 @@ footer a { display: inline-flex; align-items: center; }
       </div>
       <button class="scuola-notify" id="scuola-notify" type="button">attiva notifiche</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
-      <details class="scuola-install" id="scuola-install" open>
-        <summary>come attivare le notifiche</summary>
+      <div class="scuola-install" id="scuola-install">
+        <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
         <p><strong>iPhone e iPad</strong></p>
         <ol>
           <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
@@ -1498,7 +1498,7 @@ footer a { display: inline-flex; align-items: center; }
           <li>apri eureka! dalla nuova icona, tocca <strong>attiva notifiche</strong> e consenti l’invio.</li>
         </ol>
         <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
-      </details>
+      </div>
     </div>
     <div class="scuola-grid">
       <div class="scuola-panel reveal">
