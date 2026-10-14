@@ -794,22 +794,39 @@ a.proj-card {
 .scuola-more[hidden] { display: none; }
 .scuola-reset { border: 0; background: none; color: var(--gold); font: inherit; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
 .scuola-reset[hidden] { display: none; }
+.scuola-notify-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin: 2rem 0 2.5rem;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid rgba(245, 205, 71, 0.3);
+  border-radius: 1rem;
+  background: rgba(10, 22, 50, 0.72);
+}
+.scuola-notify-copy { display: grid; gap: 0.25rem; }
+.scuola-notify-copy strong { color: var(--cream); font-size: 1rem; }
+.scuola-notify-copy span { color: var(--beige-dim); font-size: 0.88rem; }
 .scuola-notify {
-  border: 1px solid var(--gold-dim);
+  flex: 0 0 auto;
+  border: 1px solid var(--gold);
   border-radius: 999px;
-  padding: 0.6rem 1rem;
-  background: transparent;
-  color: var(--cream);
+  padding: 0.7rem 1rem;
+  background: var(--gold);
+  color: var(--bg);
   font: inherit;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  transition: transform 180ms ease, background 180ms ease;
 }
-.scuola-notify:hover { border-color: var(--gold); background: rgba(245, 205, 71, 0.1); color: var(--gold); }
+.scuola-notify:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .scuola-notify:disabled { cursor: default; opacity: 0.75; }
-.scuola-notify[hidden], .scuola-notify-status[hidden] { display: none; }
-.scuola-notify-status { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
+.scuola-notify-status[hidden] { display: none; }
+.scuola-notify-status { flex-basis: 100%; margin: 0; color: var(--beige-dim); font-size: 0.82rem; }
+@media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
 /* ===== CANDIDATI ===== */
@@ -1449,6 +1466,14 @@ footer a { display: inline-flex; align-items: center; }
       <h2 class="h2">l'archimede. <em>in chiaro</em>.</h2>
       <p>orari e circolari, dal sito ufficiale della scuola. tutto in ordine, dalla novità più recente.</p>
     </div>
+    <div class="scuola-notify-box">
+      <div class="scuola-notify-copy">
+        <strong>Resta aggiornato sulle nuove circolari.</strong>
+        <span>Attiva le notifiche e ricevi un avviso quando ne viene pubblicata una.</span>
+      </div>
+      <button class="scuola-notify" id="scuola-notify" type="button">attiva notifiche</button>
+      <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
+    </div>
     <div class="scuola-grid">
       <div class="scuola-panel reveal">
         <h3>orario classi e docenti.</h3>
@@ -1471,9 +1496,7 @@ footer a { display: inline-flex; align-items: center; }
         <div class="scuola-actions">
           <button class="scuola-more" id="scuola-more" type="button" hidden>mostra altre circolari ↓</button>
           <button class="scuola-reset" id="scuola-reset" type="button" hidden>azzera filtri</button>
-          <button class="scuola-notify" id="scuola-notify" type="button" hidden>attiva notifiche circolari</button>
           <a href="https://www.liceoarchimedeme.edu.it/circolare/" target="_blank" rel="noopener">archivio ufficiale ↗</a>
-          <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
         </div>
       </div>
     </div>
