@@ -843,6 +843,9 @@ a.proj-card {
 .scuola-notify:disabled { cursor: default; opacity: 0.75; }
 .scuola-install { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
 .scuola-install-title { color: var(--cream); }
+.scuola-install-platform { padding: 1rem 0 0; }
+.scuola-install-platform + .scuola-install-platform { margin-top: 1rem; border-top: 1px solid rgba(245, 205, 71, .38); }
+.scuola-install-platform h4 { margin: 0; color: var(--cream); font: inherit; font-weight: 700; font-size: .9rem; }
 .scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
 .scuola-install li + li { margin-top: 0.4rem; }
 .scuola-install p { margin: 0; }
@@ -1480,24 +1483,28 @@ footer a { display: inline-flex; align-items: center; }
         <strong>Resta aggiornato sulle nuove circolari.</strong>
         <span>Attiva le notifiche e ricevi un avviso quando ne viene pubblicata una.</span>
       </div>
-      <button class="scuola-notify" id="scuola-notify" type="button">attiva notifiche</button>
+      <button class="scuola-notify" id="scuola-notify" type="button">attiva su iOS / Android</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
       <div class="scuola-install" id="scuola-install">
         <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
-        <p><strong>iPhone e iPad</strong></p>
-        <ol>
-          <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
-          <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
-          <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva notifiche</strong> e <strong>Consenti</strong>.</li>
-        </ol>
-        <p>serve iOS o iPadOS 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
-        <p><strong>Android</strong></p>
-        <ol>
-          <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
-          <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
-          <li>apri eureka! dalla nuova icona, tocca <strong>attiva notifiche</strong> e consenti l’invio.</li>
-        </ol>
-        <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
+        <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
+          <h4 id="scuola-ios-title">iPhone e iPad</h4>
+          <ol>
+            <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
+            <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
+            <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su iOS / Android</strong> e <strong>Consenti</strong>.</li>
+          </ol>
+          <p>serve iOS o iPadOS 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
+        </section>
+        <section class="scuola-install-platform" aria-labelledby="scuola-android-title">
+          <h4 id="scuola-android-title">Android</h4>
+          <ol>
+            <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
+            <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
+            <li>apri eureka! dalla nuova icona, tocca <strong>attiva su iOS / Android</strong> e consenti l’invio.</li>
+          </ol>
+          <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
+        </section>
       </div>
     </div>
     <div class="scuola-grid">

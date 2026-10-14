@@ -15,8 +15,8 @@
   const say = message => { status.textContent = message; status.hidden = !message; };
   const subscribed = () => !!(oneSignal?.User.PushSubscription.optedIn && oneSignal.User.PushSubscription.id);
   const syncButton = () => {
-    if (needsInstall) { button.textContent = 'attiva su iPhone / iPad'; return; }
-    button.textContent = subscribed() ? 'notifiche attive' : 'attiva notifiche';
+    if (needsInstall) { button.textContent = 'attiva su iOS / Android'; return; }
+    button.textContent = subscribed() ? 'notifiche attive' : 'attiva su iOS / Android';
   };
   const withTimeout = (promise, milliseconds, message) => {
     let timer;
@@ -40,7 +40,6 @@
 
   button.addEventListener('click', async () => {
     if (needsInstall) {
-      if (install) install.open = true;
       say('Aggiungi eureka! alla schermata Home, aprila dalla sua icona e attiva le notifiche.');
       return;
     }
