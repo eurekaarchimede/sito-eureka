@@ -363,7 +363,18 @@ nav .ig:hover {
   .school-scene { width: min(84vw, 520px); }
 }
 @media (max-width: 600px) and (orientation: portrait) {
-  .hero { justify-content: space-evenly; gap: 0; }
+  .hero { justify-content: center; gap: 1rem; }
+}
+@media (max-width: 600px) {
+  .hero {
+    min-height: calc(100svh - 64px);
+    padding: 5rem 1rem 1.25rem;
+    gap: 1rem;
+  }
+  .hero-wordmark h1 { margin-bottom: .55rem; }
+  .hero-tagline { margin-top: .65rem; line-height: 1.4; }
+  .hero-cta { margin-top: 1rem; }
+  .school-scene { width: min(76vw, 440px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-depth__swirl { animation: none; transform: none; }
@@ -562,7 +573,13 @@ section { padding: 7rem 2rem; position: relative; }
   gap: 1.5rem;
 }
 @media (max-width: 1000px) { .proj-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px)  { .proj-gallery-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px)  {
+  .proj-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+  .proj-card-body { padding: .75rem .7rem; }
+  .proj-card-date { font-size: .62rem; margin-bottom: .35rem; }
+  .proj-card-title { font-size: .9rem; margin-bottom: .35rem; }
+  .proj-card-desc { font-size: .72rem; line-height: 1.35; -webkit-line-clamp: 2; }
+}
 
 .proj-card {
   background: rgba(17, 32, 69, 0.45);
@@ -879,13 +896,13 @@ a.proj-card {
   gap: 1.1rem;
 }
 @media (max-width: 1000px) { .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .roster { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; } }
 
 .roster.cols-2 {
   grid-template-columns: repeat(2, minmax(0, 320px));
   justify-content: start;
 }
-@media (max-width: 600px) { .roster.cols-2 { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .roster.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .member {
   background: rgba(10, 22, 50, 0.7);
@@ -1143,16 +1160,20 @@ a.proj-card {
   font-weight: 700;
   color: var(--cream);
   text-decoration: none;
-  border-bottom: 1px solid var(--gold);
-  padding-bottom: 0.4rem;
-  transition: color 0.3s ease;
+  border: 1px solid rgba(245, 205, 71, .55);
+  border-radius: 999px;
+  padding: .8rem 1.35rem;
+  background: rgba(17, 32, 69, .55);
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, transform .2s ease;
 }
 .cta a.ig-big:hover {
   color: var(--gold);
-  letter-spacing: 0.01em;
+  border-color: var(--gold);
+  background: rgba(17, 32, 69, .9);
+  transform: translateY(-2px);
 }
 .cta a.ig-big::before {
-  content: '↳';
+  content: '◎';
   color: var(--gold);
   font-size: 1.1em;
 }
@@ -1273,16 +1294,16 @@ footer a { display: inline-flex; align-items: center; }
 }
 @media (max-width: 600px) {
   section { padding: 4rem 1rem; }
-  .hero { padding: 6rem 1rem 3rem; }
+  .hero { padding: 5rem 1rem 1.25rem; }
   .cta a.ig-big {
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    gap: .15rem;
+    gap: .55rem;
     text-align: center;
-    font-size: clamp(1.1rem, 5vw, 1.3rem);
+    font-size: clamp(.95rem, 4.5vw, 1.2rem);
+    padding: .75rem 1rem;
   }
-  .cta a.ig-big::before { display: none; }
-  .cta a.ig-big span:last-child { color: var(--gold); font-size: .8em; }
+  .cta a.ig-big span:last-child { color: var(--gold); font-size: .78em; }
   footer .row { gap: 1.4rem; letter-spacing: .07em; }
   footer .row .center {
     display: grid;
@@ -1340,14 +1361,13 @@ footer a { display: inline-flex; align-items: center; }
 .shop-colors button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .shop-select { width: 100%; min-height: 48px; margin-top: 1rem; border: 1px solid var(--gold); border-radius: 999px; background: var(--gold); color: var(--bg); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
 .shop-select:hover, .shop-select:focus-visible { filter: brightness(1.06); outline: 2px solid var(--cream); outline-offset: 2px; }
-.shop-order { max-width: 850px; margin: 2.5rem auto 0; padding: clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--line); border-radius: 20px; background: rgba(10, 22, 50, .84); }
-.shop-order h3 { color: var(--cream); font-size: clamp(1.3rem, 3vw, 1.8rem); }
-.shop-order > p { margin-top: .45rem; color: var(--beige-dim); font-size: .9rem; }
+.shop-contact { max-width: 850px; margin: 2.5rem auto 0; padding: clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--line); border-radius: 20px; background: rgba(10, 22, 50, .84); }
+.shop-contact h3 { color: var(--cream); font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.shop-contact > p { margin-top: .45rem; color: var(--beige-dim); font-size: .9rem; }
 .shop-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.35rem; }
 .shop-form label { display: grid; gap: .45rem; color: var(--beige); font-size: .78rem; font-weight: 600; }
-.shop-form input, .shop-form select { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--bg-soft); color: var(--cream); font: inherit; font-size: 1rem; text-transform: none; }
-.shop-form input:focus, .shop-form select:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
-.shop-form option { color: var(--cream); background: var(--bg); }
+.shop-form input { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--bg-soft); color: var(--cream); font: inherit; font-size: 1rem; text-transform: none; }
+.shop-form input:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
 .shop-form .shop-form__wide { grid-column: 1 / -1; }
 .shop-total { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 0; color: var(--beige-dim); border-top: 1px solid var(--line); }
 .shop-total strong { color: var(--gold); font-size: 1.2rem; }
@@ -1385,8 +1405,8 @@ footer a { display: inline-flex; align-items: center; }
 <nav aria-label="navigazione principale">
   <a href="#top" class="brand">eureka<span class="bang">!</span></a>
   <ul>
-    <li><a href="#progetti">progetti</a></li>
     <li><a href="#scuola">circolari</a></li>
+    <li><a href="#progetti">progetti</a></li>
     <li><a href="#shop">shop</a></li>
     <li><a href="#candidati">candidati</a></li>
     <li><a href="#storia">storia</a></li>
@@ -1398,12 +1418,12 @@ footer a { display: inline-flex; align-items: center; }
     </button>
   </div>
 </nav>
-<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#progetti">progetti</a><a href="#scuola">circolari</a><a href="#shop">shop</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
+<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#scuola">circolari</a><a href="#progetti">progetti</a><a href="#shop">shop</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
 
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="menu di navigazione" hidden>
   <button class="menu-close" id="menu-close" type="button" aria-label="chiudi menu">chiudi ×</button>
-  <a href="#progetti">progetti</a>
   <a href="#scuola">circolari</a>
+  <a href="#progetti">progetti</a>
   <a href="#shop">shop</a>
   <a href="#candidati">candidati</a>
   <a href="#storia">storia</a>
@@ -1447,29 +1467,13 @@ footer a { display: inline-flex; align-items: center; }
   </div>
 </div>
 
-<!-- ============ INSTAGRAM ============ -->
-<section class="instagram" id="progetti">
-  <div class="container">
-    <!-- gallery progetti — archivio locale Instagram, fallback Behold -->
-    <div class="proj-gallery" id="proj-gallery">
-      <div class="proj-gallery-head reveal">
-        <div class="section-label">in diretta da instagram</div>
-        <h2 class="h2">i progetti. <em>documentati</em>.</h2>
-        <a class="proj-ig-link" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">@eureka.archimede <span id="proj-ig-followers"></span> <span class="arrow">→</span></a>
-      </div>
-      <div class="proj-gallery-grid" id="proj-gallery-grid" aria-busy="false"></div>
-      <noscript><p>consulta i progetti su <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram ↗</a>.</p></noscript>
-    </div>
-  </div>
-</section>
-
 <!-- ============ CIRCOLARI E ORARI ============ -->
 <section class="scuola" id="scuola">
   <div class="container">
     <div class="head reveal">
       <div class="section-label">01 / circolari</div>
       <h2 class="h2">l'archimede. <em>in chiaro</em>.</h2>
-      <p>orari e circolari, dal sito ufficiale della scuola. tutto in ordine, dalla novità più recente.</p>
+      <p>orari e circolari, dal sito ufficiale della scuola. gli aggiornamenti più recenti, in un unico posto.</p>
     </div>
     <div class="scuola-notify-box">
       <div class="scuola-notify-copy">
@@ -1517,13 +1521,29 @@ footer a { display: inline-flex; align-items: center; }
   </div>
 </section>
 
+<!-- ============ INSTAGRAM ============ -->
+<section class="instagram" id="progetti">
+  <div class="container">
+    <!-- gallery progetti — archivio locale Instagram, fallback Behold -->
+    <div class="proj-gallery" id="proj-gallery">
+      <div class="proj-gallery-head reveal">
+        <div class="section-label">in diretta da instagram</div>
+        <h2 class="h2">i progetti. <em>documentati</em>.</h2>
+        <a class="proj-ig-link" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">@eureka.archimede <span id="proj-ig-followers"></span> <span class="arrow">→</span></a>
+      </div>
+      <div class="proj-gallery-grid" id="proj-gallery-grid" aria-busy="false"></div>
+      <noscript><p>consulta i progetti su <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram ↗</a>.</p></noscript>
+    </div>
+  </div>
+</section>
+
 <!-- ============ SHOP ============ -->
 <section class="shop" id="shop">
   <div class="container">
     <div class="head reveal">
       <div class="section-label">02 / shop</div>
       <h2 class="h2">la collezione <em>eureka!</em></h2>
-      <p>tre modelli, disponibili in taglie dalla XS alla XL. seleziona colore e vista per scoprire ogni dettaglio.</p>
+      <p>tre grafiche, da vedere fronte e retro. per i dettagli, scrivici in privato.</p>
     </div>
 
     <div class="shop-grid">
@@ -1543,7 +1563,7 @@ footer a { display: inline-flex; align-items: center; }
             <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
             <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
           </div>
-          <button class="shop-select" type="button" data-shop-product="Dreams / occupazione" data-shop-color="nero">seleziona modello</button>
+          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
       <article class="shop-product reveal" data-shop-gallery data-product="The worst list ever" data-label="The worst list ever" data-color="nero">
@@ -1562,7 +1582,7 @@ footer a { display: inline-flex; align-items: center; }
             <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
             <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
           </div>
-          <button class="shop-select" type="button" data-shop-product="The worst list ever" data-shop-color="nero">seleziona modello</button>
+          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
       <article class="shop-product reveal" data-shop-gallery data-product="Look up, the stars" data-label="Look up, the stars" data-color="fucsia">
@@ -1576,37 +1596,19 @@ footer a { display: inline-flex; align-items: center; }
         <div class="shop-product__body">
           <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
           <h3>look up, the stars.</h3>
-          <p class="shop-product__description">modello fucsia, disponibile solo in questo colore.</p>
+          <p class="shop-product__description">disponibile in fucsia.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
             <button type="button" data-shop-color-choice="fucsia" aria-pressed="true">fucsia</button>
           </div>
-          <button class="shop-select" type="button" data-shop-product="Look up, the stars" data-shop-color="fucsia">seleziona modello</button>
+          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
     </div>
 
-    <div class="shop-order reveal" id="shop-order">
-      <h3>completa l’ordine.</h3>
-      <p>seleziona la variante e inserisci i dati richiesti. potrai inviare il riepilogo su WhatsApp e concordare il pagamento in contanti con un rappresentante.</p>
+    <div class="shop-contact reveal" id="shop-contact">
+      <h3>ti interessa una maglietta?</h3>
+      <p>lascia i tuoi dati e continua la conversazione su WhatsApp: i dettagli li definiamo in privato.</p>
       <form class="shop-form" id="shop-form">
-        <label class="shop-form__wide">modello
-          <select id="shop-model" name="model" required>
-            <option value="">seleziona una t-shirt</option>
-            <option value="Dreams / occupazione" data-colors="nero,bianco">stop making dreams</option>
-            <option value="The worst list ever" data-colors="nero,bianco">the worst list ever</option>
-            <option value="Look up, the stars" data-colors="fucsia">look up, the stars</option>
-          </select>
-        </label>
-        <label>colore
-          <select id="shop-color" name="color" required disabled>
-            <option value="">prima scegli un modello</option>
-          </select>
-        </label>
-        <label>taglia
-          <select id="shop-size" name="size" required>
-            <option value="">seleziona</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option>
-          </select>
-        </label>
         <label>nome
           <input name="firstName" type="text" autocomplete="given-name" maxlength="40" required>
         </label>
@@ -1616,17 +1618,8 @@ footer a { display: inline-flex; align-items: center; }
         <label class="shop-form__wide">classe (es. 5A)
           <input name="className" type="text" autocomplete="off" maxlength="12" placeholder="5A" required>
         </label>
-        <div class="shop-form__wide">
-          <div class="shop-total"><span>totale per 1 t-shirt</span><strong>15 €</strong></div>
-          <button class="shop-submit" type="submit">procedi al riepilogo <span aria-hidden="true">→</span></button>
-          <p class="shop-note">l’ordine viene confermato dopo l’invio del messaggio e il pagamento in contanti a un rappresentante.</p>
-        </div>
+        <button class="shop-submit shop-form__wide" type="submit">continua su WhatsApp <span aria-hidden="true">↗</span></button>
       </form>
-      <div class="shop-success" id="shop-success" role="status" tabindex="-1" hidden>
-        <h4>riepilogo ordine.</h4>
-        <p>per inviare la richiesta, apri WhatsApp e invia il messaggio precompilato. l’ordine sarà confermato dopo il pagamento di 15 € in contanti a un rappresentante.</p>
-        <a class="shop-whatsapp" id="shop-whatsapp" href="https://wa.me/393396484444" target="_blank" rel="noopener">invia richiesta su WhatsApp ↗</a>
-      </div>
     </div>
   </div>
 </section>
@@ -1636,7 +1629,7 @@ footer a { display: inline-flex; align-items: center; }
   <div class="container">
     <div class="head reveal">
       <div class="section-label">03 / candidati</div>
-      <h2 class="h2">le persone <em>dietro</em> la lista.</h2>
+      <h2 class="h2">candidati <em>2025</em></h2>
       <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
     </div>
 
@@ -1789,7 +1782,7 @@ footer a { display: inline-flex; align-items: center; }
   <div class="container">
     <div class="reveal">
       <div class="section-label">04 / storia</div>
-      <h2 class="h2">da way out a <em>eureka!</em>.</h2>
+      <h2 class="h2">da way out a <em>eureka!</em></h2>
     </div>
 
     <div class="grid">
@@ -1804,10 +1797,10 @@ footer a { display: inline-flex; align-items: center; }
           meno gerarchie, più scelte condivise. la lista si organizza come un comitato: presidente e segreteria ci sono, ma le decisioni si prendono insieme.
         </p>
         <p>
-          il primo anno conquista un seggio in consiglio d'istituto. il secondo: un seggio in consiglio e uno in consulta. al terzo anno i seggi in consiglio diventano due.
+          il primo anno conquista un seggio in consiglio d'istituto. il secondo: un seggio in consiglio e uno in consulta. al terzo anno i seggi in consiglio diventano due. dal terzo anno in poi, eureka! ha sempre ottenuto la maggioranza assoluta dei seggi.
         </p>
         <p>
-          secondo cannata, eureka! è stata anche la prima lista dell'archimede ad aprire una pagina instagram e a fare interviste doppie.
+          eureka! è stata anche la prima lista dell'archimede ad aprire una pagina instagram e a fare interviste doppie.
         </p>
       </div>
 
@@ -1831,6 +1824,10 @@ footer a { display: inline-flex; align-items: center; }
         <div class="stat-cell">
           <div class="big">3° anno</div>
           <div class="label">due seggi in Consiglio d’Istituto</div>
+        </div>
+        <div class="stat-cell">
+          <div class="big">da allora</div>
+          <div class="label">maggioranza assoluta dei seggi, ottenuta a ogni elezione</div>
         </div>
       </aside>
     </div>
@@ -1864,8 +1861,7 @@ footer a { display: inline-flex; align-items: center; }
   <div class="illuminated-content">
     <h2>
       un'idea.<br>
-      <span class="glow-text" data-text="accesa.">accesa.</span><br>
-      da quattordici.
+      <span class="glow-text" data-text="accesa.">accesa.</span>
     </h2>
     <p>
       una lista. tre organi. una sola direzione.
@@ -1882,7 +1878,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="super">● vota. condividi. accendi.</div>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">
-      <span>@eureka.archimede</span><span>su instagram ↗</span>
+      <span>@eureka.archimede</span><span>seguici ↗</span>
     </a>
   </div>
 </section>
@@ -2199,46 +2195,17 @@ else reducedMotion.addListener(stopReveals);
   });
 })();
 
-// ===== SHOP: varianti prodotto e riepilogo WhatsApp =====
+// ===== SHOP: contatto WhatsApp =====
 (() => {
   const form = document.getElementById('shop-form');
-  const model = document.getElementById('shop-model');
-  const color = document.getElementById('shop-color');
-  const success = document.getElementById('shop-success');
-  const whatsapp = document.getElementById('shop-whatsapp');
-  if (!form || !model || !color || !success || !whatsapp) return;
+  if (!form) return;
 
-  const setColors = (colors, selected = '') => {
-    color.replaceChildren();
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = colors.length ? 'seleziona' : 'prima scegli un modello';
-    color.append(placeholder);
-    for (const value of colors) {
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = value;
-      if (value === selected) option.selected = true;
-      color.append(option);
-    }
-    color.disabled = colors.length === 0;
-    color.required = colors.length > 0;
-  };
-
-  model.addEventListener('change', () => {
-    const option = model.selectedOptions[0];
-    const colors = (option?.dataset.colors || '').split(',').filter(Boolean);
-    setColors(colors, colors.length === 1 ? colors[0] : '');
-  });
-  document.querySelectorAll('[data-shop-product]').forEach(button => {
+  document.querySelectorAll('[data-shop-contact]').forEach(button => {
     button.addEventListener('click', () => {
-      const option = [...model.options].find(item => item.value === button.dataset.shopProduct);
-      if (!option) return;
-      model.value = option.value;
-      model.dispatchEvent(new Event('change', { bubbles: true }));
-      color.value = button.dataset.shopColor || '';
-      document.getElementById('shop-order')?.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'center' });
-      color.focus({ preventScroll: true });
+      document.getElementById('shop-contact')?.scrollIntoView({
+        behavior: reducedMotion.matches ? 'auto' : 'smooth',
+        block: 'center',
+      });
     });
   });
 
@@ -2255,8 +2222,6 @@ else reducedMotion.addListener(stopReveals);
       image.src = src;
       image.dataset.originalMask = String(src.endsWith('-crop.webp'));
       image.alt = `Maglietta ${chosenColor}, vista ${chosenSide}, ${gallery.dataset.label}`;
-      const orderButton = gallery.querySelector('[data-shop-product]');
-      if (orderButton) orderButton.dataset.shopColor = chosenColor;
     };
     chooseButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -2278,19 +2243,13 @@ else reducedMotion.addListener(stopReveals);
     event.preventDefault();
     if (!form.reportValidity()) return;
     const data = new FormData(form);
-    const order = [
-      'Ciao, vorrei ordinare una t-shirt eureka!',
-      `Modello: ${data.get('model')}`,
-      `Colore: ${data.get('color')}`,
-      `Taglia: ${data.get('size')}`,
-      `Nome: ${data.get('firstName')} ${data.get('lastName')}`,
+    const message = [
+      'Ciao, sono interessato ad una maglietta.',
+      `Nome: ${data.get('firstName')}`,
+      `Cognome: ${data.get('lastName')}`,
       `Classe: ${data.get('className')}`,
-      'Prezzo: 15 €',
     ].join('\n');
-    whatsapp.href = `https://wa.me/393396484444?text=${encodeURIComponent(order)}`;
-    form.hidden = true;
-    success.hidden = false;
-    success.focus();
+    window.location.assign(`https://wa.me/393396484444?text=${encodeURIComponent(message)}`);
   });
 })();
 
