@@ -26,12 +26,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', action='store_true', help='invia solo al segmento OneSignal Test Users')
     parser.add_argument('--test-subscription', help='Subscription ID del solo dispositivo di prova')
+    parser.add_argument('--inspect-user', help='legge le sole iscrizioni push di un OneSignal ID, senza inviare')
     parser.add_argument('--dry-run', action='store_true', help='mostra il messaggio senza inviare o aggiornare il registro')
     args = parser.parse_args()
     if args.test_subscription:
         if not args.test:
             raise ValueError('--test-subscription richiede --test')
         args.test_subscription = str(uuid.UUID(args.test_subscription))
+    if args.inspect_user:
+        args.inspect_user = str(uuid.UUID(args.inspect_user))
     feed = json.loads(FEED_PATH.read_text(encoding='utf-8'))
     ledger = json.loads(LEDGER_PATH.read_text(encoding='utf-8'))
     config = json.loads(CONFIG_PATH.read_text(encoding='utf-8'))
@@ -40,7 +43,7 @@ def main():
                  if isinstance(item, dict) and isinstance(item.get('url'), str)
                  and item['url'].startswith('https://www.liceoarchimedeme.edu.it/circolare/')]
     pending = [item for item in circulars if digest(item['url']) not in sent]
-    if not pending and not args.test:
+    if not pending and not args.test and not args.inspect_user:
         print('nessuna nuova circolare')
         return 0
 
@@ -48,6 +51,24 @@ def main():
     api_key = os.environ.get('ONESIGNAL_API_KEY', '').strip()
     if not app_id or (not api_key and not args.dry_run):
         raise RuntimeError('App ID o chiave OneSignal non configurati: le circolari restano in attesa')
+
+    if args.inspect_user:
+        request = Request(
+            f'https://api.onesignal.com/apps/{app_id}/users/by/onesignal_id/{args.inspect_user}',
+            headers={'Authorization': f'Key {api_key}', 'Accept': 'application/json'},
+        )
+        try:
+            with urlopen(request, timeout=20) as response:
+                user = json.load(response)
+        except HTTPError as error:
+            raise RuntimeError(f'Ispezione utente OneSignal: HTTP {error.code}') from error
+        # Non pubblicare email, token push, chiavi di cifratura o altri dati del profilo nei log.
+        subscriptions = [
+            {key: sub.get(key) for key in ('id', 'type', 'enabled', 'notification_types', 'device_model', 'device_os')}
+            for sub in user.get('subscriptions', []) if 'Push' in sub.get('type', '')
+        ]
+        print(json.dumps({'push_subscriptions': subscriptions}, ensure_ascii=False))
+        return 0
 
     pending.sort(key=lambda item: (item.get('date', ''), item.get('number', '')))
     if args.test:
@@ -106,7 +127,8 @@ def main():
 
     if not result.get('id'):
         raise RuntimeError('OneSignal non ha creato la notifica (nessun destinatario iscritto o raggiungibile). '
-                           'Il registro non viene aggiornato; riproveremo al prossimo controllo.')
+                           'Il registro non viene aggiornato; riproveremo al prossimo controllo. '
+                           f"Dettagli API: {json.dumps(result.get('errors', []), ensure_ascii=False)[:500]}")
     if args.test:
         destination = 'il dispositivo indicato' if args.test_subscription else 'il segmento Test Users'
         print(f'Push di prova accettata da OneSignal per {destination}; registro circolari invariato')

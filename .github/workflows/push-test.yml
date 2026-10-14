@@ -1,0 +1,37 @@
+name: prova notifiche su un dispositivo
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Ispeziona un OneSignal ID oppure invia al Subscription ID"
+        type: choice
+        options:
+          - inspect
+          - send
+        default: inspect
+      device_id:
+        description: "OneSignal ID per inspect; Subscription ID per send"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: verifica il dispositivo o invia la prova mirata
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+          OPERATION: ${{ inputs.operation }}
+          DEVICE_ID: ${{ inputs.device_id }}
+        run: |
+          if [ "$OPERATION" = "inspect" ]; then
+            python3 scripts/send-circolari-notification.py --inspect-user "$DEVICE_ID"
+          else
+            python3 scripts/send-circolari-notification.py --test --test-subscription "$DEVICE_ID"
+          fi
