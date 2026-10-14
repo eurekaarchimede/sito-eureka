@@ -8,6 +8,7 @@ prime due pagine. --full forza una nuova scansione completa.
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import html
+import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -20,6 +21,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "assets" / "scuola" / "feed.json"
+VERSION_OUTPUT = OUTPUT.with_name("version.json")
 BASE = "https://www.liceoarchimedeme.edu.it"
 MONTHS = {"Gen": "01", "Feb": "02", "Mar": "03", "Apr": "04", "Mag": "05", "Giu": "06",
           "Lug": "07", "Ago": "08", "Set": "09", "Ott": "10", "Nov": "11", "Dic": "12"}
@@ -163,6 +165,17 @@ def schedule():
     return result
 
 
+def write_version():
+    content = OUTPUT.read_bytes()
+    feed = json.loads(content)
+    version = {
+        "revision": hashlib.sha256(content).hexdigest(),
+        "updated_at": feed.get("updated_at", ""),
+        "count": len(feed.get("circolari", [])),
+    }
+    VERSION_OUTPUT.write_text(json.dumps(version, separators=(",", ":")) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--full", action="store_true", help="rileggi tutte le pagine dell'archivio")
@@ -212,13 +225,21 @@ def main():
         item["pdf"] = primary_pdf(item)
     # L'ordine dell'archivio ufficiale prevale a parità di giorno.
     circolari.sort(key=lambda item: item["date"], reverse=True)
-    data = {"source": BASE, "orari": schedule(), "circolari": circolari}
+    try:
+        orari = schedule()
+    except Exception as error:
+        # Un guasto nell'API degli orari non deve bloccare nuove circolari.
+        orari = previous.get("orari", {})
+        print(f"Orari non aggiornati, mantengo gli ultimi disponibili: {error}")
+    data = {"source": BASE, "orari": orari, "circolari": circolari}
     if {key: previous.get(key) for key in data} == data:
+        write_version()
         print(f"Nessuna novità ({len(circolari)} circolari)")
         return
     data["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
+    write_version()
     print(f"Aggiornati orari e {len(circolari)} circolari ({limit} pagine lette, {failures} PDF non letti)")
 
 

@@ -15,8 +15,8 @@
 <meta name="theme-color" content="#0a1632">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="eureka!">
-<link rel="manifest" href="site.webmanifest">
-<link rel="apple-touch-icon" href="assets/notifications/icon-180.png">
+<link rel="manifest" href="site.webmanifest?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png">
 
 <!-- favicon: lampadina su blu notte -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a1632'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23f5cd47' font-family='sans-serif' font-weight='bold'%3E!%3C/text%3E%3C/svg%3E">
@@ -824,6 +824,11 @@ a.proj-card {
 }
 .scuola-notify:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .scuola-notify:disabled { cursor: default; opacity: 0.75; }
+.scuola-install { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
+.scuola-install summary { color: var(--cream); cursor: pointer; }
+.scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
+.scuola-install li + li { margin-top: 0.4rem; }
+.scuola-install p { margin: 0; }
 .scuola-notify-status[hidden] { display: none; }
 .scuola-notify-status { flex-basis: 100%; margin: 0; color: var(--beige-dim); font-size: 0.82rem; }
 @media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
@@ -1473,6 +1478,15 @@ footer a { display: inline-flex; align-items: center; }
       </div>
       <button class="scuola-notify" id="scuola-notify" type="button">attiva notifiche</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
+      <details class="scuola-install" id="scuola-install">
+        <summary>notifiche su iPhone e iPad</summary>
+        <ol>
+          <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
+          <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
+          <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva notifiche</strong> e <strong>Consenti</strong>.</li>
+        </ol>
+        <p>serve iOS o iPadOS 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
+      </details>
     </div>
     <div class="scuola-grid">
       <div class="scuola-panel reveal">
@@ -2616,168 +2630,9 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
 
 </script>
 
-<script>
-// ===== BACHECA SCUOLA: JSON aggiornato da GitHub Actions =====
-(() => {
-  const list = document.getElementById('scuola-circolari');
-  const schedules = document.getElementById('scuola-orari');
-  const status = document.getElementById('scuola-status');
-  const more = document.getElementById('scuola-more');
-  const query = document.getElementById('scuola-query');
-  const from = document.getElementById('scuola-from');
-  const to = document.getElementById('scuola-to');
-  const reset = document.getElementById('scuola-reset');
-  if (!list || !schedules || !status || !more || !query || !from || !to || !reset) return;
+<script src="assets/scuola/board.js?v=2" defer></script>
 
-  const isSchoolUrl = value => {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' && !url.username && !url.password && !url.port && url.hostname === 'www.liceoarchimedeme.edu.it';
-    } catch { return false; }
-  };
-  const dateFormat = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
-  const dateLabel = value => {
-    value = String(value || '');
-    const date = new Date(`${value.slice(0, 10)}T12:00:00`);
-    return Number.isNaN(date.getTime()) ? value : dateFormat.format(date);
-  };
-  const arrow = () => {
-    const span = document.createElement('span');
-    span.className = 'arrow';
-    span.setAttribute('aria-hidden', 'true');
-    span.textContent = '↗';
-    return span;
-  };
-  const link = url => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    return a;
-  };
-  const normalize = value => String(value || '').normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').toLowerCase();
-
-  onApproach(document.getElementById('scuola'), () => {
-  list.setAttribute('aria-busy', 'true');
-  status.textContent = 'caricamento circolari…';
-  fetchJSON('assets/scuola/feed.json')
-    .then(data => {
-      if (!Array.isArray(data.circolari) || !data.circolari.length) throw new Error('archivio vuoto');
-
-      const orari = document.createDocumentFragment();
-      for (const [kind, label] of [['classi', 'orario classi'], ['docenti', 'orario docenti']]) {
-        const item = data.orari?.[kind];
-        if (!item || !isSchoolUrl(item.pdf)) continue;
-        const a = link(item.pdf);
-        a.className = 'scuola-card';
-        const info = document.createElement('span');
-        const title = document.createElement('strong');
-        title.textContent = label;
-        const date = document.createElement('small');
-        date.textContent = `PDF · pubblicato il ${dateLabel(item.date)}`;
-        info.append(title, date);
-        a.append(info, arrow());
-        orari.append(a);
-      }
-      if (orari.childNodes.length) schedules.replaceChildren(orari);
-
-      const items = data.circolari.filter(item => item && isSchoolUrl(item.url) && /^\d{4}-\d{2}-\d{2}$/.test(item.date)).map(item => ({
-        ...item,
-        searchText: normalize(`${item.title} ${item.number}`)
-      })).sort((a, b) => b.date.localeCompare(a.date));
-      let filtered = items;
-      let shown = 0;
-      const addPage = (limit = 12) => {
-        const fragment = document.createDocumentFragment();
-        for (const item of filtered.slice(shown, shown + limit)) {
-          const li = document.createElement('li');
-          const pdfs = Array.isArray(item.pdfs) ? item.pdfs.filter(isSchoolUrl) : [];
-          const primary = isSchoolUrl(item.pdf) ? item.pdf : null;
-          const a = link(primary || item.url);
-          a.className = 'scuola-circolare';
-          const details = document.createElement('span');
-          details.className = 'details';
-          const meta = document.createElement('span');
-          meta.className = 'meta';
-          const date = document.createElement('time');
-          date.dateTime = item.date;
-          date.textContent = dateLabel(item.date);
-          meta.append(date);
-          if (item.number) {
-            const number = document.createElement('small');
-            number.textContent = item.number;
-            meta.append(number);
-          }
-          const kind = document.createElement('small');
-          kind.textContent = primary ? 'PDF diretto' : pdfs.length ? 'PDF nella scheda' : 'scheda ufficiale';
-          meta.append(kind);
-          const title = document.createElement('strong');
-          title.textContent = item.title || 'circolare riservata';
-          details.append(meta, title);
-          a.append(details, arrow());
-          li.append(a);
-          if (primary && pdfs.length > 1) {
-            const source = link(item.url);
-            source.className = 'scuola-source';
-            const count = pdfs.length - 1;
-            source.textContent = `${count} ${count === 1 ? 'altro PDF' : 'altri PDF'} nella scheda ↗`;
-            li.append(source);
-          }
-          fragment.append(li);
-        }
-        list.append(fragment);
-        shown = Math.min(shown + limit, filtered.length);
-        more.hidden = shown >= filtered.length;
-      };
-      const update = () => {
-        const invalid = from.value && to.value && from.value > to.value;
-        from.setAttribute('aria-invalid', String(!!invalid));
-        to.setAttribute('aria-invalid', String(!!invalid));
-        if (invalid) {
-          list.replaceChildren(); more.hidden = true; reset.hidden = false;
-          status.textContent = 'la data iniziale deve precedere la data finale.';
-          return;
-        }
-        const terms = normalize(query.value).trim().split(/\s+/).filter(Boolean);
-        filtered = items.filter(item =>
-          (!from.value || item.date >= from.value) &&
-          (!to.value || item.date <= to.value) &&
-          terms.every(term => item.searchText.includes(term))
-        );
-        list.replaceChildren();
-        shown = 0;
-        addPage(4);
-        const active = terms.length || from.value || to.value;
-        reset.hidden = !active;
-        const count = active
-          ? `${filtered.length} ${filtered.length === 1 ? 'circolare trovata' : 'circolari trovate'} su ${items.length}`
-          : `${items.length} circolari`;
-        status.textContent = `${count} · ultimo aggiornamento ${dateLabel(data.updated_at || '')}`;
-      };
-      more.addEventListener('click', () => addPage());
-      let searchTimer;
-      query.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(update, 150); });
-      for (const field of [from, to]) field.addEventListener('input', update);
-      reset.addEventListener('click', () => {
-        clearTimeout(searchTimer);
-        query.value = '';
-        from.value = '';
-        to.value = '';
-        update();
-        query.focus();
-      });
-      update();
-    })
-    .catch(() => {
-      status.textContent = 'impossibile caricare la bacheca. usa l’archivio ufficiale qui sotto.';
-    })
-    .finally(() => list.setAttribute('aria-busy', 'false'));
-  });
-})();
-</script>
-
-<script src="assets/notifications/push.js" defer></script>
+<script src="assets/notifications/push.js?v=2" defer></script>
 
 </body>
 </html>

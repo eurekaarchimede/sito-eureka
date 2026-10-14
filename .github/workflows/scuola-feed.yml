@@ -1,14 +1,20 @@
 name: aggiorna circolari e orari
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      test_push:
+        description: "Invia una push di prova al dispositivo indicato o al segmento Test Users"
+        type: boolean
+        default: false
+      test_subscription_id:
+        description: "Subscription ID del dispositivo da provare (opzionale, usato solo con test_push)"
+        type: string
+        default: ""
   schedule:
-    # Scansioni ogni 5 minuti, spostate fuori dai minuti tondi per ridurre
-    # ritardi e salti del scheduler GitHub nei momenti più congestionati.
-    - cron: '2-57/5 8-21 * * *'
-      timezone: "Europe/Rome"
-    # Ultimo controllo alle 22:55; non interroga tra le 23:00 e le 08:00.
-    - cron: '5,10,15,20,25,30,35,40,45,50,55 22 * * *'
+    # Backup del trigger esterno: controlli dalle 08:00 alle 22:55, ora italiana.
+    # Il scheduler GitHub può subire ritardi; non garantisce un limite di cinque minuti.
+    - cron: '*/5 8-22 * * *'
       timezone: "Europe/Rome"
 
 permissions:
@@ -21,18 +27,36 @@ concurrency:
 jobs:
   feed:
     runs-on: ubuntu-latest
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v4
+      - name: rispetta la fascia oraria anche per il cron esterno
+        id: window
+        env:
+          TEST_PUSH: ${{ inputs.test_push }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          active = 8 <= datetime.now(ZoneInfo('Europe/Rome')).hour < 23
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f"active={str(active).lower()}\n")
+          print('fascia 08:00–22:55 attiva' if active else 'pausa notturna: nessuna richiesta alla scuola')
+          PY
       - uses: actions/setup-python@v5
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true
         with:
           python-version: '3.12'
       - name: leggi il sito della scuola
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true
         run: python3 scripts/fetch-scuola.py
       - name: salva i nuovi avvisi
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/scuola/feed.json
+          git add assets/scuola/feed.json assets/scuola/version.json
           if git diff --cached --quiet; then
             echo "nessuna novità"
           else
@@ -41,10 +65,23 @@ jobs:
             git push
           fi
       - name: notifica le nuove circolari
+        if: steps.window.outputs.active == 'true' || inputs.test_push == true
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
-        run: python3 scripts/send-circolari-notification.py
+          TEST_PUSH: ${{ inputs.test_push }}
+          TEST_SUBSCRIPTION: ${{ inputs.test_subscription_id }}
+        run: |
+          if [ "$TEST_PUSH" = "true" ]; then
+            if [ -n "$TEST_SUBSCRIPTION" ]; then
+              python3 scripts/send-circolari-notification.py --test --test-subscription "$TEST_SUBSCRIPTION"
+            else
+              python3 scripts/send-circolari-notification.py --test
+            fi
+          else
+            python3 scripts/send-circolari-notification.py
+          fi
       - name: salva il registro notifiche
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"

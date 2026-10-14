@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#070f22"/>
+  <circle cx="116" cy="144" r="1.7" fill="#f5cd47" opacity="0.45"/>
+  <circle cx="850" cy="122" r="1.4" fill="#f5cd47" opacity="0.38"/>
+  <circle cx="907" cy="280" r="2" fill="#f5cd47" opacity="0.45"/>
+  <circle cx="103" cy="391" r="1.2" fill="#f5cd47" opacity="0.3"/>
+  <circle cx="863" cy="579" r="1.8" fill="#f5cd47" opacity="0.4"/>
+  <circle cx="127" cy="758" r="1.6" fill="#f5cd47" opacity="0.4"/>
+  <circle cx="815" cy="876" r="1.3" fill="#f5cd47" opacity="0.3"/>
+  <circle cx="224" cy="928" r="1.4" fill="#f5cd47" opacity="0.35"/>
+  <circle cx="947" cy="686" r="1.1" fill="#f5cd47" opacity="0.25"/>
+  <circle cx="85" cy="589" r="1.2" fill="#f5cd47" opacity="0.32"/>
+  <path d="M146 247h7m-3.5-3.5v7M891 808h6m-3-3v6" stroke="#f7eed5" stroke-width="1" opacity="0.4"/>
+  <image href="logo-eureka-official.png" x="116" y="116" width="792" height="792"/>
+</svg>
