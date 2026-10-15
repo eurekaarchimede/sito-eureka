@@ -15,7 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED_PATH = ROOT / 'assets/scuola/feed.json'
 LEDGER_PATH = ROOT / 'assets/scuola/notifiche-inviate.json'
 CONFIG_PATH = ROOT / 'assets/notifications/config.json'
-SITE_URL = 'https://eurekaarchimede.github.io/sito-eureka/#scuola'
+SITE_URL = 'https://eurekaarchimede.it/#scuola'
+ICON_URL = 'https://eurekaarchimede.it/assets/notifications/icon-eureka-v2-192.png'
 
 
 def digest(url):
@@ -91,8 +92,8 @@ def main():
         'headings': {'en': title[:100], 'it': title[:100]},
         'contents': {'en': contents[:200], 'it': contents[:200]},
         'url': SITE_URL,
-        'chrome_web_icon': 'https://eurekaarchimede.github.io/sito-eureka/assets/notifications/icon-eureka-v2-192.png',
-        'firefox_icon': 'https://eurekaarchimede.github.io/sito-eureka/assets/notifications/icon-eureka-v2-192.png',
+        'chrome_web_icon': ICON_URL,
+        'firefox_icon': ICON_URL,
     }
     if args.test_subscription:
         del payload['included_segments']
