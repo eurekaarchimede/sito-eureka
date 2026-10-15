@@ -65,7 +65,9 @@ jobs:
             git push
           fi
       - name: notifica le nuove circolari
+        id: push_notification
         if: steps.window.outputs.active == 'true' || inputs.test_push == true
+        continue-on-error: true
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
           TEST_PUSH: ${{ inputs.test_push }}
@@ -80,16 +82,23 @@ jobs:
           else
             python3 scripts/send-circolari-notification.py
           fi
-      - name: salva il registro notifiche
+      - name: invia le nuove circolari via email
         if: steps.window.outputs.active == 'true' && inputs.test_push != true
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+        run: python3 scripts/send-circolari-email.py
+      - name: salva i registri delle notifiche
+        if: always() && steps.window.outputs.active == 'true' && inputs.test_push != true
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/scuola/notifiche-inviate.json
+          for path in assets/scuola/notifiche-inviate.json assets/scuola/email-inviate.json; do
+            if [ -f "$path" ]; then git add "$path"; fi
+          done
           if git diff --cached --quiet; then
-            echo "registro notifiche invariato"
+            echo "registri notifiche invariati"
           else
-            git commit -m "registra notifiche circolari"
+            git commit -m "registra invii circolari"
             git pull --rebase origin main
             git push
           fi

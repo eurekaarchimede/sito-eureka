@@ -1,6 +1,9 @@
 (() => {
   const button = document.getElementById('scuola-notify');
   const status = document.getElementById('scuola-notify-status');
+  const emailForm = document.getElementById('scuola-email-form');
+  const emailStatus = document.getElementById('scuola-email-status');
+  const emailSubmit = document.getElementById('scuola-email-submit');
   const install = document.getElementById('scuola-install');
   if (!button || !status) return;
 
@@ -13,6 +16,7 @@
     || navigator.standalone === true;
   const needsInstall = isAppleMobile && !isInstalled;
   const say = message => { status.textContent = message; status.hidden = !message; };
+  const sayEmail = message => { emailStatus.textContent = message; emailStatus.hidden = !message; };
   const subscribed = () => !!(oneSignal?.User.PushSubscription.optedIn && oneSignal.User.PushSubscription.id);
   const syncButton = () => {
     if (needsInstall) { button.textContent = 'attiva su iOS / Android'; return; }
@@ -37,6 +41,41 @@
       check();
     });
   };
+
+  async function ensureOneSignal() {
+    if (oneSignal) return oneSignal;
+    start();
+    const deadline = Date.now() + 15000;
+    while (!oneSignal && Date.now() < deadline) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    if (!oneSignal) throw new Error('OneSignal non pronto');
+    return oneSignal;
+  }
+
+  if (emailForm && emailStatus && emailSubmit) {
+    emailForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!emailForm.reportValidity()) return;
+      const email = String(new FormData(emailForm).get('email') || '').trim();
+      emailSubmit.disabled = true;
+      emailSubmit.setAttribute('aria-busy', 'true');
+      sayEmail('Iscrizione in corso…');
+      try {
+        const sdk = await ensureOneSignal();
+        if (typeof sdk.User?.addEmail !== 'function') throw new Error('Funzione email non disponibile');
+        sdk.User.addEmail(email);
+        emailForm.reset();
+        sayEmail('Richiesta inviata a OneSignal. Puoi disiscriverti dal link presente in ogni email.');
+      } catch (error) {
+        console.error('Iscrizione email non riuscita.', error);
+        sayEmail('Iscrizione non completata. Controlla la connessione e riprova.');
+      } finally {
+        emailSubmit.disabled = false;
+        emailSubmit.setAttribute('aria-busy', 'false');
+      }
+    });
+  }
 
   button.addEventListener('click', async () => {
     if (needsInstall) {
@@ -80,7 +119,7 @@
   });
 
   async function start() {
-    if (starting || needsInstall) return;
+    if (starting || oneSignal) return;
     starting = true;
     button.disabled = true;
     button.textContent = 'caricamento notifiche…';
