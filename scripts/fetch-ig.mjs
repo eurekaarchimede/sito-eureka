@@ -1,12 +1,12 @@
 // =====================================================================
 // fetch-ig.mjs — scarica TUTTI i post di @eureka.archimede via API Meta
 // =====================================================================
-// Eseguito da GitHub Actions ogni 3 ore (.github/workflows/ig-feed.yml).
+// Eseguito dal workflow scuola (ogni 5 minuti in fascia attiva) e da un cron
+// GitHub di riserva; il token viene rinnovato al massimo una volta ogni 30 giorni.
 // Cosa fa, in ordine:
 //   1. legge il token Instagram (da data/token.enc, cifrato; al primo giro
 //      dal secret IG_TOKEN)
-//   2. lo rinnova (i token Meta scadono dopo 60 giorni: rinnovandolo a ogni
-//      run non scade mai)
+//   2. lo rinnova con margine prima della scadenza Meta di 60 giorni
 //   3. scarica profilo + tutti i post (paginati, 50 alla volta)
 //   4. scarica le immagini nuove in assets/ig/ (gli URL diretti di Instagram
 //      scadono dopo poche settimane: le copie locali no)
@@ -39,7 +39,7 @@ if (!/^[0-9a-f]{64}$/i.test(ENC_KEY)) {
 const KEY = Buffer.from(ENC_KEY, 'hex');
 
 // ---- cifratura token (AES-256-GCM) ----------------------------------
-const encrypt = (text) => {
+const encrypt = (text, metadata) => {
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', KEY, iv);
   const data = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
@@ -47,24 +47,37 @@ const encrypt = (text) => {
     iv: iv.toString('base64'),
     tag: cipher.getAuthTag().toString('base64'),
     data: data.toString('base64'),
+    ...metadata,
   });
 };
 
 const decrypt = (blob) => {
-  const { iv, tag, data } = JSON.parse(blob);
+  const record = JSON.parse(blob);
+  const { iv, tag, data } = record;
   const decipher = createDecipheriv('aes-256-gcm', KEY, Buffer.from(iv, 'base64'));
   decipher.setAuthTag(Buffer.from(tag, 'base64'));
-  return Buffer.concat([
+  const plaintext = Buffer.concat([
     decipher.update(Buffer.from(data, 'base64')),
     decipher.final(),
   ]).toString('utf8');
+  return {
+    token: plaintext,
+    refreshAttemptAt: record.refreshAttemptAt || null,
+    refreshSuccessAt: record.refreshSuccessAt || null,
+  };
 };
 
 // ---- token: leggi -> rinnova -> persisti -----------------------------
 let token = '';
+let refreshAttemptAt = null;
+let refreshSuccessAt = null;
+let tokenRecordNeedsWrite = false;
 if (existsSync(TOKEN_FILE)) {
   try {
-    token = decrypt(readFileSync(TOKEN_FILE, 'utf8'));
+    const saved = decrypt(readFileSync(TOKEN_FILE, 'utf8'));
+    token = saved.token;
+    refreshAttemptAt = saved.refreshAttemptAt;
+    refreshSuccessAt = saved.refreshSuccessAt;
     console.log('token letto da data/token.enc');
   } catch {
     console.warn('token.enc illeggibile (ENC_KEY cambiata?), provo col secret IG_TOKEN');
@@ -76,6 +89,7 @@ if (!token) {
     process.exit(1);
   }
   token = BOOTSTRAP_TOKEN;
+  tokenRecordNeedsWrite = true;
   console.log('bootstrap: uso il token dal secret IG_TOKEN');
 }
 
@@ -96,25 +110,40 @@ const refresh = async (candidate) => {
     const r = await getJSON(`${GRAPH}/refresh_access_token?grant_type=ig_refresh_token&access_token=${candidate}`);
     if (r.access_token) {
       console.log(`token rinnovato, valido altri ${Math.round((r.expires_in || 0) / 86400)} giorni`);
-      return r.access_token;
+      return { token: r.access_token, success: true };
     }
   } catch (e) {
     console.warn(`rinnovo token non riuscito (${e.message})`);
   }
-  return candidate;
+  return { token: candidate, success: false };
 };
 
 const getProfile = candidate => getJSON(`${GRAPH}/me?fields=username,followers_count&access_token=${candidate}`);
 let profile;
+const now = Date.now();
+const refreshAttemptAge = refreshAttemptAt ? now - Date.parse(refreshAttemptAt) : Infinity;
+const refreshSuccessAge = refreshSuccessAt ? now - Date.parse(refreshSuccessAt) : Infinity;
+if (refreshSuccessAge >= 30 * 86400000 && refreshAttemptAge >= 24 * 3600000) {
+  const previousToken = token;
+  const refreshed = await refresh(token);
+  token = refreshed.token;
+  refreshAttemptAt = new Date(now).toISOString();
+  if (refreshed.success) refreshSuccessAt = refreshAttemptAt;
+  tokenRecordNeedsWrite = true;
+  if (token !== previousToken) console.log('token aggiornato e pronto per la verifica');
+}
 try {
-  token = await refresh(token);
   profile = await getProfile(token);
 } catch (e) {
   if (!BOOTSTRAP_TOKEN || BOOTSTRAP_TOKEN === token) {
     throw new Error(`Token Instagram non valido (${e.message}). Genera un nuovo token Meta, aggiorna il secret IG_TOKEN su GitHub e rilancia il workflow.`);
   }
   console.warn('token salvato non valido: provo il secret IG_TOKEN');
-  token = await refresh(BOOTSTRAP_TOKEN);
+  const refreshed = await refresh(BOOTSTRAP_TOKEN);
+  token = refreshed.token;
+  refreshAttemptAt = new Date().toISOString();
+  if (refreshed.success) refreshSuccessAt = refreshAttemptAt;
+  tokenRecordNeedsWrite = true;
   try {
     profile = await getProfile(token);
   } catch (fallbackError) {
@@ -123,8 +152,10 @@ try {
 }
 
 // Persisti solo un token verificato, anche se il fetch dei media poi fallisse.
-mkdirSync(dirname(TOKEN_FILE), { recursive: true });
-writeFileSync(TOKEN_FILE, encrypt(token));
+if (tokenRecordNeedsWrite) {
+  mkdirSync(dirname(TOKEN_FILE), { recursive: true });
+  writeFileSync(TOKEN_FILE, encrypt(token, { refreshAttemptAt, refreshSuccessAt }));
+}
 
 // ---- profilo ----------------------------------------------------------
 console.log(`profilo: @${profile.username}, ${profile.followers_count} follower`);
@@ -179,11 +210,22 @@ for (const p of raw) {
 }
 console.log(`immagini nuove scaricate: ${downloaded}`);
 
-// ---- feed.json ----------------------------------------------------------
-writeFileSync(FEED_FILE, JSON.stringify({
+// ---- feed.json: evita commit e deploy se i dati non sono cambiati ----------
+const nextContent = {
   username: profile.username,
   followersCount: profile.followers_count,
-  updatedAt: new Date().toISOString(),
   posts,
-}, null, 1));
-console.log(`scritto ${FEED_FILE} con ${posts.length} post`);
+};
+let previousFeed = null;
+try { previousFeed = JSON.parse(readFileSync(FEED_FILE, 'utf8')); } catch {}
+const previousContent = previousFeed && {
+  username: previousFeed.username,
+  followersCount: previousFeed.followersCount,
+  posts: previousFeed.posts,
+};
+if (JSON.stringify(nextContent) === JSON.stringify(previousContent)) {
+  console.log(`feed invariato: ${posts.length} post, nessun file aggiornato`);
+} else {
+  writeFileSync(FEED_FILE, JSON.stringify({ ...nextContent, updatedAt: new Date().toISOString() }, null, 1));
+  console.log(`scritto ${FEED_FILE} con ${posts.length} post aggiornati`);
+}

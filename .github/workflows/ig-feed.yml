@@ -1,13 +1,12 @@
-# Aggiorna il feed Instagram ogni 15 minuti dalle 08:00 alle 22:55 (ora italiana),
-# rinnova il token Meta e committa assets/ig/feed.json + immagini.
+# Aggiorna Instagram dopo ogni controllo circolari (ogni 5 minuti, 08:00–22:55).
+# La cadenza è sincronizzata col feed scuola: trigger esterno ogni 5 minuti,
+# con il cron GitHub del feed scuola come rete di sicurezza best-effort.
+# Token rinnovato con margine; i file vengono committati solo se i dati cambiano.
 # Esecuzione manuale: tab Actions → "aggiorna feed instagram" → Run workflow.
 name: aggiorna feed instagram
 
 on:
   workflow_dispatch: {}
-  schedule:
-    - cron: '10,25,40,55 8-22 * * *'
-      timezone: "Europe/Rome"
 
 permissions:
   contents: write

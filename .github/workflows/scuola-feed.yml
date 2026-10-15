@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: scuola-feed
@@ -102,3 +103,16 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+      - name: avvia il controllo Instagram
+        if: always() && steps.window.outputs.active == 'true' && inputs.test_push != true
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 15 \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref":"main"}' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/ig-feed.yml/dispatches"
