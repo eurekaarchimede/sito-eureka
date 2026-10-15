@@ -9,13 +9,16 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import html
 import hashlib
+import http.client
 from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+import socket
 import ssl
 import time
 from urllib.parse import unquote, urlsplit
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 
@@ -35,8 +38,22 @@ def get(url):
     if not url.startswith(BASE + "/"):
         raise ValueError(f"URL inatteso: {url}")
     request = Request(url, headers={"User-Agent": "eureka-school-feed/1.0 (+public school pages)"})
-    with urlopen(request, timeout=25, context=SSL_CONTEXT) as response:
-        return response.read().decode("utf-8", "replace")
+    attempts = 3
+    for attempt in range(1, attempts + 1):
+        try:
+            with urlopen(request, timeout=25, context=SSL_CONTEXT) as response:
+                return response.read().decode("utf-8", "replace")
+        except HTTPError as error:
+            if error.code not in {408, 425, 429, 500, 502, 503, 504} or attempt == attempts:
+                raise
+            reason = f"HTTP {error.code}"
+        except (URLError, TimeoutError, socket.timeout, ssl.SSLError, http.client.HTTPException) as error:
+            if attempt == attempts:
+                raise
+            reason = str(error)
+        delay = 2 ** (attempt - 1)
+        print(f"Richiesta non riuscita ({reason}); nuovo tentativo {attempt + 1}/{attempts} tra {delay}s: {url}", flush=True)
+        time.sleep(delay)
 
 
 class ArchiveParser(HTMLParser):
