@@ -2041,8 +2041,17 @@ footer a { display: inline-flex; align-items: center; }
 
 
 <script>
-// Mantieni ancore e ripristino della posizione dopo PDF o navigazione indietro.
-if ('scrollRestoration' in history) history.scrollRestoration = 'auto';
+// Dopo un ricaricamento riparti dall'inizio; conserva il normale ripristino
+// della cronologia per navigazione indietro e avanti.
+const navigationType = performance.getEntriesByType?.('navigation')?.[0]?.type;
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = navigationType === 'reload' ? 'manual' : 'auto';
+}
+if (navigationType === 'reload') {
+  const scrollToTop = () => window.scrollTo(0, 0);
+  scrollToTop();
+  window.addEventListener('pageshow', scrollToTop, { once: true });
+}
 
 // ===== FUNZIONI COMUNI =====
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
