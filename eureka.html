@@ -410,28 +410,39 @@ nav .ig:hover {
 
 .hero-credit {
   display: grid;
-  justify-items: start;
-  gap: 0.12rem;
+  justify-items: center;
+  gap: 0.5rem;
   width: max-content;
   max-width: 100%;
   margin: 0 auto 0.75rem;
-  padding: 0.12rem 0 0.12rem 0.65rem;
-  border-left: 1px solid var(--gold-dim);
-  text-align: left;
+  text-align: center;
 }
 .hero-credit__roles {
-  color: var(--gold-dim);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+.hero-credit__roles span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.55rem;
+  padding: 0.28rem 0.52rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--bg);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  line-height: 1.4;
-  text-transform: uppercase;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
 }
 .hero-credit__name {
   color: var(--cream);
-  font-size: 0.92rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
 }
 
 .hero-tagline {
@@ -1530,7 +1541,9 @@ footer a { display: inline-flex; align-items: center; }
         <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
       </h1>
       <div class="hero-credit" aria-label="Ideato, realizzato e pubblicato da Giacomo Warm">
-        <span class="hero-credit__roles">idea · realizzazione · pubblicazione</span>
+        <span class="hero-credit__roles" aria-label="Ideatore, realizzatore, pubblicatore">
+          <span>IDEATORE</span><span>REALIZZATORE</span><span>PUBBLICATORE</span>
+        </span>
         <span class="hero-credit__name">Giacomo Warm</span>
       </div>
       <p class="hero-tagline">
