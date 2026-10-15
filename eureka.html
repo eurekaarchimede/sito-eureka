@@ -18,8 +18,8 @@
 <link rel="manifest" href="site.webmanifest?v=2">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png">
 
-<!-- favicon: lampadina su blu notte -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a1632'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23f5cd47' font-family='sans-serif' font-weight='bold'%3E!%3C/text%3E%3C/svg%3E">
+<!-- favicon allineata all'icona della schermata Home -->
+<link rel="icon" type="image/png" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png?v=3">
 
 <!-- font self-hosted: fallback di sistema immediato se il download non riesce -->
 <link rel="preload" href="fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -410,33 +410,22 @@ nav .ig:hover {
 
 .hero-credit {
   display: grid;
-  justify-items: center;
-  gap: 0.5rem;
+  justify-items: start;
+  gap: 0.12rem;
   width: max-content;
   max-width: 100%;
   margin: 0 auto 0.75rem;
-  text-align: center;
+  padding: 0.12rem 0 0.12rem 0.65rem;
+  border-left: 1px solid var(--gold-dim);
+  text-align: left;
 }
 .hero-credit__roles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem;
-}
-.hero-credit__roles span {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.55rem;
-  padding: 0.28rem 0.52rem;
-  border: 1px solid var(--gold);
-  border-radius: 999px;
-  background: var(--gold);
-  color: var(--bg);
+  color: var(--gold-dim);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.58rem;
-  font-weight: 500;
   letter-spacing: 0.1em;
   line-height: 1.4;
+  text-transform: uppercase;
 }
 .hero-credit__signature {
   display: block;
@@ -1450,11 +1439,10 @@ footer a { display: inline-flex; align-items: center; }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
 .shop-product__body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 1.25rem; }
-.shop-product__meta { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: .6rem; margin-bottom: .7rem; }
+.shop-product__meta { display: flex; width: 100%; justify-content: flex-start; align-items: center; gap: .6rem; margin-bottom: .7rem; }
 .shop-badge { display: inline-flex; align-items: center; min-height: 28px; border-radius: 999px; padding: .25rem .65rem; background: rgba(245, 205, 71, .12); color: var(--gold); font-size: .68rem; font-weight: 700; letter-spacing: .08em; }
 .shop-product h3 { color: var(--cream); font-size: 1.1rem; line-height: 1.2; }
 .shop-product__description { margin-top: .5rem; color: var(--beige-dim); font-size: .86rem; line-height: 1.5; }
-.shop-product__price { margin-top: auto; padding-top: 1rem; color: var(--gold); font-weight: 700; }
 .shop-colors { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1rem; }
 .shop-colors button { min-height: 44px; border: 1px solid var(--line); border-radius: 999px; padding: .4rem .75rem; background: transparent; color: var(--beige); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-colors button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
@@ -1542,9 +1530,7 @@ footer a { display: inline-flex; align-items: center; }
         <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
       </h1>
       <div class="hero-credit" aria-label="Ideato, realizzato e pubblicato da Giacomo Warm">
-        <span class="hero-credit__roles" aria-label="Ideatore, realizzatore, pubblicatore">
-          <span>IDEATORE</span><span>REALIZZATORE</span><span>PUBBLICATORE</span>
-        </span>
+        <span class="hero-credit__roles">idea · realizzazione · pubblicazione</span>
         <img class="hero-credit__signature" src="assets/branding/firma-giacomo-warm.png?v=2" width="2173" height="724" alt="Firma di Giacomo Warm" decoding="async">
       </div>
       <p class="hero-tagline">
@@ -1693,7 +1679,7 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>stop making dreams.</h3>
           <p class="shop-product__description">fronte con lampadina e retro con la grafica “occupazione”.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
@@ -1712,7 +1698,7 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>the worst list ever.</h3>
           <p class="shop-product__description">fronte con lampadina e retro con la grafica “the worst list ever”.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
@@ -1731,7 +1717,7 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span><span class="shop-product__price">15 €</span></div>
+          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>look up, the stars.</h3>
           <p class="shop-product__description">disponibile in fucsia.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
