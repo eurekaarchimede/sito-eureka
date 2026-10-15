@@ -853,7 +853,35 @@ a.proj-card {
 .scuola-install p { margin: 0; }
 .scuola-notify-status[hidden] { display: none; }
 .scuola-notify-status { flex-basis: 100%; margin: 0; color: var(--beige-dim); font-size: 0.82rem; }
+.scuola-email-box {
+  margin: -1rem 0 2.5rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(17, 32, 69, 0.42);
+}
+.scuola-email-box h3 { margin: 0 0 0.35rem; color: var(--cream); font-size: 1.05rem; }
+.scuola-email-box > p { margin: 0 0 1rem; color: var(--beige-dim); font-size: 0.88rem; }
+.scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
+.scuola-email-form label { color: var(--beige-dim); font-size: 0.8rem; }
+.scuola-email-form input[type="email"] {
+  display: block; width: 100%; margin-top: 0.35rem; padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--bg-soft);
+  color: var(--cream); font: inherit; font-size: 0.95rem;
+}
+.scuola-email-form input[type="email"]:focus-visible,
+.scuola-email-form input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.scuola-email-consent { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 0.55rem; }
+.scuola-email-consent input { flex: none; margin-top: 0.2rem; accent-color: var(--gold); }
+.scuola-email-submit {
+  min-height: 2.75rem; border: 1px solid var(--gold); border-radius: 999px; padding: 0.65rem 1rem;
+  background: var(--gold); color: var(--bg); font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer;
+}
+.scuola-email-submit:disabled { cursor: wait; opacity: 0.7; }
+.scuola-email-status { margin: 0.8rem 0 0 !important; color: var(--cream) !important; font-size: 0.84rem !important; }
+.scuola-email-status[hidden] { display: none; }
 @media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
+@media (max-width: 600px) { .scuola-email-form { grid-template-columns: 1fr; } .scuola-email-submit { width: 100%; } }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
 /* ===== CANDIDATI ===== */
@@ -1177,12 +1205,6 @@ a.proj-card {
   background: rgba(17, 32, 69, .9);
   transform: translateY(-2px);
 }
-.cta a.ig-big::before {
-  content: '◎';
-  color: var(--gold);
-  font-size: 1.1em;
-}
-
 footer {
   padding: 2.5rem 2rem;
   border-top: 1px solid var(--line);
@@ -1289,7 +1311,6 @@ body.menu-open { overflow: hidden; }
 .storia .stats { grid-template-columns: minmax(0, 1fr); }
 .storia .stat-cell { padding: 1rem 0.25rem 1rem 0; }
 .cta a.ig-big { max-width: 100%; overflow-wrap: anywhere; min-width: 0; text-align: left; }
-.cta a.ig-big::before { flex: none; }
 footer .row { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
 footer .row .center { flex-wrap: wrap; justify-content: center; gap: .5rem 1.4rem; }
 footer a { display: inline-flex; align-items: center; }
@@ -1308,7 +1329,6 @@ footer a { display: inline-flex; align-items: center; }
     font-size: clamp(.95rem, 4.5vw, 1.2rem);
     padding: .75rem 1rem;
   }
-  .cta a.ig-big span:last-child { color: var(--gold); font-size: .78em; }
   footer .row { gap: 1.4rem; letter-spacing: .07em; }
   footer .row .center {
     display: grid;
@@ -1508,6 +1528,21 @@ footer a { display: inline-flex; align-items: center; }
           <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
         </section>
       </div>
+    </div>
+    <div class="scuola-email-box" aria-labelledby="scuola-email-title">
+      <h3 id="scuola-email-title">Preferisci ricevere gli avvisi via email?</h3>
+      <p>OneSignal gestisce l’iscrizione e invia solo gli avvisi sulle nuove circolari. Puoi disiscriverti dal link presente in ogni email.</p>
+      <form class="scuola-email-form" id="scuola-email-form">
+        <label for="scuola-email">La tua email
+          <input id="scuola-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="nome@example.com" required>
+        </label>
+        <button class="scuola-email-submit" id="scuola-email-submit" type="submit">Iscrivimi via email</button>
+        <label class="scuola-email-consent" for="scuola-email-consent">
+          <input id="scuola-email-consent" name="consent" type="checkbox" required>
+          <span>Acconsento a ricevere via email gli avvisi sulle nuove circolari e ho capito che posso revocare l’iscrizione in qualsiasi momento.</span>
+        </label>
+      </form>
+      <p class="scuola-email-status" id="scuola-email-status" role="status" aria-live="polite" hidden></p>
     </div>
     <div class="scuola-grid">
       <div class="scuola-panel reveal">
@@ -1895,7 +1930,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="super">● vota. condividi. accendi.</div>
     <h2>vota eureka<span class="bang">!</span></h2>
     <a class="ig-big" href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">
-      <span>@eureka.archimede</span><span>seguici ↗</span>
+      <span>@eureka.archimede</span>
     </a>
   </div>
 </section>
