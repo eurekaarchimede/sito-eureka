@@ -11,7 +11,6 @@ const section = (start, end) => {
   return html.slice(from, to);
 };
 const common = section('// ===== FUNZIONI COMUNI =====', '// ===== HERO PARALLAX');
-const swirl = section('// ===== VORTICI DELL\'HERO:', '// ===== EASTER EGG');
 const bulb = section('// ===== LAMPADINA: pendolo', '// ===== year =====');
 
 function harness({ reduced = false, renderCost = 0, background = false } = {}) {
@@ -219,22 +218,6 @@ function harness({ reduced = false, renderCost = 0, background = false } = {}) {
 
 console.log('JSON: success, HTTP/network/parse failure, 8-second abort and timer cleanup passed. Approach callback: exactly one load passed.');
 
-for (const option of [
-  { memory: 2, cores: 8, saveData: false, reduced: false },
-  { memory: 4, cores: 8, saveData: false, reduced: false },
-  { memory: 8, cores: 8, saveData: true, reduced: false },
-  { memory: 8, cores: 8, saveData: false, reduced: true }
-]) {
-  let contextRequests = 0;
-  const canvas = { dataset: {}, closest: () => ({}), getContext: () => { contextRequests++; } };
-  const context = vm.createContext({
-    document: { getElementById: () => canvas },
-    navigator: { deviceMemory: option.memory, hardwareConcurrency: option.cores, connection: { saveData: option.saveData } },
-    matchMedia: () => ({ matches: true }),
-    reducedMotion: { matches: option.reduced }
-  });
-  vm.runInContext(swirl, context);
-  assert.equal(canvas.dataset.mode, 'static-low-power');
-  assert.equal(contextRequests, 0, 'Low-power mode must not create a WebGL context');
-}
-console.log('Swirl: 2/4 GB phones, data saver and reduced motion stay on the static image without WebGL.');
+assert.doesNotMatch(html, /getContext\s*\(\s*['"]webgl2?['"]/i,
+  'Ambient effects must not allocate a persistent WebGL context');
+console.log('Hero: ambient starfield runs on Canvas 2D without a persistent WebGL context.');

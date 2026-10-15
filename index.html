@@ -23,6 +23,8 @@
 
 <!-- font self-hosted: fallback di sistema immediato se il download non riesce -->
 <link rel="preload" href="fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/hero/starry-swirls-mobile.webp" as="image" type="image/webp" media="(max-width: 600px)" fetchpriority="high">
+<link rel="preload" href="assets/hero/starry-swirls-wide.webp" as="image" type="image/webp" media="(min-width: 601px)" fetchpriority="high">
 <link rel="preload" href="assets/scuola/liceo-archimede-3d-mobile.webp" as="image" type="image/webp" media="(max-width: 600px)" fetchpriority="high">
 
 <style>
@@ -845,7 +847,7 @@ a.proj-card {
 .scuola-install-title { color: var(--cream); }
 .scuola-install-platform { padding: 1rem 0 0; }
 .scuola-install-platform + .scuola-install-platform { margin-top: 1rem; border-top: 1px solid rgba(245, 205, 71, .38); }
-.scuola-install-platform h4 { margin: 0; color: var(--cream); font: inherit; font-weight: 700; font-size: .9rem; }
+.scuola-install-platform h3 { margin: 0; color: var(--cream); font: inherit; font-weight: 700; font-size: .9rem; }
 .scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
 .scuola-install li + li { margin-top: 0.4rem; }
 .scuola-install p { margin: 0; }
@@ -1488,7 +1490,7 @@ footer a { display: inline-flex; align-items: center; }
       <div class="scuola-install" id="scuola-install">
         <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
         <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
-          <h4 id="scuola-ios-title">iPhone e iPad</h4>
+          <h3 id="scuola-ios-title">iPhone e iPad</h3>
           <ol>
             <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
             <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
@@ -1497,7 +1499,7 @@ footer a { display: inline-flex; align-items: center; }
           <p>serve iOS o iPadOS 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
         </section>
         <section class="scuola-install-platform" aria-labelledby="scuola-android-title">
-          <h4 id="scuola-android-title">Android</h4>
+          <h3 id="scuola-android-title">Android</h3>
           <ol>
             <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
             <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
