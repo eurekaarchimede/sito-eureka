@@ -375,7 +375,6 @@ nav .ig:hover {
     gap: 1rem;
   }
   .hero-wordmark h1 { margin-bottom: .55rem; }
-  .hero-credit { margin-top: -0.2rem; }
   .hero-tagline { margin-top: .65rem; line-height: 1.4; }
   .hero-cta { margin-top: 1rem; }
   .school-scene { width: min(76vw, 440px); }
@@ -396,7 +395,7 @@ nav .ig:hover {
   line-height: 0.9;
   letter-spacing: -0.05em;
   color: var(--cream);
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.6rem;
   text-shadow:
     0 0  6px  rgba(247, 238, 213, 0.7),
     0 0  20px rgba(245, 205, 71, 0.4);
@@ -410,12 +409,29 @@ nav .ig:hover {
 .hero-wordmark h1 span { display: inline-block; }
 
 .hero-credit {
-  margin: -0.65rem auto 0.55rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.12rem;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 0.75rem;
+  padding: 0.12rem 0 0.12rem 0.65rem;
+  border-left: 1px solid var(--gold-dim);
+  text-align: left;
+}
+.hero-credit__roles {
+  color: var(--gold-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.hero-credit__name {
   color: var(--cream);
-  font-size: clamp(0.82rem, 1.05vw, 0.98rem);
+  font-size: 0.92rem;
   font-weight: 600;
-  letter-spacing: 0.015em;
-  text-shadow: 0 0 12px rgba(247, 238, 213, 0.28);
+  letter-spacing: 0.01em;
 }
 
 .hero-tagline {
@@ -1513,7 +1529,10 @@ footer a { display: inline-flex; align-items: center; }
       <h1 aria-label="eureka!">
         <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
       </h1>
-      <p class="hero-credit">ideato, realizzato e pubblicato da Giacomo Warm</p>
+      <div class="hero-credit" aria-label="Ideato, realizzato e pubblicato da Giacomo Warm">
+        <span class="hero-credit__roles">idea · realizzazione · pubblicazione</span>
+        <span class="hero-credit__name">Giacomo Warm</span>
+      </div>
       <p class="hero-tagline">
         un'idea. una riunione. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
       </p>
