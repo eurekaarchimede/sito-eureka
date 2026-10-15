@@ -54,10 +54,21 @@
       event.preventDefault();
       if (!emailForm.reportValidity()) return;
       const email = String(new FormData(emailForm).get('email') || '').trim();
+      const password = String(new FormData(emailForm).get('password') || '');
       emailSubmit.disabled = true;
       emailSubmit.setAttribute('aria-busy', 'true');
       sayEmail('Iscrizione in corso…');
       try {
+        const verification = await withTimeout(fetch('https://awdsasbjuueovjcupmwk.supabase.co/functions/v1/verify-teacher-email-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        }), 10000, 'Verifica del codice non riuscita');
+        if (verification.status === 401) throw new Error('Codice docenti non valido');
+        if (!verification.ok) throw new Error(`Verifica codice HTTP ${verification.status}`);
+        const verificationResult = await verification.json();
+        if (verificationResult?.verified !== true) throw new Error('Codice docenti non valido');
+
         const sdk = await ensureOneSignal();
         if (typeof sdk.User?.addEmail !== 'function') throw new Error('Funzione email non disponibile');
         await withTimeout(Promise.resolve(sdk.User.addEmail(email)), 15000,
@@ -66,7 +77,13 @@
         sayEmail('Iscrizione completata. Puoi disiscriverti dal link presente in ogni email.');
       } catch (error) {
         console.error('Iscrizione email non riuscita.', error);
-        sayEmail('OneSignal non ha confermato l’iscrizione. Controlla l’indirizzo e riprova; l’email inserita è rimasta nel campo.');
+        if (error.message === 'Codice docenti non valido') {
+          sayEmail('Codice non valido. Controllalo con i docenti e riprova.');
+        } else if (error.message?.startsWith('Verifica codice HTTP')) {
+          sayEmail('Verifica temporaneamente non disponibile. Riprova tra poco; i dati inseriti sono rimasti nel modulo.');
+        } else {
+          sayEmail('Iscrizione non completata. Controlla email e connessione, poi riprova; i dati inseriti sono rimasti nel modulo.');
+        }
       } finally {
         emailSubmit.disabled = false;
         emailSubmit.setAttribute('aria-busy', 'false');

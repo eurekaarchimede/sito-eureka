@@ -864,14 +864,16 @@ a.proj-card {
 }
 .scuola-email-box h3 { margin: 0 0 0.35rem; color: var(--cream); font-size: 1.05rem; }
 .scuola-email-box > p { margin: 0 0 1rem; color: var(--beige-dim); font-size: 0.88rem; }
-.scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
+.scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
 .scuola-email-form label { color: var(--beige-dim); font-size: 0.8rem; }
-.scuola-email-form input[type="email"] {
+.scuola-email-form input[type="email"],
+.scuola-email-form input[type="password"] {
   display: block; width: 100%; margin-top: 0.35rem; padding: 0.75rem 0.85rem;
   border: 1px solid var(--line); border-radius: 6px; background: var(--bg-soft);
   color: var(--cream); font: inherit; font-size: 0.95rem;
 }
 .scuola-email-form input[type="email"]:focus-visible,
+.scuola-email-form input[type="password"]:focus-visible,
 .scuola-email-form input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .scuola-email-consent { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 0.55rem; }
 .scuola-email-consent input { flex: none; margin-top: 0.2rem; accent-color: var(--gold); }
@@ -883,7 +885,8 @@ a.proj-card {
 .scuola-email-status { margin: 0.8rem 0 0 !important; color: var(--cream) !important; font-size: 0.84rem !important; }
 .scuola-email-status[hidden] { display: none; }
 @media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
-@media (max-width: 600px) { .scuola-email-form { grid-template-columns: 1fr; } .scuola-email-submit { width: 100%; } }
+@media (max-width: 800px) { .scuola-email-form { grid-template-columns: 1fr 1fr; } .scuola-email-submit { grid-column: 1 / -1; } }
+@media (max-width: 600px) { .scuola-email-form { grid-template-columns: 1fr; } .scuola-email-submit { grid-column: auto; width: 100%; } }
 @media (max-width: 600px) { .mobile-only-break { display: block; } }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
@@ -1566,6 +1569,9 @@ footer a { display: inline-flex; align-items: center; }
       <form class="scuola-email-form" id="scuola-email-form">
         <label for="scuola-email">La tua email
           <input id="scuola-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="nome@example.com" required>
+        </label>
+        <label for="scuola-email-password">Codice riservato ai docenti
+          <input id="scuola-email-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
         </label>
         <button class="scuola-email-submit" id="scuola-email-submit" type="submit">Iscrivimi via email</button>
         <label class="scuola-email-consent" for="scuola-email-consent">
