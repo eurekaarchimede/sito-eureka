@@ -438,11 +438,12 @@ nav .ig:hover {
   letter-spacing: 0.08em;
   line-height: 1;
 }
-.hero-credit__name {
-  color: var(--cream);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.015em;
+.hero-credit__signature {
+  display: block;
+  width: clamp(7rem, 14vw, 11rem);
+  height: auto;
+  filter: brightness(0) invert(0.95);
+  opacity: 0.96;
 }
 
 .hero-tagline {
@@ -1544,7 +1545,7 @@ footer a { display: inline-flex; align-items: center; }
         <span class="hero-credit__roles" aria-label="Ideatore, realizzatore, pubblicatore">
           <span>IDEATORE</span><span>REALIZZATORE</span><span>PUBBLICATORE</span>
         </span>
-        <span class="hero-credit__name">Giacomo Warm</span>
+        <img class="hero-credit__signature" src="assets/branding/firma-giacomo-warm.png" width="2195" height="716" alt="Firma di Giacomo Warm" decoding="async">
       </div>
       <p class="hero-tagline">
         un'idea. una riunione. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
