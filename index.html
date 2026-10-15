@@ -54,6 +54,7 @@
 
   --gold:       #f5cd47;     /* giallo cadmio delle stelle */
   --gold-bright:#ffe07a;     /* lume più caldo */
+  --neon-yellow:#eaff00;     /* evidenza rappresentanti in carica */
   --gold-dim:   #c9a531;
   --beige:      #ede0b8;     /* testo principale (crema caldo) */
   --beige-dim:  #b8a988;     /* testo secondario */
@@ -896,6 +897,22 @@ a.proj-card {
   font-size: 1.05rem;
   max-width: 620px;
 }
+.candidati .head .current-rep-note {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+  font-size: 0.88rem;
+  color: var(--cream);
+}
+.current-rep-note span {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: none;
+  border: 2px solid var(--neon-yellow);
+  border-radius: 3px;
+  box-shadow: 0 0 9px rgba(234, 255, 0, 0.35);
+}
 
 .organo { margin-bottom: 4.5rem; }
 .organo:last-child { margin-bottom: 0; }
@@ -952,6 +969,11 @@ a.proj-card {
   border-color: var(--gold);
 
 }
+.member.current-rep {
+  border: 2px solid var(--neon-yellow);
+  box-shadow: 0 0 0 1px rgba(234, 255, 0, 0.18), 0 0 16px rgba(234, 255, 0, 0.2);
+}
+.member.current-rep:hover { border-color: var(--neon-yellow); }
 .member .photo {
   position: relative;
   aspect-ratio: 4 / 5;          /* il vincolo di forma sta solo sulla foto */
@@ -1485,10 +1507,10 @@ footer a { display: inline-flex; align-items: center; }
 </section>
 
 <!-- ============ MARQUEE ============ -->
-<div class="marquee" aria-label="eureka, scoperta, archimede, messina, idee accese">
+<div class="marquee" aria-label="eureka, archimede, messina, innovazione, originalità, unione">
   <div class="marquee-track">
-    <div class="marquee-segment"><span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span></div>
-    <div class="marquee-segment" aria-hidden="true"><span>eureka!</span><span>scoperta</span><span>archimede</span><span>messina</span><span>idee accese</span></div>
+    <div class="marquee-segment"><span>eureka!</span><span>archimede</span><span>messina</span><span>innovazione</span><span>originalità</span><span>unione</span></div>
+    <div class="marquee-segment" aria-hidden="true"><span>eureka!</span><span>archimede</span><span>messina</span><span>innovazione</span><span>originalità</span><span>unione</span></div>
   </div>
 </div>
 
@@ -1510,7 +1532,7 @@ footer a { display: inline-flex; align-items: center; }
       <div class="scuola-install" id="scuola-install">
         <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
         <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
-          <h3 id="scuola-ios-title">iPhone e iPad</h3>
+          <h3 id="scuola-ios-title">iOS</h3>
           <ol>
             <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
             <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
@@ -1683,6 +1705,7 @@ footer a { display: inline-flex; align-items: center; }
       <div class="section-label">03 / candidati</div>
       <h2 class="h2">candidati <em>2025</em></h2>
       <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
+      <p class="current-rep-note"><span aria-hidden="true"></span> il bordo giallo fluo indica i rappresentanti in carica.</p>
     </div>
 
     <!-- ===== consiglio d'istituto ===== -->
@@ -1700,7 +1723,7 @@ footer a { display: inline-flex; align-items: center; }
             <div class="role">n° 01</div>
           </div>
         </div>
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">4e</div>
           <div class="photo"><img src="assets/optimized/foto/giacomo-warm.jpg" width="600" height="750" alt="giacomo warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
@@ -1708,7 +1731,7 @@ footer a { display: inline-flex; align-items: center; }
             <div class="role">n° 02</div>
           </div>
         </div>
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">4b</div>
           <div class="photo"><img src="assets/optimized/foto/giulia-perri.jpg" width="600" height="750" alt="giulia perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
@@ -1748,7 +1771,7 @@ footer a { display: inline-flex; align-items: center; }
             <div class="role">n° 07</div>
           </div>
         </div>
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">3n</div>
           <div class="photo"><img src="assets/optimized/foto/marco-cangelosi.jpg" width="600" height="750" alt="marco cangelosi" loading="lazy" decoding="async" onerror="this.remove()">m</div>
           <div class="info">
@@ -1766,7 +1789,7 @@ footer a { display: inline-flex; align-items: center; }
         <div class="organo-count">4 candidati</div>
       </div>
       <div class="roster">
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">4m</div>
           <div class="photo"><img src="assets/optimized/foto/paolo-arigo.jpg" width="600" height="750" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
           <div class="info">
@@ -1782,7 +1805,7 @@ footer a { display: inline-flex; align-items: center; }
             <div class="role">n° 02</div>
           </div>
         </div>
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">4c</div>
           <div class="photo"><img src="assets/optimized/foto/giorgio-bensaia.jpg" width="600" height="750" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
@@ -1816,7 +1839,7 @@ footer a { display: inline-flex; align-items: center; }
             <div class="role">n° 01</div>
           </div>
         </div>
-        <div class="member reveal">
+        <div class="member reveal current-rep">
           <div class="tag">4e</div>
           <div class="photo"><img src="assets/optimized/foto/nethma.jpg" width="600" height="750" alt="nethma" loading="lazy" decoding="async" onerror="this.remove()">n</div>
           <div class="info">
@@ -2403,8 +2426,8 @@ else reducedMotion.addListener(stopReveals);
       try { rig.setPointerCapture(event.pointerId); } catch { /* pointer già annullato dal browser */ }
     }
     const now = performance.now();
-    const next = Math.max(-.23, Math.min(.23, gesture.angle + dx * .003));
-    velocity = Math.max(-2, Math.min(2, (next - angle) / Math.max(.008, (now - gesture.last) / 1000)));
+    const next = Math.max(-.34, Math.min(.34, gesture.angle + dx * .004));
+    velocity = Math.max(-2.5, Math.min(2.5, (next - angle) / Math.max(.008, (now - gesture.last) / 1000)));
     angle = next;
     gesture.last = now;
     apply();
