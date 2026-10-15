@@ -15,11 +15,12 @@
 <meta name="theme-color" content="#0a1632">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="eureka!">
-<link rel="manifest" href="site.webmanifest?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png">
+<link rel="manifest" href="site.webmanifest?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/notifications/icon-180.png?v=4">
 
 <!-- favicon allineata all'icona della schermata Home -->
-<link rel="icon" type="image/png" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png?v=3">
+<link rel="icon" type="image/png" sizes="180x180" href="assets/notifications/icon-180.png?v=4">
+<link rel="shortcut icon" type="image/png" href="assets/notifications/icon-180.png?v=4">
 
 <!-- font self-hosted: fallback di sistema immediato se il download non riesce -->
 <link rel="preload" href="fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -427,6 +428,7 @@ nav .ig:hover {
   line-height: 1.4;
   text-transform: uppercase;
 }
+.case-sensitive { text-transform: none; }
 .hero-credit__signature {
   display: block;
   width: clamp(9rem, 18vw, 14rem);
@@ -1571,25 +1573,25 @@ footer a { display: inline-flex; align-items: center; }
         <strong>Resta aggiornato sulle nuove circolari.</strong>
         <span>Attiva le notifiche e ricevi un avviso quando ne viene pubblicata una.</span>
       </div>
-      <button class="scuola-notify" id="scuola-notify" type="button">attiva su iOS / Android</button>
+      <button class="scuola-notify" id="scuola-notify" type="button">attiva su <span class="case-sensitive">iOS</span> / Android</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
       <div class="scuola-install" id="scuola-install">
         <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
         <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
-          <h3 id="scuola-ios-title">iOS</h3>
+          <h3 id="scuola-ios-title"><span class="case-sensitive">iOS</span></h3>
           <ol>
             <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
             <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
-            <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su iOS / Android</strong> e <strong>Consenti</strong>.</li>
+            <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e <strong>Consenti</strong>.</li>
           </ol>
-          <p>serve iOS o iPadOS 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
+          <p>serve <span class="case-sensitive">iOS</span> o <span class="case-sensitive">iPadOS</span> 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
         </section>
         <section class="scuola-install-platform" aria-labelledby="scuola-android-title">
           <h3 id="scuola-android-title">Android</h3>
           <ol>
             <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
             <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
-            <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su iOS / Android</strong> e consenti l’invio.</li>
+            <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e consenti l’invio.</li>
           </ol>
           <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
         </section>
