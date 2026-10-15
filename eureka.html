@@ -863,6 +863,8 @@ a.proj-card {
   background: rgba(10, 22, 50, 0.72);
 }
 .scuola-email-box h3 { margin: 0 0 0.35rem; color: var(--cream); font-size: 1.05rem; }
+.scuola-email-audience { display: inline-flex; align-items: center; margin: 0 0 0.65rem; padding: 0.28rem 0.62rem; border: 1px solid rgba(245, 205, 71, 0.55); border-radius: 999px; color: var(--gold); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.scuola-email-box > p.scuola-email-notice { margin-bottom: 0.35rem; color: var(--cream); }
 .scuola-email-box > p { margin: 0 0 1rem; color: var(--beige-dim); font-size: 0.88rem; }
 .scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
 .scuola-email-form label { color: var(--beige-dim); font-size: 0.8rem; }
@@ -1564,7 +1566,9 @@ footer a { display: inline-flex; align-items: center; }
       </div>
     </div>
     <div class="scuola-email-box" aria-labelledby="scuola-email-title">
-      <h3 id="scuola-email-title">Preferisci ricevere gli avvisi via email?</h3>
+      <h3 id="scuola-email-title">Avvisi email riservati ai professori</h3>
+      <span class="scuola-email-audience">Solo docenti</span>
+      <p class="scuola-email-notice">L’iscrizione è riservata ai professori del Liceo Archimede. Per completarla serve il codice condiviso con i docenti.</p>
       <p>Puoi sempre disiscriverti dal link presente in ogni email.</p>
       <form class="scuola-email-form" id="scuola-email-form">
         <label for="scuola-email">La tua email
