@@ -852,14 +852,15 @@ a.proj-card {
 .scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
 .scuola-install li + li { margin-top: 0.4rem; }
 .scuola-install p { margin: 0; }
+.mobile-only-break { display: none; }
 .scuola-notify-status[hidden] { display: none; }
 .scuola-notify-status { flex-basis: 100%; margin: 0; color: var(--beige-dim); font-size: 0.82rem; }
 .scuola-email-box {
   margin: -1rem 0 2.5rem;
   padding: 1.25rem 1.35rem;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 205, 71, 0.3);
   border-radius: 1rem;
-  background: rgba(17, 32, 69, 0.42);
+  background: rgba(10, 22, 50, 0.72);
 }
 .scuola-email-box h3 { margin: 0 0 0.35rem; color: var(--cream); font-size: 1.05rem; }
 .scuola-email-box > p { margin: 0 0 1rem; color: var(--beige-dim); font-size: 0.88rem; }
@@ -883,6 +884,7 @@ a.proj-card {
 .scuola-email-status[hidden] { display: none; }
 @media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
 @media (max-width: 600px) { .scuola-email-form { grid-template-columns: 1fr; } .scuola-email-submit { width: 100%; } }
+@media (max-width: 600px) { .mobile-only-break { display: block; } }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
 /* ===== CANDIDATI ===== */
@@ -1253,6 +1255,13 @@ footer a {
 footer a:hover { color: var(--gold); }
 footer .right { text-align: right; }
 footer .footer-location::before { content: ' · '; }
+.footer-credit {
+  margin: 1.25rem auto 0;
+  color: var(--beige-dim);
+  font-size: 0.76rem;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
 @media (max-width: 700px) {
   footer .row { grid-template-columns: 1fr; text-align: center; }
   footer .right, footer .center { justify-content: center; text-align: center; }
@@ -1490,7 +1499,7 @@ footer a { display: inline-flex; align-items: center; }
         <span>e</span><span>u</span><span>r</span><span>e</span><span>k</span><span>a</span><span class="bang">!</span>
       </h1>
       <p class="hero-tagline">
-        un'idea. un'aula. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
+        un'idea. una riunione. un istituto. <em>eureka!</em> è la lista del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a> di messina.
       </p>
       <div class="hero-cta">
         <a href="#candidati" class="btn btn-primary">i candidati <span class="arrow">→</span></a>
@@ -1545,7 +1554,7 @@ footer a { display: inline-flex; align-items: center; }
           <ol>
             <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
             <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
-            <li>apri eureka! dalla nuova icona, tocca <strong>attiva su iOS / Android</strong> e consenti l’invio.</li>
+            <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su iOS / Android</strong> e consenti l’invio.</li>
           </ol>
           <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
         </section>
@@ -1973,6 +1982,7 @@ footer a { display: inline-flex; align-items: center; }
     </div>
     <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a><span class="footer-location">messina, it</span></div>
   </div>
+  <p class="footer-credit">ideato, realizzato e pubblicato da Giacomo Warm</p>
 </footer>
 
 
@@ -2666,7 +2676,7 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
 
 <script src="assets/scuola/board.js?v=2" defer></script>
 
-<script src="assets/notifications/push.js?v=2" defer></script>
+<script src="assets/notifications/push.js?v=3" defer></script>
 
 </body>
 </html>

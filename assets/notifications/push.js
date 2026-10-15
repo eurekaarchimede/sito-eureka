@@ -8,7 +8,7 @@
   if (!button || !status) return;
 
   let oneSignal = null;
-  let starting = false;
+  let startPromise = null;
   let activating = false;
   const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -44,11 +44,7 @@
 
   async function ensureOneSignal() {
     if (oneSignal) return oneSignal;
-    start();
-    const deadline = Date.now() + 15000;
-    while (!oneSignal && Date.now() < deadline) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
+    await start();
     if (!oneSignal) throw new Error('OneSignal non pronto');
     return oneSignal;
   }
@@ -64,12 +60,13 @@
       try {
         const sdk = await ensureOneSignal();
         if (typeof sdk.User?.addEmail !== 'function') throw new Error('Funzione email non disponibile');
-        sdk.User.addEmail(email);
+        await withTimeout(Promise.resolve(sdk.User.addEmail(email)), 15000,
+          'OneSignal non ha confermato l’iscrizione email');
         emailForm.reset();
-        sayEmail('Richiesta inviata a OneSignal. Puoi disiscriverti dal link presente in ogni email.');
+        sayEmail('Iscrizione completata. Puoi disiscriverti dal link presente in ogni email.');
       } catch (error) {
         console.error('Iscrizione email non riuscita.', error);
-        sayEmail('Iscrizione non completata. Controlla la connessione e riprova.');
+        sayEmail('OneSignal non ha confermato l’iscrizione. Controlla l’indirizzo e riprova; l’email inserita è rimasta nel campo.');
       } finally {
         emailSubmit.disabled = false;
         emailSubmit.setAttribute('aria-busy', 'false');
@@ -82,7 +79,7 @@
       say('Aggiungi eureka! alla schermata Home, aprila dalla sua icona e attiva le notifiche.');
       return;
     }
-    if (!oneSignal) { start(); return; }
+    if (!oneSignal) { start().catch(() => {}); return; }
     if (subscribed()) { say('Sei già iscritto: riceverai un avviso per le nuove circolari.'); return; }
     if (!oneSignal.Notifications.isPushSupported()) {
       say('Questo browser non supporta le notifiche. Usa un browser aggiornato; su iPhone apri eureka! dalla Home.');
@@ -118,14 +115,15 @@
     }
   });
 
-  async function start() {
-    if (starting || oneSignal) return;
-    starting = true;
+  function start() {
+    if (oneSignal) return Promise.resolve(oneSignal);
+    if (startPromise) return startPromise;
     button.disabled = true;
     button.textContent = 'caricamento notifiche…';
     button.setAttribute('aria-busy', 'true');
     say('');
-    try {
+    startPromise = (async () => {
+      try {
       const response = await withTimeout(fetch(new URL('assets/notifications/config.json', document.baseURI),
         { cache: 'no-store' }), 8000, 'Configurazione non raggiungibile');
       if (!response.ok) throw new Error(`config HTTP ${response.status}`);
@@ -167,17 +165,21 @@
       if (!oneSignal.Notifications.isPushSupported()) {
         say('Questo browser non supporta le notifiche. Usa un browser aggiornato.');
       }
-    } catch (error) {
-      console.error('Inizializzazione notifiche non riuscita.', error);
-      say('Servizio notifiche non raggiungibile. Premi il pulsante per riprovare.');
-    } finally {
-      starting = false;
-      button.disabled = false;
-      button.setAttribute('aria-busy', 'false');
-      syncButton();
-    }
+      return oneSignal;
+      } catch (error) {
+        console.error('Inizializzazione notifiche non riuscita.', error);
+        say('Servizio notifiche non raggiungibile. Premi il pulsante per riprovare.');
+        throw error;
+      } finally {
+        startPromise = null;
+        button.disabled = false;
+        button.setAttribute('aria-busy', 'false');
+        syncButton();
+      }
+    })();
+    return startPromise;
   }
 
   syncButton();
-  if (!needsInstall) start();
+  if (!needsInstall) start().catch(() => {});
 })();
