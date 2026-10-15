@@ -2402,7 +2402,7 @@ else reducedMotion.addListener(stopReveals);
     if (!visible || document.hidden || reducedMotion.matches || gesture?.dragging) return;
     const dt = previous ? Math.min((now - previous) / 1000, .032) : 1 / 60;
     previous = now;
-    velocity += (-12 * Math.sin(angle) - 4 * velocity) * dt;
+    velocity += (-11 * Math.sin(angle) - 2.8 * velocity) * dt;
     angle += velocity * dt;
     apply();
     if (Math.abs(angle) < .001 && Math.abs(velocity) < .004) { stop(); return; }
@@ -2436,8 +2436,8 @@ else reducedMotion.addListener(stopReveals);
       try { rig.setPointerCapture(event.pointerId); } catch { /* pointer già annullato dal browser */ }
     }
     const now = performance.now();
-    const next = Math.max(-.34, Math.min(.34, gesture.angle + dx * .004));
-    velocity = Math.max(-2.5, Math.min(2.5, (next - angle) / Math.max(.008, (now - gesture.last) / 1000)));
+    const next = Math.max(-.52, Math.min(.52, gesture.angle + dx * .006));
+    velocity = Math.max(-3.2, Math.min(3.2, (next - angle) / Math.max(.008, (now - gesture.last) / 1000)));
     angle = next;
     gesture.last = now;
     apply();
@@ -2455,7 +2455,7 @@ else reducedMotion.addListener(stopReveals);
     const observer = new IntersectionObserver(entries => {
       visible = entries[0].isIntersecting;
       if (!visible) { stop(); return; }
-      if (!entered) { entered = true; angle = .07; start(); }
+      if (!entered) { entered = true; angle = .16; start(); }
     }, { threshold: .15 });
     observer.observe(rig);
   } else { visible = true; }
