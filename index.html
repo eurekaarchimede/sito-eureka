@@ -861,46 +861,59 @@ a.proj-card {
 .scuola-reset { border: 0; background: none; color: var(--gold); font: inherit; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
 .scuola-reset[hidden] { display: none; }
 .scuola-notify-box {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem 2rem;
+  gap: 1.25rem 2rem;
   margin: 2rem 0 2.5rem;
-  padding: 1.15rem 1.35rem;
+  padding: clamp(1.4rem, 3vw, 2.25rem);
   border: 1px solid rgba(245, 205, 71, 0.3);
-  border-radius: 1rem;
-  background: rgba(10, 22, 50, 0.72);
+  border-radius: 1.25rem;
+  background: var(--bg-soft);
+  color: var(--cream);
+  box-shadow: none;
 }
-.scuola-notify-copy { display: grid; gap: 0.25rem; }
-.scuola-notify-copy strong { color: var(--cream); font-size: 1rem; }
-.scuola-notify-copy span { color: var(--beige-dim); font-size: 0.88rem; }
+.scuola-notify-copy { display: grid; gap: 0.35rem; }
+.scuola-notify-kicker { color: var(--gold-bright); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; }
+.scuola-notify-copy strong { color: var(--cream); font-size: clamp(1.35rem, 2.4vw, 2rem); line-height: 1.08; letter-spacing: -0.035em; text-shadow: 0 0 22px rgba(247, 238, 213, 0.22); }
+.scuola-notify-copy span { color: var(--beige); font-size: clamp(0.9rem, 1.2vw, 1.05rem); }
 .scuola-notify {
   flex: 0 0 auto;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--gold-bright);
   border-radius: 999px;
-  padding: 0.7rem 1rem;
+  padding: 1rem 1.4rem;
   background: var(--gold);
   color: var(--bg);
   font: inherit;
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease;
+  box-shadow: none;
+  transition: transform 180ms ease, filter 180ms ease;
 }
-.scuola-notify:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.scuola-notify:hover { transform: translateY(-1px); filter: brightness(1.08); }
 .scuola-notify:disabled { cursor: default; opacity: 0.75; }
-.scuola-install { flex-basis: 100%; color: var(--beige-dim); font-size: 0.82rem; }
+.scuola-notify-status { grid-column: 1 / -1; }
+.scuola-install {
+  margin: -1.25rem 0 2.5rem;
+  padding: 1.4rem clamp(1.4rem, 3vw, 2.25rem);
+  border: 1px solid rgba(245, 205, 71, 0.3);
+  border-radius: 1rem;
+  background: rgba(17, 32, 69, 0.78);
+  color: var(--beige-dim);
+  font-size: 0.9rem;
+}
 .scuola-install-title { color: var(--cream); }
 .scuola-install-platform { padding: 1rem 0 0; }
 .scuola-install-platform + .scuola-install-platform { margin-top: 1rem; border-top: 1px solid rgba(245, 205, 71, .38); }
-.scuola-install-platform h3 { margin: 0; color: var(--cream); font: inherit; font-weight: 700; font-size: .9rem; }
+.scuola-install-platform h3 { margin: 0; color: var(--cream); font: inherit; font-weight: 700; font-size: .95rem; }
 .scuola-install ol { padding-left: 1.3rem; margin: 0.75rem 0; }
 .scuola-install li + li { margin-top: 0.4rem; }
 .scuola-install p { margin: 0; }
 .mobile-only-break { display: none; }
 .scuola-notify-status[hidden] { display: none; }
-.scuola-notify-status { flex-basis: 100%; margin: 0; color: var(--beige-dim); font-size: 0.82rem; }
+.scuola-notify-status { margin: 0; color: var(--cream); font-size: 0.9rem; text-shadow: 0 0 14px rgba(247, 238, 213, 0.2); }
 .scuola-email-box {
   margin: -1rem 0 2.5rem;
   padding: 1.25rem 1.35rem;
@@ -932,7 +945,7 @@ a.proj-card {
 .scuola-email-submit:disabled { cursor: wait; opacity: 0.7; }
 .scuola-email-status { margin: 0.8rem 0 0 !important; color: var(--cream) !important; font-size: 0.84rem !important; }
 .scuola-email-status[hidden] { display: none; }
-@media (max-width: 600px) { .scuola-notify-box { align-items: stretch; flex-direction: column; } .scuola-notify { width: 100%; } }
+@media (max-width: 600px) { .scuola-notify-box { grid-template-columns: 1fr; gap: 1rem; } .scuola-notify { width: 100%; } }
 @media (max-width: 800px) { .scuola-email-form { grid-template-columns: 1fr 1fr; } .scuola-email-submit { grid-column: 1 / -1; } }
 @media (max-width: 600px) { .scuola-email-form { grid-template-columns: 1fr; } .scuola-email-submit { grid-column: auto; width: 100%; } }
 @media (max-width: 600px) { .mobile-only-break { display: block; } }
@@ -1458,15 +1471,11 @@ footer a { display: inline-flex; align-items: center; }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
 .shop-product__body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 1.25rem; }
-.shop-product__meta { display: flex; width: 100%; justify-content: flex-start; align-items: center; gap: .6rem; margin-bottom: .7rem; }
-.shop-badge { display: inline-flex; align-items: center; min-height: 28px; border-radius: 999px; padding: .25rem .65rem; background: rgba(245, 205, 71, .12); color: var(--gold); font-size: .68rem; font-weight: 700; letter-spacing: .08em; }
 .shop-product h3 { color: var(--cream); font-size: 1.1rem; line-height: 1.2; }
 .shop-product__description { margin-top: .5rem; color: var(--beige-dim); font-size: .86rem; line-height: 1.5; }
 .shop-colors { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1rem; }
 .shop-colors button { min-height: 44px; border: 1px solid var(--line); border-radius: 999px; padding: .4rem .75rem; background: transparent; color: var(--beige); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-colors button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
-.shop-select { width: 100%; min-height: 48px; margin-top: 1rem; border: 1px solid var(--gold); border-radius: 999px; background: var(--gold); color: var(--bg); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
-.shop-select:hover, .shop-select:focus-visible { filter: brightness(1.06); outline: 2px solid var(--cream); outline-offset: 2px; }
 .shop-contact { max-width: 850px; margin: 2.5rem auto 0; padding: clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--line); border-radius: 20px; background: rgba(10, 22, 50, .84); }
 .shop-contact h3 { color: var(--cream); font-size: clamp(1.3rem, 3vw, 1.8rem); }
 .shop-contact > p { margin-top: .45rem; color: var(--beige-dim); font-size: .9rem; }
@@ -1475,16 +1484,8 @@ footer a { display: inline-flex; align-items: center; }
 .shop-form input { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--bg-soft); color: var(--cream); font: inherit; font-size: 1rem; text-transform: none; }
 .shop-form input:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
 .shop-form .shop-form__wide { grid-column: 1 / -1; }
-.shop-total { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 0; color: var(--beige-dim); border-top: 1px solid var(--line); }
-.shop-total strong { color: var(--gold); font-size: 1.2rem; }
-.shop-submit, .shop-whatsapp { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1px solid var(--gold); border-radius: 999px; padding: .75rem 1.2rem; background: var(--gold); color: var(--bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
-.shop-submit { width: 100%; }
-.shop-submit:focus-visible, .shop-whatsapp:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
-.shop-note { margin-top: .75rem; color: var(--muted); font-size: .75rem; text-align: center; }
-.shop-success { margin-top: 1.25rem; padding: 1.2rem; border: 1px solid rgba(245, 205, 71, .42); border-radius: 14px; background: rgba(245, 205, 71, .07); }
-.shop-success h4 { color: var(--gold); font-size: 1.2rem; }
-.shop-success p { margin: .4rem 0 1rem; color: var(--beige); }
-.shop-success[hidden] { display: none; }
+.shop-submit { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1px solid var(--gold); border-radius: 999px; padding: .75rem 1.2rem; background: var(--gold); color: var(--bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; width: 100%; }
+.shop-submit:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 @media (max-width: 1050px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) {
   .shop-grid { grid-template-columns: 1fr; gap: .9rem; }
@@ -1587,32 +1588,33 @@ footer a { display: inline-flex; align-items: center; }
     </div>
     <div class="scuola-notify-box">
       <div class="scuola-notify-copy">
-        <strong>Resta aggiornato sulle nuove circolari.</strong>
-        <span>Attiva le notifiche e ricevi un avviso quando ne viene pubblicata una.</span>
+        <span class="scuola-notify-kicker">circolari, senza perdertele</span>
+        <strong>una nuova circolare? ti avvisiamo sul telefono.</strong>
+        <span>attiva gli avvisi per iOS o Android in pochi passaggi.</span>
       </div>
       <button class="scuola-notify" id="scuola-notify" type="button">attiva su <span class="case-sensitive">iOS</span> / Android</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
-      <div class="scuola-install" id="scuola-install">
-        <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
-        <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
-          <h3 id="scuola-ios-title"><span class="case-sensitive">iOS</span></h3>
-          <ol>
-            <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
-            <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
-            <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e <strong>Consenti</strong>.</li>
-          </ol>
-          <p>serve <span class="case-sensitive">iOS</span> o <span class="case-sensitive">iPadOS</span> 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
-        </section>
-        <section class="scuola-install-platform" aria-labelledby="scuola-android-title">
-          <h3 id="scuola-android-title">Android</h3>
-          <ol>
-            <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
-            <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
-            <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e consenti l’invio.</li>
-          </ol>
-          <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
-        </section>
-      </div>
+    </div>
+    <div class="scuola-install" id="scuola-install">
+      <p class="scuola-install-title"><strong>come attivare le notifiche</strong></p>
+      <section class="scuola-install-platform" aria-labelledby="scuola-ios-title">
+        <h3 id="scuola-ios-title"><span class="case-sensitive">iOS</span></h3>
+        <ol>
+          <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
+          <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
+          <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e <strong>Consenti</strong>.</li>
+        </ol>
+        <p>serve <span class="case-sensitive">iOS</span> o <span class="case-sensitive">iPadOS</span> 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
+      </section>
+      <section class="scuola-install-platform" aria-labelledby="scuola-android-title">
+        <h3 id="scuola-android-title">Android</h3>
+        <ol>
+          <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
+          <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
+          <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e consenti l’invio.</li>
+        </ol>
+        <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
+      </section>
     </div>
     <div class="scuola-email-box" aria-labelledby="scuola-email-title">
       <h3 id="scuola-email-title">Avvisi email riservati ai professori</h3>
@@ -1685,11 +1687,11 @@ footer a { display: inline-flex; align-items: center; }
     <div class="head reveal">
       <div class="section-label">02 / shop</div>
       <h2 class="h2">la collezione <em>eureka!</em></h2>
-      <p>tre grafiche, da vedere fronte e retro. per i dettagli, scrivici in privato.</p>
+      <p>tre grafiche, da vedere fronte e retro.</p>
     </div>
 
     <div class="shop-grid">
-      <article class="shop-product reveal" data-shop-gallery data-product="Dreams / occupazione" data-label="Stop making dreams" data-color="nero">
+      <article class="shop-product reveal" data-shop-gallery data-label="Stop making dreams" data-color="nero">
         <div class="shop-gallery">
           <img class="shop-product__image" src="assets/shop/dreams-nero-retro-crop.webp" data-original-mask="true" data-nero-fronte="assets/shop/dreams-nero-fronte-crop.webp" data-nero-retro="assets/shop/dreams-nero-retro-crop.webp" data-bianco-fronte="assets/shop/dreams-bianco-fronte-site.webp" data-bianco-retro="assets/shop/dreams-bianco-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con grafica stop making dreams">
         </div>
@@ -1698,17 +1700,15 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>stop making dreams.</h3>
           <p class="shop-product__description">fronte con lampadina e retro con la grafica “occupazione”.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
             <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
             <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
           </div>
-          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
-      <article class="shop-product reveal" data-shop-gallery data-product="The worst list ever" data-label="The worst list ever" data-color="nero">
+      <article class="shop-product reveal" data-shop-gallery data-label="The worst list ever" data-color="nero">
         <div class="shop-gallery">
           <img class="shop-product__image" src="assets/shop/worst-nero-retro-clean.webp" data-nero-fronte="assets/shop/worst-nero-fronte-clean.webp" data-nero-retro="assets/shop/worst-nero-retro-clean.webp" data-bianco-fronte="assets/shop/worst-bianco-fronte-site.webp" data-bianco-retro="assets/shop/worst-bianco-retro-site.webp" width="1150" height="1368" loading="lazy" decoding="async" alt="Maglietta nera, vista retro, con la scritta The worst list ever to vote">
         </div>
@@ -1717,17 +1717,15 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>the worst list ever.</h3>
           <p class="shop-product__description">fronte con lampadina e retro con la grafica “the worst list ever”.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
             <button type="button" data-shop-color-choice="nero" aria-pressed="true">nero</button>
             <button type="button" data-shop-color-choice="bianco" aria-pressed="false">bianco</button>
           </div>
-          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
-      <article class="shop-product reveal" data-shop-gallery data-product="Look up, the stars" data-label="Look up, the stars" data-color="fucsia">
+      <article class="shop-product reveal" data-shop-gallery data-label="Look up, the stars" data-color="fucsia">
         <div class="shop-gallery">
           <img class="shop-product__image" src="assets/shop/stars-fucsia-retro-site.webp" data-fucsia-fronte="assets/shop/stars-fucsia-fronte-site.webp" data-fucsia-retro="assets/shop/stars-fucsia-retro-site.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglietta fucsia, vista retro, con la frase Look up, the stars are lighting up">
         </div>
@@ -1736,13 +1734,11 @@ footer a { display: inline-flex; align-items: center; }
           <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
         </div>
         <div class="shop-product__body">
-          <div class="shop-product__meta"><span class="shop-badge">disponibile</span></div>
           <h3>look up, the stars.</h3>
-          <p class="shop-product__description">disponibile in fucsia.</p>
+          <p class="shop-product__description">fronte e retro con una grafica ispirata alle stelle.</p>
           <div class="shop-colors" role="group" aria-label="Colore della maglietta">
             <button type="button" data-shop-color-choice="fucsia" aria-pressed="true">fucsia</button>
           </div>
-          <button class="shop-select" type="button" data-shop-contact>chiedi informazioni</button>
         </div>
       </article>
     </div>
@@ -2348,19 +2344,9 @@ else reducedMotion.addListener(stopReveals);
   });
 })();
 
-// ===== SHOP: contatto WhatsApp =====
+// ===== SHOP: viste e colori delle magliette =====
 (() => {
   const form = document.getElementById('shop-form');
-  if (!form) return;
-
-  document.querySelectorAll('[data-shop-contact]').forEach(button => {
-    button.addEventListener('click', () => {
-      document.getElementById('shop-contact')?.scrollIntoView({
-        behavior: reducedMotion.matches ? 'auto' : 'smooth',
-        block: 'center',
-      });
-    });
-  });
 
   document.querySelectorAll('[data-shop-gallery]').forEach(gallery => {
     const image = gallery.querySelector('.shop-product__image');
@@ -2392,6 +2378,7 @@ else reducedMotion.addListener(stopReveals);
     });
   });
 
+  if (!form) return;
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (!form.reportValidity()) return;
