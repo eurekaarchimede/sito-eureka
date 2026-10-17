@@ -920,22 +920,23 @@ a.proj-card {
 .scuola-notify-status { margin: 0; color: var(--cream); font-size: 0.9rem; text-shadow: 0 0 14px rgba(247, 238, 213, 0.2); }
 .scuola-email-box {
   margin: -1rem 0 2.5rem;
-  padding: 1.25rem 1.35rem;
-  border: 1px solid rgba(245, 205, 71, 0.3);
-  border-radius: 1rem;
-  background: rgba(10, 22, 50, 0.72);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid rgba(247, 238, 213, 0.2);
+  border-radius: 1.25rem;
+  background: var(--bg-soft);
+  box-shadow: none;
 }
-.scuola-email-box h3 { margin: 0 0 0.35rem; color: var(--cream); font-size: 1.05rem; }
-.scuola-email-audience { display: inline-flex; align-items: center; margin: 0 0 0.65rem; padding: 0.28rem 0.62rem; border: 1px solid rgba(245, 205, 71, 0.55); border-radius: 999px; color: var(--gold); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.scuola-email-box > p.scuola-email-notice { margin-bottom: 0.35rem; color: var(--cream); }
-.scuola-email-box > p { margin: 0 0 1rem; color: var(--beige-dim); font-size: 0.88rem; }
+.scuola-email-box h3 { margin: 0 0 0.45rem; color: var(--cream); font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.2; letter-spacing: -0.02em; }
+.scuola-email-audience { display: inline-flex; align-items: center; margin: 0 0 0.8rem; padding: 0.32rem 0.7rem; border: 1px solid rgba(247, 238, 213, 0.3); border-radius: 999px; background: rgba(10, 22, 50, 0.5); color: var(--cream); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.scuola-email-box > p.scuola-email-notice { margin-bottom: 0.4rem; color: var(--cream); font-size: 0.98rem; line-height: 1.5; }
+.scuola-email-box > p { margin: 0 0 1.15rem; color: var(--beige); font-size: 0.9rem; }
 .scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
-.scuola-email-form label { color: var(--beige-dim); font-size: 0.8rem; }
+.scuola-email-form label { color: var(--cream); font-size: 0.84rem; font-weight: 600; }
 .scuola-email-form input[type="email"],
 .scuola-email-form input[type="password"] {
-  display: block; width: 100%; margin-top: 0.35rem; padding: 0.75rem 0.85rem;
-  border: 1px solid var(--line); border-radius: 6px; background: var(--bg-soft);
-  color: var(--cream); font: inherit; font-size: 0.95rem;
+  display: block; width: 100%; min-height: 3rem; margin-top: 0.4rem; padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(247, 238, 213, 0.2); border-radius: 9px; background: rgba(10, 22, 50, 0.62);
+  color: var(--cream); font: inherit; font-size: 1rem;
 }
 .scuola-email-form input[type="email"]:focus-visible,
 .scuola-email-form input[type="password"]:focus-visible,
@@ -943,8 +944,8 @@ a.proj-card {
 .scuola-email-consent { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 0.55rem; }
 .scuola-email-consent input { flex: none; margin-top: 0.2rem; accent-color: var(--gold); }
 .scuola-email-submit {
-  min-height: 2.75rem; border: 1px solid var(--gold); border-radius: 999px; padding: 0.65rem 1rem;
-  background: var(--gold); color: var(--bg); font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer;
+  min-height: 3rem; border: 1px solid var(--gold); border-radius: 999px; padding: 0.7rem 1.15rem;
+  background: var(--gold); color: var(--bg); font: inherit; font-size: 0.9rem; font-weight: 800; cursor: pointer;
 }
 .scuola-email-submit:disabled { cursor: wait; opacity: 0.7; }
 .scuola-email-status { margin: 0.8rem 0 0 !important; color: var(--cream) !important; font-size: 0.84rem !important; }
