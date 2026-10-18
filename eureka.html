@@ -1523,8 +1523,11 @@ footer a { display: inline-flex; align-items: center; }
 .shop-product__zoom:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
 .shop-product__image { display: block; width: 88%; height: 88%; object-fit: contain; object-position: center; background: transparent; }
 .shop-lightbox { position: fixed; inset: 50% auto auto 50%; width: min(92vw, 760px); max-width: none; max-height: 92dvh; overflow: visible; transform: translate(-50%, -50%); padding: clamp(.75rem, 2vw, 1.25rem); border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); color: var(--cream); box-shadow: 0 24px 90px rgba(0, 0, 0, .6); }
-.shop-lightbox::backdrop { background: rgba(3, 8, 20, .84); backdrop-filter: blur(5px); }
+.shop-lightbox::backdrop { background: rgba(3, 8, 20, .84); opacity: 0; backdrop-filter: blur(5px); transition: opacity 240ms ease; }
+.shop-lightbox[open]::backdrop { opacity: 1; }
+.shop-lightbox.is-closing::backdrop { opacity: 0; }
 .shop-lightbox__image { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(92dvh - 2.5rem); margin: auto; object-fit: contain; }
+.shop-lightbox__image[data-original-mask="true"] { -webkit-mask-image: url("assets/shop/dreams-silhouette-v4.svg"); mask-image: url("assets/shop/dreams-silhouette-v4.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .shop-lightbox__close { position: absolute; z-index: 1; top: .5rem; right: .5rem; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--shop-outline); border-radius: 50%; background: var(--shop-deep); color: var(--cream); font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
 .shop-product__image[data-original-mask="true"] { width: 88%; height: 88%; margin: auto; -webkit-mask-image: url("assets/shop/dreams-silhouette-v4.svg"); mask-image: url("assets/shop/dreams-silhouette-v4.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
@@ -2495,11 +2498,49 @@ else reducedMotion.addListener(stopReveals);
   });
 })();
 
-// ===== SHOP: viste e colori delle magliette =====
+// ===== SHOP: viste, colori e ingrandimento delle magliette =====
 (() => {
   const lightbox = document.getElementById('shop-lightbox');
   const lightboxImage = lightbox?.querySelector('.shop-lightbox__image');
   const lightboxClose = lightbox?.querySelector('.shop-lightbox__close');
+  let zoomOrigin = null;
+  let openingAnimations = [];
+  let closing = false;
+
+  const animateZoom = (from, to, duration, reverse = false) => {
+    if (!lightboxImage || !from || !to || !from.width || !to.width) return null;
+    const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+    const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+    const sx = from.width / to.width;
+    const sy = from.height / to.height;
+    const start = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+    const end = 'translate(0, 0) scale(1, 1)';
+    return lightboxImage.animate(
+      reverse ? [{ transform: end }, { transform: start }] : [{ transform: start }, { transform: end }],
+      { duration, easing: 'cubic-bezier(.2, .8, .2, 1)', fill: 'both' }
+    );
+  };
+
+  const closeLightbox = () => {
+    if (!lightbox?.open || closing) return;
+    closing = true;
+    openingAnimations.forEach(animation => animation.cancel());
+    openingAnimations = [];
+    lightbox.classList.add('is-closing');
+    const destination = zoomOrigin?.getBoundingClientRect();
+    const source = lightboxImage?.getBoundingClientRect();
+    const imageAnimation = animateZoom(source, destination, 240, true);
+    const frameAnimation = lightbox.animate(
+      [{ opacity: 1, transform: 'translate(-50%, -50%) scale(1)' }, { opacity: 0, transform: 'translate(-50%, -50%) scale(.97)' }],
+      { duration: 220, easing: 'ease-in', fill: 'both' }
+    );
+    Promise.all([frameAnimation.finished, ...(imageAnimation ? [imageAnimation.finished] : [])].map(promise => promise.catch(() => {})))
+      .then(() => {
+        if (lightbox.open) lightbox.close();
+        lightbox.classList.remove('is-closing');
+        closing = false;
+      });
+  };
 
   document.querySelectorAll('[data-shop-gallery]').forEach(gallery => {
     const image = gallery.querySelector('.shop-product__image');
@@ -2515,10 +2556,25 @@ else reducedMotion.addListener(stopReveals);
     zoomButton.append(image);
     zoomButton.addEventListener('click', () => {
       if (!lightbox || !lightboxImage || typeof lightbox.showModal !== 'function') return;
+      zoomOrigin = image;
+      const originRect = image.getBoundingClientRect();
       lightboxImage.src = image.currentSrc || image.src;
       lightboxImage.alt = image.alt;
+      lightboxImage.dataset.originalMask = image.dataset.originalMask || 'false';
+      lightboxImage.width = image.naturalWidth || 1000;
+      lightboxImage.height = image.naturalHeight || 1250;
       lightbox.showModal();
       lightboxClose?.focus({ preventScroll: true });
+      requestAnimationFrame(() => {
+        const destination = lightboxImage.getBoundingClientRect();
+        const imageAnimation = animateZoom(originRect, destination, 280);
+        const frameAnimation = lightbox.animate(
+          [{ opacity: .72, transform: 'translate(-50%, -50%) scale(.97)' }, { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' }],
+          { duration: 280, easing: 'cubic-bezier(.2, .8, .2, 1)', fill: 'both' }
+        );
+        openingAnimations = [frameAnimation, ...(imageAnimation ? [imageAnimation] : [])];
+        openingAnimations.forEach(animation => animation.finished.then(() => animation.cancel()).catch(() => {}));
+      });
     });
     const refreshImage = () => {
       const sideLabel = chosenSide === 'fronte' ? 'Fronte' : 'Retro';
@@ -2546,11 +2602,12 @@ else reducedMotion.addListener(stopReveals);
     });
   });
 
-  lightboxClose?.addEventListener('click', () => lightbox.close());
+  lightboxClose?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('cancel', event => { event.preventDefault(); closeLightbox(); });
   lightbox?.addEventListener('click', event => {
     const bounds = lightbox.getBoundingClientRect();
     const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
-    if (!inside) lightbox.close();
+    if (!inside) closeLightbox();
   });
 })();
 
