@@ -20,6 +20,17 @@
   const isEmbeddedBrowser = /Instagram|FBAN|FBAV/i.test(navigator.userAgent);
   const say = message => { status.textContent = message; status.hidden = !message; };
   const sayEmail = message => { emailStatus.textContent = message; emailStatus.hidden = !message; };
+  const permissionDenied = () => window.Notification?.permission === 'denied'
+    || oneSignal?.Notifications.permission === 'denied';
+  const permissionHelp = () => {
+    if (isAppleMobile) {
+      return 'Hai bloccato le notifiche. Per riattivarle: apri Impostazioni > Notifiche > eureka! e attiva “Consenti notifiche”; poi torna qui e riprova. Se eureka! non compare, aprila dalla sua icona sulla schermata Home.';
+    }
+    if (/Android/i.test(navigator.userAgent)) {
+      return 'Hai bloccato le notifiche. In Chrome apri ⋮ > Impostazioni > Impostazioni sito > Notifiche > eurekaarchimede.it e scegli Consenti; poi ricarica la pagina e riprova.';
+    }
+    return 'Hai bloccato le notifiche per questo sito. Apri le autorizzazioni del browser per eurekaarchimede.it, imposta Notifiche su Consenti e poi ricarica la pagina.';
+  };
   emailCodeToggle?.addEventListener('click', () => {
     const isVisible = emailCode.type === 'text';
     emailCode.type = isVisible ? 'password' : 'text';
@@ -30,6 +41,7 @@
   const syncButton = () => {
     if (isEmbeddedBrowser) { button.textContent = isAppleMobile ? 'apri in Safari' : 'apri in Chrome'; return; }
     if (needsInstall) { button.textContent = 'attiva le notifiche'; return; }
+    if (permissionDenied()) { button.textContent = 'come riattivarle'; return; }
     button.textContent = subscribed() ? 'notifiche attive' : 'attiva le notifiche';
   };
   const withTimeout = (promise, milliseconds, message) => {
@@ -114,8 +126,8 @@
       say('Questo browser non supporta le notifiche. Usa un browser aggiornato; su iPhone apri eureka! dalla Home.');
       return;
     }
-    if (window.Notification?.permission === 'denied') {
-      say('Le notifiche sono bloccate. Abilitale nelle impostazioni del browser per questo sito, poi riprova.');
+    if (permissionDenied()) {
+      say(permissionHelp());
       return;
     }
 
@@ -126,7 +138,9 @@
       // La richiesta del permesso parte direttamente dal tap, come richiesto da iOS.
       await oneSignal.Notifications.requestPermission();
       if (!oneSignal.Notifications.permission) {
-        say('Permesso non concesso. Puoi abilitarlo dalle impostazioni del browser.');
+        say(permissionDenied()
+          ? permissionHelp()
+          : 'Richiesta chiusa senza attivare le notifiche. Tocca il pulsante e scegli Consenti.');
         return;
       }
       say('Registrazione delle notifiche in corso…');
@@ -211,5 +225,9 @@
 
   syncButton();
   if (isEmbeddedBrowser) say('Per attivare gli avvisi, apri questa pagina nel browser del telefono usando il menu ⋯ di Instagram o Facebook.');
-  else if (!needsInstall) start().catch(() => {});
+  else if (!needsInstall) {
+    start().then(() => {
+      if (permissionDenied()) say(permissionHelp());
+    }).catch(() => {});
+  }
 })();
