@@ -1,12 +1,12 @@
 {
  "username": "eureka.archimede",
- "followersCount": 2667,
+ "followersCount": 2668,
  "posts": [
   {
    "id": "18117399446587555",
    "permalink": "https://www.instagram.com/reel/DepZ_lbo-Y9/",
    "timestamp": "2026-10-18T19:15:37+0000",
-   "likeCount": 0,
+   "likeCount": 30,
    "commentsCount": 0,
    "mediaType": "VIDEO",
    "caption": "eurekaarchimede.it\n10 anni di eureka!💡",
@@ -16,8 +16,8 @@
    "id": "17972781912156783",
    "permalink": "https://www.instagram.com/p/DepaLNriNc1/",
    "timestamp": "2026-10-18T19:14:06+0000",
-   "likeCount": 16,
-   "commentsCount": 0,
+   "likeCount": 46,
+   "commentsCount": 1,
    "mediaType": "CAROUSEL_ALBUM",
    "caption": "eurekaarchimede.it\n10 anni di eureka!💡\n\n~made by @giacomo_warm",
    "image": "assets/ig/17972781912156783.jpg"
@@ -1503,5 +1503,5 @@
    "image": "assets/ig/18051340243268181.jpg"
   }
  ],
- "updatedAt": "2026-10-18T19:15:56.957Z"
+ "updatedAt": "2026-10-18T19:20:56.338Z"
 }
