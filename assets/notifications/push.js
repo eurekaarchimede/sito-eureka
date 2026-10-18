@@ -24,12 +24,12 @@
     || oneSignal?.Notifications.permission === 'denied';
   const permissionHelp = () => {
     if (isAppleMobile) {
-      return 'Hai bloccato le notifiche. Per riattivarle: apri Impostazioni > Notifiche > eureka! e attiva “Consenti notifiche”; poi torna qui e riprova. Se eureka! non compare, aprila dalla sua icona sulla schermata Home.';
+      return 'Il dispositivo al momento non concede le notifiche a eureka!. Controlla in Impostazioni > Notifiche se eureka! può inviare notifiche. Se non compare, apri eureka! dalla sua icona sulla schermata Home e riprova.';
     }
     if (/Android/i.test(navigator.userAgent)) {
-      return 'Hai bloccato le notifiche. In Chrome apri ⋮ > Impostazioni > Impostazioni sito > Notifiche > eurekaarchimede.it e scegli Consenti; poi ricarica la pagina e riprova.';
+      return 'Chrome al momento non concede le notifiche a questo sito. In Chrome vai su ⋮ > Impostazioni > Impostazioni sito > Notifiche e controlla eurekaarchimede.it: se è bloccato, imposta Consenti. Verifica anche che Android consenta le notifiche di Chrome; poi ricarica la pagina e riprova.';
     }
-    return 'Hai bloccato le notifiche per questo sito. Apri le autorizzazioni del browser per eurekaarchimede.it, imposta Notifiche su Consenti e poi ricarica la pagina.';
+    return 'Il browser al momento non concede le notifiche a questo sito. Controlla le autorizzazioni per eurekaarchimede.it, imposta Notifiche su Consenti e poi ricarica la pagina.';
   };
   emailCodeToggle?.addEventListener('click', () => {
     const isVisible = emailCode.type === 'text';
@@ -41,7 +41,7 @@
   const syncButton = () => {
     if (isEmbeddedBrowser) { button.textContent = isAppleMobile ? 'apri in Safari' : 'apri in Chrome'; return; }
     if (needsInstall) { button.textContent = 'attiva le notifiche'; return; }
-    if (permissionDenied()) { button.textContent = 'come riattivarle'; return; }
+    if (permissionDenied()) { button.textContent = 'verifica il permesso'; return; }
     button.textContent = subscribed() ? 'notifiche attive' : 'attiva le notifiche';
   };
   const withTimeout = (promise, milliseconds, message) => {
