@@ -930,6 +930,9 @@ a.proj-card {
 .scuola-email-box > p { margin: 0 0 1.15rem; color: var(--beige); font-size: 0.9rem; }
 .scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
 .scuola-email-form label { color: var(--cream); font-size: 0.84rem; font-weight: 600; }
+.scuola-email-code-group { min-width: 0; }
+.scuola-email-code-heading { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.scuola-email-code-heading label { min-width: 0; }
 .scuola-email-form input[type="email"],
 .scuola-email-form input[type="password"],
 .scuola-email-code-field input[type="text"] {
@@ -937,12 +940,11 @@ a.proj-card {
   border: 1px solid rgba(247, 238, 213, 0.2); border-radius: 9px; background: rgba(10, 22, 50, 0.62);
   color: var(--cream); font: inherit; font-size: 1rem;
 }
-.scuola-email-code-field { position: relative; margin-top: 0.4rem; }
+.scuola-email-code-field { margin-top: 0.4rem; }
 .scuola-email-code-field input[type="password"],
-.scuola-email-code-field input[type="text"] { margin-top: 0; padding-right: 5rem; }
+.scuola-email-code-field input[type="text"] { margin-top: 0; }
 .scuola-email-code-toggle {
-  position: absolute; top: 50%; right: 0.8rem; transform: translateY(-50%);
-  border: 0; padding: 0.35rem; background: transparent; color: var(--gold-bright);
+  flex: none; border: 0; padding: 0.1rem 0.2rem; background: transparent; color: var(--gold-bright);
   font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
 }
 .scuola-email-code-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
@@ -1640,12 +1642,15 @@ html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after 
         <label for="scuola-email">La tua email
           <input id="scuola-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="nome@example.com" required>
         </label>
-        <label for="scuola-email-code">Codice riservato ai docenti
+        <div class="scuola-email-code-group">
+          <div class="scuola-email-code-heading">
+            <label for="scuola-email-code">Codice riservato ai docenti</label>
+            <button class="scuola-email-code-toggle" id="scuola-email-code-toggle" type="button" aria-controls="scuola-email-code" aria-pressed="false">Mostra</button>
+          </div>
           <span class="scuola-email-code-field">
             <input id="scuola-email-code" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
-            <button class="scuola-email-code-toggle" id="scuola-email-code-toggle" type="button" aria-controls="scuola-email-code" aria-pressed="false">Mostra</button>
           </span>
-        </label>
+        </div>
         <button class="scuola-email-submit" id="scuola-email-submit" type="submit">Iscrivimi via email</button>
         <label class="scuola-email-consent" for="scuola-email-consent">
           <input id="scuola-email-consent" name="consent" type="checkbox" required>
