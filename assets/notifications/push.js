@@ -15,12 +15,14 @@
   const isInstalled = window.matchMedia('(display-mode: standalone)').matches
     || navigator.standalone === true;
   const needsInstall = isAppleMobile && !isInstalled;
+  const isEmbeddedBrowser = /Instagram|FBAN|FBAV/i.test(navigator.userAgent);
   const say = message => { status.textContent = message; status.hidden = !message; };
   const sayEmail = message => { emailStatus.textContent = message; emailStatus.hidden = !message; };
   const subscribed = () => !!(oneSignal?.User.PushSubscription.optedIn && oneSignal.User.PushSubscription.id);
   const syncButton = () => {
-    if (needsInstall) { button.textContent = 'attiva su iOS / Android'; return; }
-    button.textContent = subscribed() ? 'notifiche attive' : 'attiva su iOS / Android';
+    if (isEmbeddedBrowser) { button.textContent = isAppleMobile ? 'apri in Safari' : 'apri in Chrome'; return; }
+    if (needsInstall) { button.textContent = 'attiva le notifiche'; return; }
+    button.textContent = subscribed() ? 'notifiche attive' : 'attiva le notifiche';
   };
   const withTimeout = (promise, milliseconds, message) => {
     let timer;
@@ -59,15 +61,15 @@
       emailSubmit.setAttribute('aria-busy', 'true');
       sayEmail('Iscrizione in corso…');
       try {
-        const verification = await withTimeout(fetch('https://awdsasbjuueovjcupmwk.supabase.co/functions/v1/verify-teacher-email-code', {
+        const verificationResponse = await withTimeout(fetch('https://awdsasbjuueovjcupmwk.supabase.co/functions/v1/verify-teacher-email-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password })
         }), 10000, 'Verifica del codice non riuscita');
-        if (verification.status === 401) throw new Error('Codice docenti non valido');
-        if (!verification.ok) throw new Error(`Verifica codice HTTP ${verification.status}`);
-        const verificationResult = await verification.json();
-        if (verificationResult?.verified !== true) throw new Error('Codice docenti non valido');
+        if (verificationResponse.status === 401) throw new Error('Codice docenti non valido');
+        if (!verificationResponse.ok) throw new Error('Verifica del codice non disponibile');
+        const verification = await verificationResponse.json();
+        if (verification?.verified !== true) throw new Error('Codice docenti non valido');
 
         const sdk = await ensureOneSignal();
         if (typeof sdk.User?.addEmail !== 'function') throw new Error('Funzione email non disponibile');
@@ -77,13 +79,9 @@
         sayEmail('Iscrizione completata. Puoi disiscriverti dal link presente in ogni email.');
       } catch (error) {
         console.error('Iscrizione email non riuscita.', error);
-        if (error.message === 'Codice docenti non valido') {
-          sayEmail('Codice non valido. Controllalo con i docenti e riprova.');
-        } else if (error.message?.startsWith('Verifica codice HTTP')) {
-          sayEmail('Verifica temporaneamente non disponibile. Riprova tra poco; i dati inseriti sono rimasti nel modulo.');
-        } else {
-          sayEmail('Iscrizione non completata. Controlla email e connessione, poi riprova; i dati inseriti sono rimasti nel modulo.');
-        }
+        sayEmail(error?.message === 'Codice docenti non valido'
+          ? 'Codice docenti non valido. Controlla il codice e riprova.'
+          : 'Iscrizione non completata. Controlla email e connessione, poi riprova; i dati inseriti sono rimasti nel modulo.');
       } finally {
         emailSubmit.disabled = false;
         emailSubmit.setAttribute('aria-busy', 'false');
@@ -92,6 +90,12 @@
   }
 
   button.addEventListener('click', async () => {
+    if (isEmbeddedBrowser) {
+      say(isAppleMobile
+        ? 'Dal menu ⋯ di Instagram o Facebook scegli “Apri in Safari”, poi aggiungi eureka! alla schermata Home e segui i passaggi qui sotto.'
+        : 'Dal menu ⋯ di Instagram o Facebook scegli “Apri in Chrome” o “Apri nel browser”, poi segui i passaggi qui sotto.');
+      return;
+    }
     if (needsInstall) {
       say('Aggiungi eureka! alla schermata Home, aprila dalla sua icona e attiva le notifiche.');
       return;
@@ -198,5 +202,6 @@
   }
 
   syncButton();
-  if (!needsInstall) start().catch(() => {});
+  if (isEmbeddedBrowser) say('Per attivare gli avvisi, apri questa pagina nel browser del telefono usando il menu ⋯ di Instagram o Facebook.');
+  else if (!needsInstall) start().catch(() => {});
 })();

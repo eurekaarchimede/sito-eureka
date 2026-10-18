@@ -76,7 +76,7 @@
   --beige:      #ede0b8;     /* testo principale (crema caldo) */
   --beige-dim:  #b8a988;     /* testo secondario */
   --cream:      #f7eed5;     /* highlight testo */
-  --muted:      #6a7da8;     /* blu-grigio per microcopy, leggibile su blu notte */
+  --muted:      #93a2c6;     /* microcopy: contrasto AA anche sui pannelli blu */
   --line:       rgba(237, 224, 184, 0.10);
   --shop-deep:  #07112a;
   --shop-soft:  #0d1a3b;
@@ -203,6 +203,12 @@ nav .right {
   align-items: center;
   gap: 1rem;
 }
+.motion-toggle {
+  display: grid; place-items: center; flex: none;
+  width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%;
+  background: var(--bg); color: var(--cream); font: inherit; font-size: 1rem; cursor: pointer;
+}
+.motion-toggle[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
 nav .ig {
   color: var(--cream);
   text-decoration: none;
@@ -404,7 +410,7 @@ nav .ig:hover {
   .school-egg__occupied, .school-egg__base { transition: none; clip-path: none; transform: none; }
 }
 
-.hero-inner { position: relative; z-index: 2; transform: translate3d(0, var(--copy-offset, 0px), 0); }
+.hero-inner { position: relative; z-index: 2; max-width: 100%; transform: translate3d(0, var(--copy-offset, 0px), 0); }
 
 .hero-wordmark h1 {
   font-weight: 700;
@@ -880,6 +886,9 @@ a.proj-card {
 .scuola-notify-copy span { color: var(--beige); font-size: clamp(0.9rem, 1.2vw, 1.05rem); }
 .scuola-notify {
   flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   border: 1px solid var(--gold-bright);
   border-radius: 999px;
   padding: 1rem 1.4rem;
@@ -888,6 +897,7 @@ a.proj-card {
   font: inherit;
   font-size: 1rem;
   font-weight: 800;
+  text-transform: none;
   cursor: pointer;
   box-shadow: none;
   transition: transform 180ms ease, filter 180ms ease;
@@ -1462,6 +1472,9 @@ footer a { display: inline-flex; align-items: center; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after {
+  animation: none !important; transition: none !important;
+}
 
 /* ===== SHOP ===== */
 .shop { scroll-margin-top: 8rem; border-top: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 48%, transparent), color-mix(in srgb, var(--bg) 72%, transparent)); }
@@ -1524,6 +1537,7 @@ footer a { display: inline-flex; align-items: center; }
     <li><a href="#storia">storia</a></li>
   </ul>
   <div class="right">
+    <button class="motion-toggle" id="motion-toggle" type="button" aria-label="metti in pausa le animazioni" aria-pressed="false" title="metti in pausa le animazioni" hidden><span aria-hidden="true">Ⅱ</span></button>
     <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="ig">@eureka.archimede</a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-label="apri menu" aria-expanded="false" aria-controls="mobile-menu" hidden>
       <span></span><span></span><span></span>
@@ -1556,7 +1570,7 @@ footer a { display: inline-flex; align-items: center; }
       </h1>
       <div class="hero-credit" aria-label="Ideato, realizzato e pubblicato da Giacomo Warm">
         <span class="hero-credit__roles">ideatore · realizzatore · pubblicatore</span>
-        <img class="hero-credit__signature" src="assets/branding/firma-giacomo-warm.png?v=2" width="2173" height="724" alt="Firma di Giacomo Warm" decoding="async">
+        <img class="hero-credit__signature" src="assets/branding/firma-giacomo-warm-720.webp" srcset="assets/branding/firma-giacomo-warm-720.webp 720w, assets/branding/firma-giacomo-warm-1080.webp 1080w" sizes="(max-width: 800px) 9rem, (min-width: 1245px) 14rem, 18vw" width="2173" height="724" alt="Firma di Giacomo Warm" decoding="async">
       </div>
       <p class="hero-tagline">
         un'idea. una riunione. un istituto. <em>eureka!</em> è la lista di maggioranza del <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo archimede</a>.
@@ -1595,9 +1609,9 @@ footer a { display: inline-flex; align-items: center; }
       <div class="scuola-notify-copy">
         <span class="scuola-notify-kicker">circolari, senza perdertele</span>
         <strong>una nuova circolare? ti avvisiamo sul telefono.</strong>
-        <span>attiva gli avvisi per iOS o Android in pochi passaggi.</span>
+        <span>attiva gli avvisi per <span class="case-sensitive">iOS</span> o <span class="case-sensitive">Android</span> in pochi passaggi.</span>
       </div>
-      <button class="scuola-notify" id="scuola-notify" type="button">attiva su <span class="case-sensitive">iOS</span> / Android</button>
+      <button class="scuola-notify" id="scuola-notify" type="button">attiva le notifiche</button>
       <p class="scuola-notify-status" id="scuola-notify-status" role="status" aria-live="polite" hidden></p>
     </div>
     <div class="scuola-install" id="scuola-install">
@@ -1607,7 +1621,7 @@ footer a { display: inline-flex; align-items: center; }
         <ol>
           <li>apri eureka! in Safari e tocca <strong>Condividi</strong>.</li>
           <li>scegli <strong>Aggiungi alla schermata Home</strong> e conferma.</li>
-          <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e <strong>Consenti</strong>.</li>
+          <li>apri eureka! dalla nuova icona, poi tocca <strong>attiva le notifiche</strong> e <strong>Consenti</strong>.</li>
         </ol>
         <p>serve <span class="case-sensitive">iOS</span> o <span class="case-sensitive">iPadOS</span> 16.4 o successivo. Le notifiche arrivano anche quando eureka! è chiusa.</p>
       </section>
@@ -1616,22 +1630,23 @@ footer a { display: inline-flex; align-items: center; }
         <ol>
           <li>apri eureka! con <strong>Chrome</strong> e tocca il menu <strong>⋮</strong>.</li>
           <li>seleziona <strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong> e conferma.</li>
-          <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva su <span class="case-sensitive">iOS</span> / Android</strong> e consenti l’invio.</li>
+          <li>apri eureka! dalla nuova icona,<br class="mobile-only-break"> poi tocca <strong>attiva le notifiche</strong> e consenti l’invio.</li>
         </ol>
         <p>se la richiesta non appare, controlla in Chrome le autorizzazioni del sito e imposta <strong>Notifiche</strong> su Consenti.</p>
       </section>
     </div>
     <div class="scuola-email-box" aria-labelledby="scuola-email-title">
       <h3 id="scuola-email-title">Avvisi email riservati ai professori</h3>
-      <span class="scuola-email-audience">Solo docenti</span>
-      <p class="scuola-email-notice">L’iscrizione è riservata ai professori del Liceo Archimede. Per completarla serve il codice condiviso con i docenti.</p>
+      <p class="scuola-email-audience">Solo docenti</p>
+      <p class="scuola-email-notice">L’iscrizione è riservata ai professori del liceo Archimede. Per completarla serve il codice condiviso con i docenti.</p>
       <p>Puoi sempre disiscriverti dal link presente in ogni email.</p>
+      <p class="privacy-notice">Prima di iscriverti, leggi l’<a href="privacy.html">informativa privacy</a>.</p>
       <form class="scuola-email-form" id="scuola-email-form">
         <label for="scuola-email">La tua email
           <input id="scuola-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="nome@example.com" required>
         </label>
-        <label for="scuola-email-password">Codice riservato ai docenti
-          <input id="scuola-email-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
+        <label for="scuola-email-code">Codice riservato ai docenti
+          <input id="scuola-email-code" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
         </label>
         <button class="scuola-email-submit" id="scuola-email-submit" type="submit">Iscrivimi via email</button>
         <label class="scuola-email-consent" for="scuola-email-consent">
@@ -1751,6 +1766,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="shop-contact reveal" id="shop-contact">
       <h3>ti interessa una maglietta?</h3>
       <p>lascia i tuoi dati e continua la conversazione su WhatsApp: i dettagli li definiamo in privato.</p>
+      <p class="privacy-notice">Se continui, nome, cognome e classe saranno inseriti nel messaggio WhatsApp. <a href="privacy.html">Informativa privacy</a>.</p>
       <form class="shop-form" id="shop-form">
         <label>nome
           <input name="firstName" type="text" autocomplete="given-name" maxlength="40" required>
@@ -2039,6 +2055,7 @@ footer a { display: inline-flex; align-items: center; }
       <a href="#shop">shop</a>
       <a href="#candidati">candidati</a>
       <a href="#storia">storia</a>
+      <a href="privacy.html">privacy</a>
     </div>
     <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a><span class="footer-location">messina, it</span></div>
   </div>
@@ -2059,8 +2076,45 @@ if (navigationType === 'reload') {
   window.addEventListener('pageshow', scrollToTop, { once: true });
 }
 
+// Pausa esplicita per i movimenti continui, insieme alla preferenza del sistema.
+const siteMotion = (() => {
+  const system = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const control = document.getElementById('motion-toggle');
+  const listeners = new Set();
+  let paused = false;
+  try { paused = localStorage.getItem('eureka:motion-paused') === 'true'; } catch { /* storage opzionale */ }
+  const preference = {
+    get matches() { return paused || system.matches; },
+    addEventListener(type, listener) { if (type === 'change') listeners.add(listener); },
+    removeEventListener(type, listener) { if (type === 'change') listeners.delete(listener); },
+    addListener(listener) { listeners.add(listener); },
+    removeListener(listener) { listeners.delete(listener); }
+  };
+  const update = () => {
+    document.documentElement.classList.toggle('motion-paused', preference.matches);
+    control.hidden = false;
+    control.disabled = system.matches;
+    control.setAttribute('aria-pressed', String(preference.matches));
+    const label = system.matches ? 'animazioni ridotte nelle impostazioni del sistema'
+      : paused ? 'riprendi le animazioni' : 'metti in pausa le animazioni';
+    control.setAttribute('aria-label', label);
+    control.title = label;
+    control.firstElementChild.textContent = preference.matches ? '▶' : 'Ⅱ';
+    listeners.forEach(listener => listener({ matches: preference.matches }));
+  };
+  control.addEventListener('click', () => {
+    paused = !paused;
+    try { localStorage.setItem('eureka:motion-paused', String(paused)); } catch { /* storage opzionale */ }
+    update();
+  });
+  if (system.addEventListener) system.addEventListener('change', update);
+  else system.addListener(update);
+  update();
+  return preference;
+})();
+
 // ===== FUNZIONI COMUNI =====
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const reducedMotion = typeof siteMotion !== 'undefined' ? siteMotion : window.matchMedia('(prefers-reduced-motion: reduce)');
 // Iperspazio 21st.dev: proiezione prospettica a raggi, accelerata dallo scroll.
 // Canvas 2D per mantenere la resa senza un renderer WebGL permanente.
 (() => {
@@ -2365,7 +2419,8 @@ else reducedMotion.addListener(stopReveals);
       if (!src) return;
       image.src = src;
       image.dataset.originalMask = String(src.endsWith('-crop.webp'));
-      image.alt = `Maglietta ${chosenColor}, vista ${chosenSide}, ${gallery.dataset.label}`;
+      const colorLabel = { nero: 'nera', bianco: 'bianca', fucsia: 'fucsia' }[chosenColor] || chosenColor;
+      image.alt = `Maglietta ${colorLabel}, vista ${chosenSide}, ${gallery.dataset.label}`;
     };
     chooseButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -2734,9 +2789,9 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
 
 </script>
 
-<script src="assets/scuola/board.js?v=2" defer></script>
+<script src="assets/scuola/board.js?v=3" defer></script>
 
-<script src="assets/notifications/push.js?v=3" defer></script>
+<script src="assets/notifications/push.js?v=6" defer></script>
 
 </body>
 </html>

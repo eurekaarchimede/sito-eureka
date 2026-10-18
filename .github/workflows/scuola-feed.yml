@@ -116,3 +116,8 @@ jobs:
             --header "X-GitHub-Api-Version: 2022-11-28" \
             --data '{"ref":"main"}' \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/ig-feed.yml/dispatches"
+      - name: segnala gli invii push falliti
+        if: always() && steps.push_notification.outcome == 'failure'
+        run: |
+          echo "::error::Invio push fallito. Il registro conserva le circolari pendenti: controllare lo step notifiche prima di ritentare."
+          exit 1

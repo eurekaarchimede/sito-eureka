@@ -7,11 +7,30 @@
 <meta name="description" content="piattaforma mozioni interna — eureka! liceo archimede">
 <meta name="robots" content="noindex,nofollow">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a1632">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/notifications/icon-eureka-v2-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/notifications/icon-eureka-v2-180.png">
+<link rel="preload" href="fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <style>
+/* Stessa famiglia della homepage, disponibile senza Google Fonts. */
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("fonts/dmsans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("fonts/dmsans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
 :root {
   /* palette eureka — blu notte + oro */
   --bg:           #0a1632;
@@ -23,7 +42,7 @@
   --beige:        #ede0b8;
   --beige-dim:    #b8a988;
   --cream:        #f7eed5;
-  --muted:        #6a7da8;
+  --muted:        #93a2c6;
   --line:         rgba(237, 224, 184, 0.10);
   --line-strong:  rgba(237, 224, 184, 0.20);
 
@@ -665,7 +684,7 @@ details.admin[open] > summary::after { transform: rotate(45deg); }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2rem min(2rem, 8vw);
 }
 .login-card { max-width: 440px; width: 100%; text-align: center; }
 .login-card h1 { font-size: clamp(2.4rem, 6vw, 3.4rem); margin-bottom: 0.4rem; }
@@ -713,7 +732,7 @@ details.admin[open] > summary::after { transform: rotate(45deg); }
   backdrop-filter: blur(16px);
   border: 1px solid var(--line-strong);
   border-radius: 22px;
-  padding: 2.8rem 2.3rem;
+  padding: 2.8rem min(2.3rem, 10vw);
   box-shadow: 0 36px 90px -34px rgba(0,0,0,0.65), inset 0 1px 0 rgba(247,238,213,0.06);
 }
 .login-card::before {
@@ -1125,6 +1144,7 @@ details.admin > summary { padding: 1rem 1.25rem; user-select: none; }
       <li>aspetta 1–2 minuti il provisioning.</li>
       <li>nella sidebar del progetto: <strong>SQL Editor</strong> → <strong>new query</strong>. apri il file <code>mozioni-setup.sql</code> di questa cartella, copia tutto, incolla, premi <strong>run</strong>.</li>
       <li><strong>Authentication → URL Configuration</strong>: imposta <code>Site URL</code> all'url dove servirai questa pagina (es. <code>http://localhost:8000</code> o l'url di netlify/vercel/github pages). aggiungi lo stesso valore in <code>Redirect URLs</code>.</li>
+      <li>mantieni attiva la conferma dell'indirizzo email e verifica la casella prima di accedere, in particolare per gli account amministratori.</li>
       <li><strong>Project Settings → API</strong>: copia <code>Project URL</code> e <code>anon public</code> key.</li>
       <li>apri <code>mozioni.html</code> in editor, sostituisci i due placeholder all'inizio dello <code>&lt;script type="module"&gt;</code>:
 <pre>const SUPABASE_URL = 'https://xxx.supabase.co';
@@ -1185,6 +1205,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
           <label for="reg-classe">classe</label>
           <input type="text" id="reg-classe" required placeholder="es. 4E" maxlength="10">
         </div>
+        <p class="lead">Prima di registrarti, leggi l’<a href="privacy.html">informativa privacy</a>.</p>
         <button type="submit" class="btn btn-primary" id="reg-btn">invia richiesta →</button>
       </form>
       <p style="margin-top:1.5rem; font-size:12px; color:var(--muted); letter-spacing: 0.04em">hai già un account? <a href="#" id="goto-login" style="color:var(--gold)">accedi</a></p>
@@ -1205,7 +1226,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
   <section id="dashboard" class="container hidden">
     <div class="section-label">collettivo eureka!</div>
     <h1>mozioni</h1>
-    <p style="margin-bottom:2.5rem; max-width:580px">vota a favore, contrario o astenuto. le mozioni hanno una finestra temporale e possono essere anonime o nominali.</p>
+    <p style="margin-bottom:2.5rem; max-width:580px">vota a favore, contrario o astenuto. le mozioni hanno una finestra temporale e possono essere anonime o nominali. nelle votazioni anonime il voto è nascosto agli altri partecipanti; gli amministratori possono consultare i voti.</p>
 
     <div class="admin hidden" id="admin-quick-nav" style="display:flex;gap:0.6rem;margin-bottom:1.5rem;flex-wrap:wrap">
       <a href="#section-members" class="btn btn-ghost btn-small">gestione membri ↓</a>
@@ -1304,7 +1325,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
           </div>
           <div class="form-row checkbox">
             <input type="checkbox" id="m-anon">
-            <label for="m-anon">votazione anonima — i voti sono segreti</label>
+            <label for="m-anon">anonima per gli altri partecipanti; voti consultabili dagli amministratori</label>
           </div>
           <div class="form-row checkbox">
             <input type="checkbox" id="m-custom-opts">
@@ -1379,7 +1400,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
           </div>
           <div class="form-row checkbox">
             <input type="checkbox" id="e-anon">
-            <label for="e-anon">anonima — i voti sono segreti</label>
+            <label for="e-anon">anonima per gli altri partecipanti; voti consultabili dagli amministratori</label>
           </div>
           <button type="submit" class="btn btn-primary" id="election-submit">avvia elezione →</button>
         </form>
@@ -1409,7 +1430,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGc...';</pre>
 </main>
 
 <footer>
-  <p>eureka! · liceo scientifico archimede · messina · <a href="eureka.html">sito pubblico</a></p>
+  <p>eureka! · liceo scientifico archimede · messina · <a href="eureka.html">sito pubblico</a> · <a href="privacy.html">informativa privacy</a></p>
 </footer>
 
 <div id="toast-host"></div>
@@ -1466,6 +1487,7 @@ const fmtCountdown = (ms) => {
 
 const VOTE_LABEL = { favorevole: 'favorevole', contrario: 'contrario', astenuto: 'astenuto' };
 const VOTE_CLASS = { favorevole: 'yes', contrario: 'no', astenuto: 'abs' };
+const ANONYMITY_NOTICE = 'anonimo per gli altri partecipanti; gli amministratori possono consultare i voti.';
 
 function toast(msg, isError = false) {
   const el = document.createElement('div');
@@ -1513,6 +1535,7 @@ const ORGAN_LABEL = { consiglio: 'consiglio di istituto', garanzia: 'organo di g
 let allProposals = [];
 let _proposalsSig = '';
 let proposalResponsesCache = {}; // proposal_id -> { my_response, responses?, total }
+const proposalDrafts = new Map(); // bozze locali, mai inviate dal polling
 
 // ============================================================
 // STARFIELD (lightweight)
@@ -1825,7 +1848,7 @@ $('#register-form').addEventListener('submit', async (e) => {
 
   // se la conferma email è attiva non c'è sessione: avvisa
   if (!signUpData.session) {
-    fail('conferma email richiesta. disattiva "confirm email" in Supabase, poi riprova.');
+    fail('conferma email richiesta: verifica la tua casella di posta, poi accedi per completare la registrazione.');
     return;
   }
 
@@ -2151,6 +2174,7 @@ function renderMotionCard(m) {
         <span><b>durata</b> ${fmtDuration(new Date(m.closes_at) - new Date(m.opens_at))}</span>
         <span><b>chiude</b> ${fmtDate(m.closes_at)}</span>
       </div>
+      ${m.anonymous ? `<p class="your-vote">${ANONYMITY_NOTICE}</p>` : ''}
       ${st === 'open' ? `<div class="card-clock"><span class="clock-label">rimane</span><span class="clock-value countdown${remMs < 30000 ? ' urgent' : ''}" data-closes="${m.closes_at}">${fmtCountdown(remMs)}</span></div>` : ''}
       ${body}
       ${isAdmin ? `<div style="margin-top:1rem; text-align:right; padding-top:1rem; border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-motion="${m.id}">elimina mozione</button></div>` : ''}
@@ -2275,7 +2299,7 @@ function renderResults(m) {
     </div>`;
   } else if (m.anonymous && r.turnout_names && r.turnout_names.length) {
     html += `<div class="anon-list">
-      <b>hanno partecipato (anonimo: nessuno vede chi ha votato cosa)</b>
+      <b>hanno partecipato · voto nascosto agli altri partecipanti</b>
       ${r.turnout_names.map(escapeHtml).join(' · ')}
     </div>`;
   }
@@ -2612,6 +2636,7 @@ function renderElectionCard(el) {
         <span><b>durata</b> ${fmtDuration(new Date(el.closes_at) - new Date(el.opens_at))}</span>
         <span><b>chiude</b> ${fmtDate(el.closes_at)}</span>
       </div>
+      ${el.anonymous ? `<p class="your-vote">${ANONYMITY_NOTICE}</p>` : ''}
       ${st === 'open' ? `<div class="card-clock"><span class="clock-label">rimane</span><span class="clock-value countdown${remMsEl < 30000 ? ' urgent' : ''}" data-closes="${el.closes_at}">${fmtCountdown(remMsEl)}</span></div>` : ''}
       ${body}
       ${isAdmin ? `<div style="margin-top:1rem;text-align:right;padding-top:1rem;border-top:1px solid var(--line)"><button class="btn btn-ghost btn-small btn-danger" data-delete-election="${el.id}">elimina elezione</button></div>` : ''}
@@ -2815,7 +2840,7 @@ async function loadProposals() {
       id + (r?.total ?? 0) + (isAdm ? (r?.responses?.length ?? 0) : (r?.my_response ?? ''))
     )
   });
-  if (newSig !== _proposalsSig) { _proposalsSig = newSig; renderProposals(); }
+  if (newSig !== _proposalsSig && renderProposals()) _proposalsSig = newSig;
 }
 
 function proposalStatusOf(p) {
@@ -2827,11 +2852,19 @@ function proposalStatusOf(p) {
 
 function renderProposals() {
   const list = $('#proposals-list');
-  if (!allProposals.length) { list.innerHTML = ''; return; }
+  if (!allProposals.length) { list.innerHTML = ''; return true; }
   // non ricostruire se l'utente sta scrivendo in una textarea
-  if (document.activeElement && document.activeElement.classList.contains('resp-area')) return;
+  if (document.activeElement && document.activeElement.classList.contains('resp-area')) return false;
 
   list.innerHTML = allProposals.map(renderProposalCard).join('');
+  for (const textarea of list.querySelectorAll('.resp-area[data-proposal]')) {
+    const id = textarea.dataset.proposal;
+    if (proposalDrafts.has(id)) textarea.value = proposalDrafts.get(id);
+    textarea.addEventListener('input', () => {
+      if (textarea.value === textarea.defaultValue) proposalDrafts.delete(id);
+      else proposalDrafts.set(id, textarea.value);
+    });
+  }
 
   $$('[data-submit-proposal]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2843,6 +2876,7 @@ function renderProposals() {
   $$('[data-delete-proposal]').forEach(btn => {
     btn.addEventListener('click', () => deleteProposal(btn.dataset.deleteProposal));
   });
+  return true;
 }
 
 function renderProposalCard(p) {
@@ -2946,6 +2980,11 @@ async function submitProposalResponse(proposalId, text) {
   if (error) { toast('errore: ' + error.message, true); return; }
   if (data?.error) { toast('errore: ' + data.error, true); return; }
 
+  const textarea = document.querySelector(`.resp-area[data-proposal="${proposalId}"]`);
+  if (!textarea || textarea.value.trim() === text) {
+    proposalDrafts.delete(proposalId);
+    if (textarea) textarea.defaultValue = textarea.value;
+  }
   buzz(18);
   toast('risposta inviata.');
   _proposalsSig = '';
@@ -2956,6 +2995,7 @@ async function deleteProposal(id) {
   if (!confirm('eliminare questa raccolta e tutte le risposte? operazione irreversibile.')) return;
   const { error } = await supabase.from('proposals').delete().eq('id', id);
   if (error) { toast('errore: ' + error.message, true); return; }
+  proposalDrafts.delete(id);
   toast('raccolta eliminata.');
   await loadProposals();
 }
@@ -2992,6 +3032,14 @@ $('#proposal-form').addEventListener('submit', async (e) => {
 function refreshElectionCandidatesList() {
   const container = $('#e-candidates-list');
   if (!container) return;
+  const signature = JSON.stringify(allMembers.map(m => [m.id, m.name, m.classe]));
+  // Il polling non deve ricreare i campi mentre l'admin prepara l'elezione.
+  if (container.dataset.membersSignature === signature) return;
+  const selected = new Set([...container.querySelectorAll('input[name="e-candidate"]:checked')]
+    .map(input => input.value));
+  const focused = document.activeElement;
+  const focusedId = container.contains(focused) && focused?.name === 'e-candidate' ? focused.value : null;
+  container.dataset.membersSignature = signature;
   if (!allMembers.length) {
     container.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:0.2rem">nessun membro attivo</div>';
     return;
@@ -3002,6 +3050,11 @@ function refreshElectionCandidatesList() {
       <span>${escapeHtml(m.name)}${m.classe ? ' · <span style="color:var(--muted);font-size:11px">' + escapeHtml(m.classe) + '</span>' : ''}</span>
     </label>`
   ).join('');
+  for (const input of container.querySelectorAll('input[name="e-candidate"]')) {
+    // Usa la proprietà, così il normale reset del modulo azzera le selezioni.
+    input.checked = selected.has(input.value);
+    if (input.value === focusedId) input.focus({ preventScroll: true });
+  }
 }
 
 $('#election-form').addEventListener('submit', async (e) => {

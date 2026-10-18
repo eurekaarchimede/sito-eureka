@@ -86,10 +86,9 @@ alter table public.motions enable row level security;
 alter table public.votes   enable row level security;
 
 -- ---- members ----
+-- The roster contains email and class. Only admins need to read it;
+-- members_admin_all below provides that access after is_admin() succeeds.
 drop policy if exists members_read       on public.members;
-create policy members_read on public.members
-  for select to authenticated
-  using ((select id from public.current_member()) is not null);
 
 drop policy if exists members_admin_all  on public.members;
 create policy members_admin_all on public.members
@@ -146,7 +145,14 @@ create policy votes_update_own on public.votes
         and now() between m.opens_at and m.closes_at
     )
   )
-  with check (member_id = (select id from public.current_member()));
+  with check (
+    member_id = (select id from public.current_member())
+    and exists (
+      select 1 from public.motions m
+      where m.id = motion_id
+        and now() between m.opens_at and m.closes_at
+    )
+  );
 
 drop policy if exists votes_admin_all    on public.votes;
 create policy votes_admin_all on public.votes

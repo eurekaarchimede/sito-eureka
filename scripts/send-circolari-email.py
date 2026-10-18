@@ -14,7 +14,6 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED_PATH = ROOT / 'assets/scuola/feed.json'
-PUSH_LEDGER_PATH = ROOT / 'assets/scuola/notifiche-inviate.json'
 EMAIL_LEDGER_PATH = ROOT / 'assets/scuola/email-inviate.json'
 CONFIG_PATH = ROOT / 'assets/notifications/config.json'
 SITE_URL = 'https://eurekaarchimede.it/#scuola'
@@ -68,14 +67,21 @@ def save_ledger(sent):
 def main():
     feed = json.loads(FEED_PATH.read_text(encoding='utf-8'))
     config = json.loads(CONFIG_PATH.read_text(encoding='utf-8'))
-    push_ledger = json.loads(PUSH_LEDGER_PATH.read_text(encoding='utf-8'))
-    # Prima attivazione: considera già gestite le circolari precedenti al servizio email.
-    baseline = set(push_ledger.get('urls', []))
-    email_ledger = json.loads(EMAIL_LEDGER_PATH.read_text(encoding='utf-8')) if EMAIL_LEDGER_PATH.exists() else {}
-    sent = set(email_ledger.get('urls', baseline))
     circulars = [item for item in feed.get('circolari', [])
                  if isinstance(item, dict) and isinstance(item.get('url'), str)
                  and item['url'].startswith('https://www.liceoarchimedeme.edu.it/circolare/')]
+    # Bootstrap esplicito: fotografa una volta il catalogo attuale, senza inviare
+    # arretrati. I giri successivi usano solo questo registro, indipendente dal push.
+    if not EMAIL_LEDGER_PATH.exists():
+        baseline = {digest(item['url']) for item in circulars}
+        if os.environ.get('DRY_RUN') == 'true':
+            print(f'Simulazione: inizializzazione registro email con {len(baseline)} circolari; nessun invio o salvataggio')
+        else:
+            save_ledger(baseline)
+            print(f'Registro email inizializzato con {len(baseline)} circolari; nessun arretrato inviato')
+        return 0
+    email_ledger = json.loads(EMAIL_LEDGER_PATH.read_text(encoding='utf-8'))
+    sent = set(email_ledger.get('urls', []))
     pending = [item for item in circulars if digest(item['url']) not in sent]
     if not pending:
         print('nessuna nuova circolare da inviare via email')

@@ -295,6 +295,8 @@
       if (inView) { if (started) refresh(); else start(); }
       else scheduleRefresh();
     }, { rootMargin: '300px' });
-    observer.observe(section);
+    // Carica il catalogo quando si avvicinano le liste, non già nell'hero:
+    // il blocco istruzioni/email può precederle di più schermate su mobile.
+    observer.observe(list.closest('.scuola-grid') || section);
   } else start();
 })();

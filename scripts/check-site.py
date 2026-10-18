@@ -355,7 +355,7 @@ class Checker:
                 self.fail("HTML", "index.html ed eureka.html non sono identici")
         except OSError as error:
             self.fail("HTML", "impossibile confrontare i due file: %s" % error)
-        for path in (index, alias):
+        for path in (index, alias, self.root / "404.html"):
             parser = self.html(path)
             for value, kind, line in parser.references:
                 self.reference(value, path, "%s:%d %s" % (self.label(path), line, kind), parser.base)

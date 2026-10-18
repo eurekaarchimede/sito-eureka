@@ -94,8 +94,11 @@ if (!token) {
 }
 
 const getJSON = async (url) => {
-  const res = await fetch(url);
-  const body = await res.json().catch(() => ({}));
+  const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
+  const body = await res.json().catch(error => {
+    if (res.ok) throw error; // un timeout del body non è un feed vuoto valido
+    return {};
+  });
   if (!res.ok) {
     const msg = body && body.error ? body.error.message : `HTTP ${res.status}`;
     throw new Error(msg);
@@ -186,7 +189,7 @@ for (const p of raw) {
 
   if (!existsSync(path)) {
     try {
-      const res = await fetch(src);
+      const res = await fetch(src, { signal: AbortSignal.timeout(20000) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       writeFileSync(path, Buffer.from(await res.arrayBuffer()));
       downloaded++;
