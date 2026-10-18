@@ -943,13 +943,24 @@ a.proj-card {
 .scuola-email-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
 .scuola-email-form label { color: var(--cream); font-size: 0.84rem; font-weight: 600; }
 .scuola-email-form input[type="email"],
-.scuola-email-form input[type="password"] {
+.scuola-email-form input[type="password"],
+.scuola-email-code-field input[type="text"] {
   display: block; width: 100%; min-height: 3rem; margin-top: 0.4rem; padding: 0.75rem 0.9rem;
   border: 1px solid rgba(247, 238, 213, 0.2); border-radius: 9px; background: rgba(10, 22, 50, 0.62);
   color: var(--cream); font: inherit; font-size: 1rem;
 }
+.scuola-email-code-field { position: relative; margin-top: 0.4rem; }
+.scuola-email-code-field input[type="password"],
+.scuola-email-code-field input[type="text"] { margin-top: 0; padding-right: 5rem; }
+.scuola-email-code-toggle {
+  position: absolute; top: 50%; right: 0.8rem; transform: translateY(-50%);
+  border: 0; padding: 0.35rem; background: transparent; color: var(--gold-bright);
+  font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+}
+.scuola-email-code-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 .scuola-email-form input[type="email"]:focus-visible,
 .scuola-email-form input[type="password"]:focus-visible,
+.scuola-email-code-field input[type="text"]:focus-visible,
 .scuola-email-form input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .scuola-email-consent { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 0.55rem; }
 .scuola-email-consent input { flex: none; margin-top: 0.2rem; accent-color: var(--gold); }
@@ -1639,14 +1650,17 @@ html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after 
       <h3 id="scuola-email-title">Avvisi email riservati ai professori</h3>
       <p class="scuola-email-audience">Solo docenti</p>
       <p class="scuola-email-notice">L’iscrizione è riservata ai professori del liceo Archimede. Per completarla serve il codice condiviso con i docenti.</p>
-      <p>Puoi sempre disiscriverti dal link presente in ogni email.</p>
+      <p>Non riceverai una mail di conferma: gli avvisi arriveranno quando verrà rilevata una nuova circolare. Puoi sempre disiscriverti dal link presente in ogni email.</p>
       <p class="privacy-notice">Prima di iscriverti, leggi l’<a href="privacy.html">informativa privacy</a>.</p>
       <form class="scuola-email-form" id="scuola-email-form">
         <label for="scuola-email">La tua email
           <input id="scuola-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="nome@example.com" required>
         </label>
         <label for="scuola-email-code">Codice riservato ai docenti
-          <input id="scuola-email-code" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
+          <span class="scuola-email-code-field">
+            <input id="scuola-email-code" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Inserisci il codice" required>
+            <button class="scuola-email-code-toggle" id="scuola-email-code-toggle" type="button" aria-controls="scuola-email-code" aria-pressed="false">Mostra</button>
+          </span>
         </label>
         <button class="scuola-email-submit" id="scuola-email-submit" type="submit">Iscrivimi via email</button>
         <label class="scuola-email-consent" for="scuola-email-consent">
@@ -2791,7 +2805,7 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
 
 <script src="assets/scuola/board.js?v=4" defer></script>
 
-<script src="assets/notifications/push.js?v=7" defer></script>
+<script src="assets/notifications/push.js?v=8" defer></script>
 
 </body>
 </html>

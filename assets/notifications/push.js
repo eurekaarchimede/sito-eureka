@@ -4,6 +4,8 @@
   const emailForm = document.getElementById('scuola-email-form');
   const emailStatus = document.getElementById('scuola-email-status');
   const emailSubmit = document.getElementById('scuola-email-submit');
+  const emailCode = document.getElementById('scuola-email-code');
+  const emailCodeToggle = document.getElementById('scuola-email-code-toggle');
   const install = document.getElementById('scuola-install');
   if (!button || !status) return;
 
@@ -18,6 +20,12 @@
   const isEmbeddedBrowser = /Instagram|FBAN|FBAV/i.test(navigator.userAgent);
   const say = message => { status.textContent = message; status.hidden = !message; };
   const sayEmail = message => { emailStatus.textContent = message; emailStatus.hidden = !message; };
+  emailCodeToggle?.addEventListener('click', () => {
+    const isVisible = emailCode.type === 'text';
+    emailCode.type = isVisible ? 'password' : 'text';
+    emailCodeToggle.textContent = isVisible ? 'Mostra' : 'Nascondi';
+    emailCodeToggle.setAttribute('aria-pressed', String(!isVisible));
+  });
   const subscribed = () => !!(oneSignal?.User.PushSubscription.optedIn && oneSignal.User.PushSubscription.id);
   const syncButton = () => {
     if (isEmbeddedBrowser) { button.textContent = isAppleMobile ? 'apri in Safari' : 'apri in Chrome'; return; }
@@ -76,7 +84,7 @@
         await withTimeout(Promise.resolve(sdk.User.addEmail(email)), 15000,
           'OneSignal non ha confermato l’iscrizione email');
         emailForm.reset();
-        sayEmail('Iscrizione completata. Puoi disiscriverti dal link presente in ogni email.');
+        sayEmail('Iscrizione registrata. Riceverai gli avvisi quando verrà rilevata una nuova circolare.');
       } catch (error) {
         console.error('Iscrizione email non riuscita.', error);
         sayEmail(error?.message === 'Codice docenti non valido'
