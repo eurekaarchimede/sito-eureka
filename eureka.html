@@ -1121,23 +1121,7 @@ a.proj-card {
 }
 .member:hover .photo img { transform: scale(1.06); filter: saturate(1.15) brightness(1.06); }
 .member .photo { overflow: hidden; }
-/* Ritratti: esclude cornici, classi e numeri dei vecchi santini. */
 #rappresentanti { scroll-margin-top: 1rem; }
-.member .photo img {
-  max-width: none;
-  width: var(--portrait-scale);
-  height: var(--portrait-scale);
-  left: var(--portrait-x);
-  top: var(--portrait-y);
-  object-fit: fill;
-  transform-origin: var(--portrait-origin);
-}
-.portrait--giacomo-warm { --portrait-scale: 225.0000%; --portrait-x: -73.4375%; --portrait-y: -66.2500%; --portrait-origin: 54.8611% 51.6667%; }
-.portrait--giulia-perri { --portrait-scale: 218.1818%; --portrait-x: -65.1515%; --portrait-y: -70.3030%; --portrait-origin: 52.7778% 55.1389%; }
-.portrait--marco-cangelosi { --portrait-scale: 225.0000%; --portrait-x: -68.7500%; --portrait-y: -71.2500%; --portrait-origin: 52.7778% 53.8889%; }
-.portrait--paolo-arigo { --portrait-scale: 204.5455%; --portrait-x: -56.2500%; --portrait-y: -68.1818%; --portrait-origin: 51.9444% 57.7778%; }
-.portrait--giorgio-bensaia { --portrait-scale: 218.1818%; --portrait-x: -66.6667%; --portrait-y: -67.8788%; --portrait-origin: 53.4722% 54.0278%; }
-.portrait--nethma { --portrait-scale: 240.0000%; --portrait-x: -75.0000%; --portrait-y: -97.3333%; --portrait-origin: 52.0833% 61.3889%; }
 
 .member .info {
   display: flex;
@@ -1889,21 +1873,21 @@ footer a { display: inline-flex; align-items: center; }
       </div>
       <div class="roster cols-3">
         <a class="member reveal current-rep" href="https://www.instagram.com/giacomo_warm/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di giacomo warm, si apre in una nuova scheda">
-          <div class="photo portrait--giacomo-warm"><img src="assets/optimized/foto/giacomo-warm.jpg" width="600" height="750" alt="giacomo warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
+          <div class="photo"><img src="assets/optimized/foto/giacomo-warm.jpg" width="600" height="750" alt="giacomo warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giacomo warm</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
           </div>
         </a>
         <a class="member reveal current-rep" href="https://www.instagram.com/giuliaperri__/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di giulia perri, si apre in una nuova scheda">
-          <div class="photo portrait--giulia-perri"><img src="assets/optimized/foto/giulia-perri.jpg" width="600" height="750" alt="giulia perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
+          <div class="photo"><img src="assets/optimized/foto/giulia-perri.jpg" width="600" height="750" alt="giulia perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giulia perri</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
           </div>
         </a>
         <a class="member reveal current-rep" href="https://www.instagram.com/_marcocangelosi/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di marco cangelosi, si apre in una nuova scheda">
-          <div class="photo portrait--marco-cangelosi"><img src="assets/optimized/foto/marco-cangelosi.jpg" width="600" height="750" alt="marco cangelosi" loading="lazy" decoding="async" onerror="this.remove()">m</div>
+          <div class="photo"><img src="assets/optimized/foto/marco-cangelosi.jpg" width="600" height="750" alt="marco cangelosi" loading="lazy" decoding="async" onerror="this.remove()">m</div>
           <div class="info">
             <h4 class="name">marco cangelosi</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
@@ -1920,14 +1904,14 @@ footer a { display: inline-flex; align-items: center; }
       </div>
       <div class="roster cols-2">
         <a class="member reveal current-rep" href="https://www.instagram.com/paolo_arigo/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di paolo arigo, si apre in una nuova scheda">
-          <div class="photo portrait--paolo-arigo"><img src="assets/optimized/foto/paolo-arigo.jpg" width="600" height="750" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
+          <div class="photo"><img src="assets/optimized/foto/paolo-arigo.jpg" width="600" height="750" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
           <div class="info">
             <h4 class="name">paolo arigo</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
           </div>
         </a>
         <a class="member reveal current-rep" href="https://www.instagram.com/giorgiobensaiaofficial_/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di giorgio bensaia, si apre in una nuova scheda">
-          <div class="photo portrait--giorgio-bensaia"><img src="assets/optimized/foto/giorgio-bensaia.jpg" width="600" height="750" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
+          <div class="photo"><img src="assets/optimized/foto/giorgio-bensaia.jpg" width="600" height="750" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giorgio bensaia</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
@@ -1944,7 +1928,7 @@ footer a { display: inline-flex; align-items: center; }
       </div>
       <div class="roster cols-2">
         <a class="member reveal current-rep" href="https://www.instagram.com/anuhas.nethma_/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di nethma, si apre in una nuova scheda">
-          <div class="photo portrait--nethma"><img src="assets/optimized/foto/nethma.jpg" width="600" height="750" alt="nethma" loading="lazy" decoding="async" onerror="this.remove()">n</div>
+          <div class="photo"><img src="assets/optimized/foto/nethma.jpg" width="600" height="750" alt="nethma" loading="lazy" decoding="async" onerror="this.remove()">n</div>
           <div class="info">
             <h4 class="name">nethma</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
