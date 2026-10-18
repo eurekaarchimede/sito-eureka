@@ -193,7 +193,7 @@ def write_version():
     VERSION_OUTPUT.write_text(json.dumps(version, separators=(",", ":")) + "\n")
 
 
-def main():
+def run():
     parser = argparse.ArgumentParser()
     parser.add_argument("--full", action="store_true", help="rileggi tutte le pagine dell'archivio")
     args = parser.parse_args()
@@ -260,5 +260,19 @@ def main():
     print(f"Aggiornati orari e {len(circolari)} circolari ({limit} pagine lette, {failures} PDF non letti)")
 
 
+def main():
+    try:
+        run()
+    except HTTPError as error:
+        if error.code not in {408, 425, 429, 500, 502, 503, 504}:
+            raise
+        print(f"Fonte scolastica temporaneamente non raggiungibile (HTTP {error.code}); catalogo precedente conservato.")
+        return 2
+    except (URLError, TimeoutError, socket.timeout, ssl.SSLError, http.client.HTTPException) as error:
+        print(f"Fonte scolastica temporaneamente non raggiungibile ({error}); catalogo precedente conservato.")
+        return 2
+    return 0
+
+
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

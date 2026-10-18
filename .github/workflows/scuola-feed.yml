@@ -50,10 +50,19 @@ jobs:
         with:
           python-version: '3.12'
       - name: leggi il sito della scuola
+        id: school_feed
         if: steps.window.outputs.active == 'true' && inputs.test_push != true
-        run: python3 scripts/fetch-scuola.py
+        run: |
+          if python3 scripts/fetch-scuola.py; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            result=$?
+            if [ "$result" -ne 2 ]; then exit "$result"; fi
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Fonte scolastica temporaneamente non raggiungibile::Nessun dato è stato sostituito e gli invii sono saltati. Il prossimo controllo riproverà automaticamente."
+          fi
       - name: salva i nuovi avvisi
-        if: steps.window.outputs.active == 'true' && inputs.test_push != true
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true && steps.school_feed.outputs.available == 'true'
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -67,7 +76,7 @@ jobs:
           fi
       - name: notifica le nuove circolari
         id: push_notification
-        if: steps.window.outputs.active == 'true' || inputs.test_push == true
+        if: (steps.window.outputs.active == 'true' && steps.school_feed.outputs.available == 'true') || inputs.test_push == true
         continue-on-error: true
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
@@ -84,12 +93,12 @@ jobs:
             python3 scripts/send-circolari-notification.py
           fi
       - name: invia le nuove circolari via email
-        if: steps.window.outputs.active == 'true' && inputs.test_push != true
+        if: steps.window.outputs.active == 'true' && inputs.test_push != true && steps.school_feed.outputs.available == 'true'
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
         run: python3 scripts/send-circolari-email.py
       - name: salva i registri delle notifiche
-        if: always() && steps.window.outputs.active == 'true' && inputs.test_push != true
+        if: always() && steps.window.outputs.active == 'true' && inputs.test_push != true && steps.school_feed.outputs.available == 'true'
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
