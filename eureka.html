@@ -1519,7 +1519,13 @@ footer a { display: inline-flex; align-items: center; }
 .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: stretch; }
 .shop-product { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); box-shadow: 0 0 12px rgba(245, 205, 71, .12); }
 .shop-gallery { display: grid; place-items: center; position: relative; overflow: hidden; aspect-ratio: 1 / 1; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
+.shop-product__zoom { display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.shop-product__zoom:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
 .shop-product__image { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.shop-lightbox { position: fixed; inset: 50% auto auto 50%; width: min(92vw, 760px); max-width: none; max-height: 92dvh; overflow: visible; transform: translate(-50%, -50%); padding: clamp(.75rem, 2vw, 1.25rem); border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); color: var(--cream); box-shadow: 0 24px 90px rgba(0, 0, 0, .6); }
+.shop-lightbox::backdrop { background: rgba(3, 8, 20, .84); backdrop-filter: blur(5px); }
+.shop-lightbox__image { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(92dvh - 2.5rem); margin: auto; object-fit: contain; }
+.shop-lightbox__close { position: absolute; z-index: 1; top: .5rem; right: .5rem; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--shop-outline); border-radius: 50%; background: var(--shop-deep); color: var(--cream); font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
 .shop-product__image[data-original-mask="true"] { width: 92%; height: 92%; margin: auto; -webkit-mask-image: url("assets/shop/dreams-silhouette-v4.svg"); mask-image: url("assets/shop/dreams-silhouette-v4.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
@@ -1954,7 +1960,10 @@ footer .footer-credit {
       </article>
     </div>
 
-
+    <dialog class="shop-lightbox" id="shop-lightbox" aria-label="Vista ingrandita della maglietta">
+      <button class="shop-lightbox__close" type="button" aria-label="Chiudi immagine ingrandita">×</button>
+      <img class="shop-lightbox__image" alt="" decoding="async">
+    </dialog>
   </div>
 </section>
 
@@ -2488,12 +2497,29 @@ else reducedMotion.addListener(stopReveals);
 
 // ===== SHOP: viste e colori delle magliette =====
 (() => {
+  const lightbox = document.getElementById('shop-lightbox');
+  const lightboxImage = lightbox?.querySelector('.shop-lightbox__image');
+  const lightboxClose = lightbox?.querySelector('.shop-lightbox__close');
+
   document.querySelectorAll('[data-shop-gallery]').forEach(gallery => {
     const image = gallery.querySelector('.shop-product__image');
     const chooseButtons = gallery.querySelectorAll('[data-shop-color-choice]');
     const sideButtons = gallery.querySelectorAll('[data-shop-side]');
     let chosenColor = gallery.dataset.color || 'nero';
     let chosenSide = 'retro';
+    const zoomButton = document.createElement('button');
+    zoomButton.type = 'button';
+    zoomButton.className = 'shop-product__zoom';
+    zoomButton.setAttribute('aria-label', `Ingrandisci: ${image.alt}`);
+    image.parentNode.insertBefore(zoomButton, image);
+    zoomButton.append(image);
+    zoomButton.addEventListener('click', () => {
+      if (!lightbox || !lightboxImage || typeof lightbox.showModal !== 'function') return;
+      lightboxImage.src = image.currentSrc || image.src;
+      lightboxImage.alt = image.alt;
+      lightbox.showModal();
+      lightboxClose?.focus({ preventScroll: true });
+    });
     const refreshImage = () => {
       const sideLabel = chosenSide === 'fronte' ? 'Fronte' : 'Retro';
       const src = image.dataset[`${chosenColor}${sideLabel}`];
@@ -2502,6 +2528,7 @@ else reducedMotion.addListener(stopReveals);
       image.dataset.originalMask = String(src.endsWith('-crop.webp'));
       const colorLabel = { nero: 'nera', bianco: 'bianca', fucsia: 'fucsia', navy: 'blu navy', burgundy: 'burgundy' }[chosenColor] || chosenColor;
       image.alt = `Maglietta ${colorLabel}, vista ${chosenSide}, ${gallery.dataset.label}`;
+      zoomButton.setAttribute('aria-label', `Ingrandisci: ${image.alt}`);
     };
     chooseButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -2519,7 +2546,12 @@ else reducedMotion.addListener(stopReveals);
     });
   });
 
-
+  lightboxClose?.addEventListener('click', () => lightbox.close());
+  lightbox?.addEventListener('click', event => {
+    const bounds = lightbox.getBoundingClientRect();
+    const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+    if (!inside) lightbox.close();
+  });
 })();
 
 // ===== MENU TOUCH E TASTIERA =====
