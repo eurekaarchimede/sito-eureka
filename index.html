@@ -131,7 +131,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: .65;
+  opacity: .76;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -380,7 +380,7 @@ nav .ig:hover {
     background-position: center 42%;
     opacity: .50;
   }
-  .scroll-stars { opacity: .70; }
+  .scroll-stars { opacity: .82; }
   .school-scene { width: min(84vw, 520px); }
 }
 @media (max-width: 600px) and (orientation: portrait) {
@@ -766,12 +766,18 @@ a.proj-card {
 /* ===== SCUOLA: ORARI E CIRCOLARI ===== */
 .scuola {
   border-top: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(17, 32, 69, 0.72), rgba(10, 22, 50, 0.72));
+  background: linear-gradient(180deg, rgba(17, 32, 69, 0.28), rgba(10, 22, 50, 0.28));
 }
 .scuola .head { max-width: 780px; margin-bottom: 3rem; }
 .scuola .head p { color: var(--beige-dim); font-size: clamp(1rem, 1.5vw, 1.2rem); }
 .scuola-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); }
 .scuola-panel { min-width: 0; }
+.scuola-panel-circolari {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid rgba(247, 238, 213, 0.14);
+  border-radius: 1rem;
+  background: rgba(10, 22, 50, 0.84);
+}
 .scuola-panel h3 {
   color: var(--cream);
   font-size: clamp(1.5rem, 2.5vw, 2.3rem);
@@ -1660,7 +1666,7 @@ footer a { display: inline-flex; align-items: center; }
           <a class="scuola-card" href="https://www.liceoarchimedeme.edu.it/argomento/orario/" target="_blank" rel="noopener"><span><strong>consulta gli orari</strong><small>sul sito ufficiale</small></span><span class="arrow" aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <div class="scuola-panel reveal">
+      <div class="scuola-panel scuola-panel-circolari reveal">
         <h3>tutte le circolari.</h3>
         <p>dalla più recente. PDF diretto quando disponibile, scheda ufficiale negli altri casi.</p>
         <div class="scuola-filters" role="group" aria-label="filtra le circolari">
