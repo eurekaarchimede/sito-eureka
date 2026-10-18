@@ -1546,16 +1546,6 @@ footer a { display: inline-flex; align-items: center; }
 .shop-colors { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1rem; }
 .shop-colors button { min-height: 44px; border: 1px solid var(--line); border-radius: 999px; padding: .4rem .75rem; background: transparent; color: var(--beige); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-colors button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
-.shop-contact { max-width: 850px; margin: 2.5rem auto 0; padding: clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--line); border-radius: 20px; background: rgba(10, 22, 50, .84); }
-.shop-contact h3 { color: var(--cream); font-size: clamp(1.3rem, 3vw, 1.8rem); }
-.shop-contact > p { margin-top: .45rem; color: var(--beige-dim); font-size: .9rem; }
-.shop-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.35rem; }
-.shop-form label { display: grid; gap: .45rem; color: var(--beige); font-size: .78rem; font-weight: 600; }
-.shop-form input { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--bg-soft); color: var(--cream); font: inherit; font-size: 1rem; text-transform: none; }
-.shop-form input:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
-.shop-form .shop-form__wide { grid-column: 1 / -1; }
-.shop-submit { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1px solid var(--gold); border-radius: 999px; padding: .75rem 1.2rem; background: var(--gold); color: var(--bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; width: 100%; }
-.shop-submit:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 @media (max-width: 1050px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) {
   .shop-grid { grid-template-columns: 1fr; gap: .9rem; }
@@ -1564,8 +1554,6 @@ footer a { display: inline-flex; align-items: center; }
   .shop-product__body { padding: 1rem; }
   .shop-product h3 { font-size: 1rem; }
   .shop-product__description { font-size: .78rem; }
-  .shop-form { grid-template-columns: 1fr; }
-  .shop-form .shop-form__wide { grid-column: auto; }
 }
 @media (max-width: 380px) {
   .shop-product__body { padding: .85rem; }
@@ -1781,7 +1769,7 @@ footer a { display: inline-flex; align-items: center; }
     <div class="head reveal">
       <div class="section-label">02 / merchandising</div>
       <h2 class="h2">la collezione <em>eureka!</em></h2>
-      <p>tre grafiche, da vedere fronte e retro.</p>
+      <p>cinque grafiche, da vedere fronte e retro.</p>
     </div>
 
     <div class="shop-grid">
@@ -1835,25 +1823,45 @@ footer a { display: inline-flex; align-items: center; }
           </div>
         </div>
       </article>
+      <article class="shop-product reveal" data-shop-gallery data-label="BULB" data-color="bianco">
+        <div class="shop-gallery">
+          <img class="shop-product__image" src="assets/shop/bulb-bianco-retro.svg" data-bianco-fronte="assets/shop/bulb-bianco-fronte.svg" data-bianco-retro="assets/shop/bulb-bianco-retro.svg" data-nero-fronte="assets/shop/bulb-nero-fronte.svg" data-nero-retro="assets/shop/bulb-nero-retro.svg" data-navy-fronte="assets/shop/bulb-navy-fronte.svg" data-navy-retro="assets/shop/bulb-navy-retro.svg" data-burgundy-fronte="assets/shop/bulb-burgundy-fronte.svg" data-burgundy-retro="assets/shop/bulb-burgundy-retro.svg" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglia bianca, vista retro, modello BULB">
+        </div>
+        <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
+          <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
+          <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
+        </div>
+        <div class="shop-product__body">
+          <h3>bulb.</h3>
+          <p class="shop-product__description">fronte con la scritta eureka! e retro con la lampadina disegnata.</p>
+          <div class="shop-colors" role="group" aria-label="Colore della maglia">
+            <button type="button" data-shop-color-choice="bianco" aria-pressed="true">bianco</button>
+            <button type="button" data-shop-color-choice="nero" aria-pressed="false">nero</button>
+            <button type="button" data-shop-color-choice="navy" aria-pressed="false">blu navy</button>
+            <button type="button" data-shop-color-choice="burgundy" aria-pressed="false">burgundy</button>
+          </div>
+        </div>
+      </article>
+      <article class="shop-product reveal" data-shop-gallery data-label="YOUR OPINION" data-color="bianco">
+        <div class="shop-gallery">
+          <img class="shop-product__image" src="assets/shop/your-opinion-bianco-retro.svg" data-bianco-fronte="assets/shop/your-opinion-bianco-fronte.svg" data-bianco-retro="assets/shop/your-opinion-bianco-retro.svg" data-nero-fronte="assets/shop/your-opinion-nero-fronte.svg" data-nero-retro="assets/shop/your-opinion-nero-retro.svg" width="1000" height="1250" loading="lazy" decoding="async" alt="Maglia bianca, vista retro, modello YOUR OPINION">
+        </div>
+        <div class="shop-gallery__views" role="group" aria-label="Seleziona la vista">
+          <button type="button" data-shop-side="fronte" aria-pressed="false">fronte</button>
+          <button type="button" data-shop-side="retro" aria-pressed="true">retro</button>
+        </div>
+        <div class="shop-product__body">
+          <h3>your opinion.</h3>
+          <p class="shop-product__description">fronte con la scritta eureka! e retro con la grafica “your opinion”.</p>
+          <div class="shop-colors" role="group" aria-label="Colore della maglia">
+            <button type="button" data-shop-color-choice="bianco" aria-pressed="true">bianco</button>
+            <button type="button" data-shop-color-choice="nero" aria-pressed="false">nero</button>
+          </div>
+        </div>
+      </article>
     </div>
 
-    <div class="shop-contact reveal" id="shop-contact">
-      <h3>ti interessa una maglietta?</h3>
-      <p>lascia i tuoi dati e continua la conversazione su WhatsApp: i dettagli li definiamo in privato.</p>
-      <p class="privacy-notice">Se continui, nome, cognome e classe saranno inseriti nel messaggio WhatsApp. <a href="privacy.html">Informativa privacy</a>.</p>
-      <form class="shop-form" id="shop-form">
-        <label>nome
-          <input name="firstName" type="text" autocomplete="given-name" maxlength="40" required>
-        </label>
-        <label>cognome
-          <input name="lastName" type="text" autocomplete="family-name" maxlength="50" required>
-        </label>
-        <label class="shop-form__wide">classe (es. 5A)
-          <input name="className" type="text" autocomplete="off" maxlength="12" placeholder="5A" required>
-        </label>
-        <button class="shop-submit shop-form__wide" type="submit">continua su WhatsApp <span aria-hidden="true">↗</span></button>
-      </form>
-    </div>
+
   </div>
 </section>
 
@@ -2379,8 +2387,6 @@ else reducedMotion.addListener(stopReveals);
 
 // ===== SHOP: viste e colori delle magliette =====
 (() => {
-  const form = document.getElementById('shop-form');
-
   document.querySelectorAll('[data-shop-gallery]').forEach(gallery => {
     const image = gallery.querySelector('.shop-product__image');
     const chooseButtons = gallery.querySelectorAll('[data-shop-color-choice]');
@@ -2393,7 +2399,7 @@ else reducedMotion.addListener(stopReveals);
       if (!src) return;
       image.src = src;
       image.dataset.originalMask = String(src.endsWith('-crop.webp'));
-      const colorLabel = { nero: 'nera', bianco: 'bianca', fucsia: 'fucsia' }[chosenColor] || chosenColor;
+      const colorLabel = { nero: 'nera', bianco: 'bianca', fucsia: 'fucsia', navy: 'blu navy', burgundy: 'burgundy' }[chosenColor] || chosenColor;
       image.alt = `Maglietta ${colorLabel}, vista ${chosenSide}, ${gallery.dataset.label}`;
     };
     chooseButtons.forEach(button => {
@@ -2412,19 +2418,7 @@ else reducedMotion.addListener(stopReveals);
     });
   });
 
-  if (!form) return;
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    if (!form.reportValidity()) return;
-    const data = new FormData(form);
-    const message = [
-      'Ciao, sono interessato ad una maglietta.',
-      `Nome: ${data.get('firstName')}`,
-      `Cognome: ${data.get('lastName')}`,
-      `Classe: ${data.get('className')}`,
-    ].join('\n');
-    window.location.assign(`https://wa.me/393396484444?text=${encodeURIComponent(message)}`);
-  });
+
 })();
 
 // ===== MENU TOUCH E TASTIERA =====
