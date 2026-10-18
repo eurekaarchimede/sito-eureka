@@ -1521,12 +1521,12 @@ footer a { display: inline-flex; align-items: center; }
 .shop-gallery { display: grid; place-items: center; position: relative; overflow: hidden; aspect-ratio: 1 / 1; background: radial-gradient(ellipse at 50% 42%, var(--shop-soft) 0%, var(--shop-deep) 76%); }
 .shop-product__zoom { display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
 .shop-product__zoom:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
-.shop-product__image { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.shop-product__image { display: block; width: 88%; height: 88%; object-fit: contain; object-position: center; background: transparent; }
 .shop-lightbox { position: fixed; inset: 50% auto auto 50%; width: min(92vw, 760px); max-width: none; max-height: 92dvh; overflow: visible; transform: translate(-50%, -50%); padding: clamp(.75rem, 2vw, 1.25rem); border: 1px solid var(--shop-outline); border-radius: 18px; background: var(--shop-deep); color: var(--cream); box-shadow: 0 24px 90px rgba(0, 0, 0, .6); }
 .shop-lightbox::backdrop { background: rgba(3, 8, 20, .84); backdrop-filter: blur(5px); }
 .shop-lightbox__image { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(92dvh - 2.5rem); margin: auto; object-fit: contain; }
 .shop-lightbox__close { position: absolute; z-index: 1; top: .5rem; right: .5rem; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--shop-outline); border-radius: 50%; background: var(--shop-deep); color: var(--cream); font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
-.shop-product__image[data-original-mask="true"] { width: 92%; height: 92%; margin: auto; -webkit-mask-image: url("assets/shop/dreams-silhouette-v4.svg"); mask-image: url("assets/shop/dreams-silhouette-v4.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.shop-product__image[data-original-mask="true"] { width: 88%; height: 88%; margin: auto; -webkit-mask-image: url("assets/shop/dreams-silhouette-v4.svg"); mask-image: url("assets/shop/dreams-silhouette-v4.svg"); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .shop-gallery__views { display: flex; justify-content: center; gap: .35rem; padding: .45rem 1rem; border-bottom: 1px solid var(--shop-outline); background: var(--shop-deep); }
 .shop-gallery__views button { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; padding: .45rem .75rem; background: transparent; color: var(--beige-dim); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
 .shop-gallery__views button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
@@ -2886,6 +2886,27 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
     } finally { grid.setAttribute('aria-busy', 'false'); }
   };
   onApproach(gallery, load);
+
+  // Il feed viene inserito dopo il caricamento iniziale e può spostare #shop
+  // mentre il browser sta raggiungendo l'ancora. Correggi la posizione a feed pronto.
+  const shopTarget = document.getElementById('shop');
+  let shopNavigationPending = false;
+  document.querySelectorAll('a[href="#shop"]').forEach(link => {
+    link.addEventListener('click', () => {
+      const feedReady = grid.getAttribute('aria-busy') === 'false' && grid.children.length > 0;
+      shopNavigationPending = !feedReady;
+    });
+  });
+  const correctShopAnchor = () => {
+    if (!shopNavigationPending || grid.getAttribute('aria-busy') !== 'false' || !grid.children.length) return;
+    shopNavigationPending = false;
+    requestAnimationFrame(() => shopTarget.scrollIntoView({ block: 'start', behavior: 'auto' }));
+  };
+  new MutationObserver(correctShopAnchor).observe(grid, {
+    attributes: true,
+    attributeFilter: ['aria-busy'],
+    childList: true
+  });
 })();
 
 </script>
