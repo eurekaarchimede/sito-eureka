@@ -1559,6 +1559,110 @@ footer a { display: inline-flex; align-items: center; }
   }
 }
 
+
+/* ===== CTA e footer: chiusura più compatta e raccolta ===== */
+.cta { padding: 2.75rem 1rem 2rem; }
+.cta .super { font-size: .75rem; letter-spacing: .075em; margin-bottom: 1.15rem; }
+.cta h2 {
+  font-size: clamp(2.35rem, 11.7vw, 6rem);
+  line-height: 1;
+  margin-bottom: 1.35rem;
+}
+.cta a.ig-big {
+  min-height: 52px;
+  font-size: 1.08rem;
+  letter-spacing: 0;
+  padding: .75rem 1.15rem;
+}
+footer {
+  padding: 1rem 1.25rem 1.15rem;
+  border-top: 0;
+  background: rgba(10, 22, 50, .35);
+}
+.footer-refined {
+  max-width: 35rem;
+  margin: auto;
+  display: grid;
+  gap: .5rem;
+  text-align: center;
+}
+.footer-navigation {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+.footer-navigation-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+}
+.footer-navigation a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-size: .82rem;
+  letter-spacing: .01em;
+  color: var(--beige);
+  text-decoration: none;
+}
+.footer-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .3rem;
+  font-size: .73rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.footer-meta a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+footer .footer-credit {
+  margin: 0 auto;
+  max-width: 19rem;
+  font-size: .74rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+  color: var(--beige-dim);
+}
+.footer-credit .author { white-space: nowrap; color: var(--cream); }
+.footer-legal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-size: .7rem;
+  letter-spacing: .015em;
+  color: var(--muted);
+}
+.footer-legal a { min-height: 44px; display: inline-flex; align-items: center; color: var(--muted); }
+.footer-navigation a:hover, .footer-meta a:hover, .footer-legal a:hover { color: var(--gold); }
+@media (min-width: 700px) {
+  .footer-navigation { max-width: none; }
+  .footer-refined { gap: .75rem; }
+  footer { padding-bottom: 2rem; }
+  .cta h2 { font-size: clamp(4rem, 8vw, 8rem); }
+}
+
 </style>
 </head>
 <body>
@@ -2048,20 +2152,28 @@ footer a { display: inline-flex; align-items: center; }
 </main>
 
 <footer>
-  <div class="row">
-    <div>© <span id="year"></span> <span class="glow-mini">eureka<span class="bang">!</span></span></div>
-    <div class="center">
-      <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener">instagram</a>
-      <a href="#progetti">progetti</a>
-      <a href="#scuola">circolari</a>
-      <a href="#shop">merchandising</a>
-      <a href="#candidati">candidati</a>
-      <a href="#storia">storia</a>
+  <div class="footer-refined">
+    <nav class="footer-navigation" aria-label="Navigazione nel footer">
+      <div class="footer-navigation-row">
+        <a href="#scuola">circolari</a>
+        <a href="#progetti">progetti</a>
+        <a href="#shop">merchandising</a>
+      </div>
+      <div class="footer-navigation-row">
+        <a href="#candidati">candidati</a>
+        <a href="#storia">storia</a>
+      </div>
+    </nav>
+    <div class="footer-meta">
+      <a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a>
+      <span aria-hidden="true">· messina, it</span>
+    </div>
+    <p class="footer-credit">ideato, realizzato e pubblicato da <span class="author">Giacomo Warm</span></p>
+    <div class="footer-legal">
+      <span>© <span id="year"></span> eureka!</span>
       <a href="privacy.html">privacy</a>
     </div>
-    <div class="right"><a href="https://www.liceoarchimedeme.edu.it" target="_blank" rel="noopener" class="school-link">liceo scientifico archimede</a><span class="footer-location">messina, it</span></div>
   </div>
-  <p class="footer-credit">ideato, realizzato e pubblicato da Giacomo Warm</p>
 </footer>
 
 
