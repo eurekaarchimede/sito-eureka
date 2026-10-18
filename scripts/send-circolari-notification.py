@@ -40,10 +40,13 @@ def main():
     ledger = json.loads(LEDGER_PATH.read_text(encoding='utf-8'))
     config = json.loads(CONFIG_PATH.read_text(encoding='utf-8'))
     sent = set(ledger.get('urls', []))
+    skipped_no_subscribers = set(ledger.get('skipped_no_subscribers', []))
     circulars = [item for item in feed.get('circolari', [])
                  if isinstance(item, dict) and isinstance(item.get('url'), str)
                  and item['url'].startswith('https://www.liceoarchimedeme.edu.it/circolare/')]
-    pending = [item for item in circulars if digest(item['url']) not in sent]
+    pending = [item for item in circulars
+               if digest(item['url']) not in sent
+               and digest(item['url']) not in skipped_no_subscribers]
     if not pending and not args.test and not args.inspect_user:
         print('nessuna nuova circolare')
         return 0
@@ -125,6 +128,29 @@ def main():
         raise RuntimeError(f'OneSignal ha risposto HTTP {error.code}: {detail[:500]}') from error
     except URLError as error:
         raise RuntimeError(f'Connessione a OneSignal non riuscita: {error.reason}') from error
+
+    errors = result.get('errors', [])
+    error_text = errors if isinstance(errors, str) else (
+        ' '.join(str(error) for error in errors)
+        if isinstance(errors, (list, tuple)) else str(errors)
+    )
+    if not result.get('id') and not args.test and 'All included players are not subscribed' in error_text:
+        # Non è un guasto del servizio: OneSignal conferma che non esistono
+        # destinatari push idonei. Non ritentare queste circolari in futuro,
+        # così un'eventuale nuova iscrizione non riceverà un arretrato in blocco.
+        skipped_no_subscribers.update(digest(item['url']) for item in pending)
+        ledger['version'] = 1
+        ledger['urls'] = sorted(sent)
+        ledger['skipped_no_subscribers'] = sorted(skipped_no_subscribers)
+        with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=LEDGER_PATH.parent,
+                                         delete=False) as temp:
+            json.dump(ledger, temp, ensure_ascii=False, separators=(',', ':'))
+            temp.write('\n')
+            temp_path = Path(temp.name)
+        temp_path.replace(LEDGER_PATH)
+        print(f'push saltate per {len(pending)} circolare/i: nessun dispositivo iscritto; '
+              'nessun arretrato verrà inviato')
+        return 0
 
     if not result.get('id'):
         raise RuntimeError('OneSignal non ha creato la notifica (nessun destinatario iscritto o raggiungibile). '
