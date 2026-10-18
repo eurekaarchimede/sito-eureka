@@ -2094,9 +2094,12 @@ if (navigationType === 'reload') {
 const siteMotion = (() => {
   const system = window.matchMedia('(prefers-reduced-motion: reduce)');
   const control = document.getElementById('motion-toggle');
+  const isAndroid = /Android/i.test(navigator.userAgent);
   const listeners = new Set();
   let paused = false;
-  try { paused = localStorage.getItem('eureka:motion-paused') === 'true'; } catch { /* storage opzionale */ }
+  if (!isAndroid) {
+    try { paused = localStorage.getItem('eureka:motion-paused') === 'true'; } catch { /* storage opzionale */ }
+  }
   const preference = {
     get matches() { return paused || system.matches; },
     addEventListener(type, listener) { if (type === 'change') listeners.add(listener); },
@@ -2106,8 +2109,8 @@ const siteMotion = (() => {
   };
   const update = () => {
     document.documentElement.classList.toggle('motion-paused', preference.matches);
-    control.hidden = false;
-    control.disabled = system.matches;
+    control.hidden = isAndroid;
+    control.disabled = system.matches || isAndroid;
     control.setAttribute('aria-pressed', String(preference.matches));
     const label = system.matches ? 'animazioni ridotte nelle impostazioni del sistema'
       : paused ? 'riprendi le animazioni' : 'metti in pausa le animazioni';
