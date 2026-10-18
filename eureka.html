@@ -983,21 +983,37 @@ a.proj-card {
   font-size: 1.05rem;
   max-width: 620px;
 }
-.candidati .head .current-rep-note {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-top: 0.7rem;
-  font-size: 0.88rem;
-  color: var(--cream);
+.candidati-soon {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+  padding: 1rem 0 3.5rem;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
 }
-.current-rep-note span {
-  width: 0.75rem;
-  height: 0.75rem;
-  flex: none;
-  border: 2px solid var(--neon-yellow);
-  border-radius: 3px;
-  box-shadow: 0 0 9px rgba(234, 255, 0, 0.35);
+.candidati-soon .section-label { margin-bottom: 1.1rem; }
+.candidati-soon .h2 {
+  margin-bottom: 0;
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+}
+.candidati-soon-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--cream);
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-shadow:
+    0 0 4px color-mix(in srgb, var(--cream) 75%, transparent),
+    0 0 12px color-mix(in srgb, var(--gold) 65%, transparent);
+}
+.candidati #rappresentanti .h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
 .organo { margin-bottom: 4.5rem; }
@@ -1033,6 +1049,11 @@ a.proj-card {
 }
 @media (max-width: 1000px) { .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; } }
+
+.roster.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 320px));
+}
+@media (max-width: 1000px) { .roster.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .roster.cols-2 {
   grid-template-columns: repeat(2, minmax(0, 320px));
@@ -1788,82 +1809,45 @@ footer a { display: inline-flex; align-items: center; }
 <!-- ============ CANDIDATI ============ -->
 <section class="candidati" id="candidati">
   <div class="container">
-    <div class="head reveal">
-      <div class="section-label">03 / candidati</div>
-      <h2 class="h2">candidati <em>2025</em></h2>
-      <p>tre organi. quattordici candidati. classi diverse. sezioni diverse. una sola lista.</p>
-      <p class="current-rep-note"><span aria-hidden="true"></span> il bordo giallo fluo indica i rappresentanti in carica.</p>
+    <div class="candidati-soon reveal" id="candidati-2026" aria-labelledby="candidati-2026-title">
+      <div>
+        <div class="section-label">03 / candidati</div>
+        <h2 class="h2" id="candidati-2026-title">candidati <em>2026</em>.</h2>
+      </div>
+      <p class="candidati-soon-status">soon…</p>
+    </div>
+
+    <div class="head reveal" id="rappresentanti">
+      <h2 class="h2">rappresentanti <em>in carica</em>.</h2>
+      <p>gli studenti di eureka! in carica nei tre organi di rappresentanza.</p>
     </div>
 
     <!-- ===== consiglio d'istituto ===== -->
     <div class="organo reveal">
       <div class="organo-head">
         <h3 class="organo-name">consiglio <em>d'istituto</em>.</h3>
-        <div class="organo-count">8 candidati</div>
+        <div class="organo-count">3 rappresentanti in carica</div>
       </div>
-      <div class="roster">
-        <div class="member reveal">
-          <div class="tag">5a</div>
-          <div class="photo"><img src="assets/optimized/foto/christian-bucalo.jpg" width="600" height="750" alt="christian bucalo" loading="lazy" decoding="async" onerror="this.remove()">c</div>
-          <div class="info">
-            <h4 class="name">christian bucalo</h4>
-            <div class="role">n° 01</div>
-          </div>
-        </div>
+      <div class="roster cols-3">
         <div class="member reveal current-rep">
-          <div class="tag">4e</div>
           <div class="photo"><img src="assets/optimized/foto/giacomo-warm.jpg" width="600" height="750" alt="giacomo warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giacomo warm</h4>
-            <div class="role">n° 02</div>
+            <div class="role">in carica</div>
           </div>
         </div>
         <div class="member reveal current-rep">
-          <div class="tag">4b</div>
           <div class="photo"><img src="assets/optimized/foto/giulia-perri.jpg" width="600" height="750" alt="giulia perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giulia perri</h4>
-            <div class="role">n° 03</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">4d</div>
-          <div class="photo"><img src="assets/optimized/foto/tania-spinella.jpg" width="600" height="750" alt="tania spinella" loading="lazy" decoding="async" onerror="this.remove()">t</div>
-          <div class="info">
-            <h4 class="name">tania spinella</h4>
-            <div class="role">n° 04</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">5i</div>
-          <div class="photo"><img src="assets/optimized/foto/giovanni-lo-nostro.jpg" width="600" height="750" alt="giovanni lo nostro" loading="lazy" decoding="async" onerror="this.remove()">g</div>
-          <div class="info">
-            <h4 class="name">giovanni lo nostro</h4>
-            <div class="role">n° 05</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">3c</div>
-          <div class="photo"><img src="assets/optimized/foto/gabriele-picciolo.jpg" width="600" height="750" alt="gabriele picciolo" loading="lazy" decoding="async" onerror="this.remove()">g</div>
-          <div class="info">
-            <h4 class="name">gabriele picciolo</h4>
-            <div class="role">n° 06</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">2c</div>
-          <div class="photo"><img src="assets/optimized/foto/federico-de-salvo.jpg" width="600" height="750" alt="federico de salvo" loading="lazy" decoding="async" onerror="this.remove()">f</div>
-          <div class="info">
-            <h4 class="name">federico de salvo</h4>
-            <div class="role">n° 07</div>
+            <div class="role">in carica</div>
           </div>
         </div>
         <div class="member reveal current-rep">
-          <div class="tag">3n</div>
           <div class="photo"><img src="assets/optimized/foto/marco-cangelosi.jpg" width="600" height="750" alt="marco cangelosi" loading="lazy" decoding="async" onerror="this.remove()">m</div>
           <div class="info">
             <h4 class="name">marco cangelosi</h4>
-            <div class="role">n° 08</div>
+            <div class="role">in carica</div>
           </div>
         </div>
       </div>
@@ -1873,39 +1857,21 @@ footer a { display: inline-flex; align-items: center; }
     <div class="organo reveal">
       <div class="organo-head">
         <h3 class="organo-name">consulta <em>provinciale</em>.</h3>
-        <div class="organo-count">4 candidati</div>
+        <div class="organo-count">2 rappresentanti in carica</div>
       </div>
-      <div class="roster">
+      <div class="roster cols-2">
         <div class="member reveal current-rep">
-          <div class="tag">4m</div>
           <div class="photo"><img src="assets/optimized/foto/paolo-arigo.jpg" width="600" height="750" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
           <div class="info">
             <h4 class="name">paolo arigo</h4>
-            <div class="role">n° 01</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">3e</div>
-          <div class="photo"><img src="assets/optimized/foto/alberto-di-cagno.jpg" width="600" height="750" alt="alberto di cagno" loading="lazy" decoding="async" onerror="this.remove()">a</div>
-          <div class="info">
-            <h4 class="name">alberto di cagno</h4>
-            <div class="role">n° 02</div>
+            <div class="role">in carica</div>
           </div>
         </div>
         <div class="member reveal current-rep">
-          <div class="tag">4c</div>
           <div class="photo"><img src="assets/optimized/foto/giorgio-bensaia.jpg" width="600" height="750" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giorgio bensaia</h4>
-            <div class="role">n° 03</div>
-          </div>
-        </div>
-        <div class="member reveal">
-          <div class="tag">5c</div>
-          <div class="photo"><img src="assets/optimized/foto/giorgia-curro.jpg" width="600" height="750" alt="giorgia currò" loading="lazy" decoding="async" onerror="this.remove()">g</div>
-          <div class="info">
-            <h4 class="name">giorgia currò</h4>
-            <div class="role">n° 04</div>
+            <div class="role">in carica</div>
           </div>
         </div>
       </div>
@@ -1915,23 +1881,14 @@ footer a { display: inline-flex; align-items: center; }
     <div class="organo reveal">
       <div class="organo-head">
         <h3 class="organo-name">organo di <em>garanzia</em>.</h3>
-        <div class="organo-count">2 candidati</div>
+        <div class="organo-count">1 rappresentante in carica</div>
       </div>
       <div class="roster cols-2">
-        <div class="member reveal">
-          <div class="tag">5a</div>
-          <div class="photo"><img src="assets/optimized/foto/nino-sutera.jpg" width="600" height="750" alt="nino sutera" loading="lazy" decoding="async" onerror="this.remove()">n</div>
-          <div class="info">
-            <h4 class="name">nino sutera</h4>
-            <div class="role">n° 01</div>
-          </div>
-        </div>
         <div class="member reveal current-rep">
-          <div class="tag">4e</div>
           <div class="photo"><img src="assets/optimized/foto/nethma.jpg" width="600" height="750" alt="nethma" loading="lazy" decoding="async" onerror="this.remove()">n</div>
           <div class="info">
             <h4 class="name">nethma</h4>
-            <div class="role">n° 02</div>
+            <div class="role">in carica</div>
           </div>
         </div>
       </div>
