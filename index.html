@@ -402,14 +402,6 @@ nav .ig:hover {
   .hero-cta { margin-top: 1rem; }
   .school-scene { width: min(76vw, 440px); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero-depth__swirl { animation: none; transform: none; }
-  .hero-depth__sky { transform: none; }
-  .school-egg { transform: perspective(900px) rotateX(3deg); }
-  .hero-inner, .school-scene::before { transform: none; }
-  .school-egg__occupied, .school-egg__base { transition: none; clip-path: none; transform: none; }
-}
-
 .hero-inner { position: relative; z-index: 2; max-width: 100%; transform: translate3d(0, var(--copy-offset, 0px), 0); }
 
 .hero-wordmark h1 {
@@ -577,10 +569,6 @@ nav .ig:hover {
   color: var(--bg);
   font-size: 0.7em;
 }
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
-}
-
 /* ===== SECTION COMMONS ===== */
 section { padding: 7rem 2rem; position: relative; }
 .container { max-width: 1280px; margin: 0 auto; }
@@ -1479,10 +1467,6 @@ footer a { display: inline-flex; align-items: center; }
   .member:hover .photo img { transform: none; filter: none; }
   .scuola-card:hover, .scuola-circolare:hover { padding-left: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
 html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after {
   animation: none !important; transition: none !important;
 }
@@ -2090,9 +2074,9 @@ if (navigationType === 'reload') {
   window.addEventListener('pageshow', scrollToTop, { once: true });
 }
 
-// Pausa esplicita per i movimenti continui, insieme alla preferenza del sistema.
+// Pausa solo esplicita: il sito mantiene le animazioni anche se il dispositivo
+// segnala la preferenza di sistema "riduci movimento".
 const siteMotion = (() => {
-  const system = window.matchMedia('(prefers-reduced-motion: reduce)');
   const control = document.getElementById('motion-toggle');
   const isAndroid = /Android/i.test(navigator.userAgent);
   const listeners = new Set();
@@ -2101,7 +2085,7 @@ const siteMotion = (() => {
     try { paused = localStorage.getItem('eureka:motion-paused') === 'true'; } catch { /* storage opzionale */ }
   }
   const preference = {
-    get matches() { return paused || system.matches; },
+    get matches() { return paused; },
     addEventListener(type, listener) { if (type === 'change') listeners.add(listener); },
     removeEventListener(type, listener) { if (type === 'change') listeners.delete(listener); },
     addListener(listener) { listeners.add(listener); },
@@ -2110,10 +2094,9 @@ const siteMotion = (() => {
   const update = () => {
     document.documentElement.classList.toggle('motion-paused', preference.matches);
     control.hidden = isAndroid;
-    control.disabled = system.matches || isAndroid;
+    control.disabled = isAndroid;
     control.setAttribute('aria-pressed', String(preference.matches));
-    const label = system.matches ? 'animazioni ridotte nelle impostazioni del sistema'
-      : paused ? 'riprendi le animazioni' : 'metti in pausa le animazioni';
+    const label = paused ? 'riprendi le animazioni' : 'metti in pausa le animazioni';
     control.setAttribute('aria-label', label);
     control.title = label;
     control.firstElementChild.textContent = preference.matches ? '▶' : 'Ⅱ';
@@ -2124,14 +2107,12 @@ const siteMotion = (() => {
     try { localStorage.setItem('eureka:motion-paused', String(paused)); } catch { /* storage opzionale */ }
     update();
   });
-  if (system.addEventListener) system.addEventListener('change', update);
-  else system.addListener(update);
   update();
   return preference;
 })();
 
 // ===== FUNZIONI COMUNI =====
-const reducedMotion = typeof siteMotion !== 'undefined' ? siteMotion : window.matchMedia('(prefers-reduced-motion: reduce)');
+const reducedMotion = siteMotion;
 // Iperspazio 21st.dev: proiezione prospettica a raggi, accelerata dallo scroll.
 // Canvas 2D per mantenere la resa senza un renderer WebGL permanente.
 (() => {
