@@ -2322,8 +2322,8 @@ else reducedMotion.addListener(stopReveals);
   let top = hero.getBoundingClientRect().top + window.scrollY;
   const compact = matchMedia('(max-width: 600px)');
   const getSchoolTravel = () => compact.matches
-    ? Math.min(200, Math.max(125, school.offsetHeight * 1.35))
-    : Math.min(150, Math.max(70, school.offsetHeight * .7));
+    ? Math.min(165, Math.max(100, school.offsetHeight * 1.1))
+    : Math.min(120, Math.max(56, school.offsetHeight * .58));
   let schoolTravel = getSchoolTravel();
   const reset = () => {
     if (frame) cancelAnimationFrame(frame);
@@ -2340,19 +2340,19 @@ else reducedMotion.addListener(stopReveals);
     frame = 0;
     if (!visible || document.hidden || reducedMotion.matches) return;
     const progress = Math.max(0, Math.min(1, (window.scrollY - top) / height));
-    // Zoom rapido, con la stessa scala massima e il limite mobile.
-    const zoomDistance = Math.min(1, progress / (compact.matches ? .1375 : .25));
+    // Crescita progressiva fino ai margini dello schermo.
+    const zoomDistance = Math.min(1, progress / (compact.matches ? .18 : .31));
     const zoomProgress = zoomDistance * zoomDistance * (3 - 2 * zoomDistance);
-    const zoomAmount = compact.matches
-      ? Math.max(0, Math.min(.22, (window.innerWidth - 1) / schoolScene.offsetWidth - 1))
-      : .22;
+    const screenGutter = compact.matches ? 24 : 64;
+    const maxSchoolWidth = Math.max(0, window.innerWidth - screenGutter);
+    const zoomAmount = Math.max(0, maxSchoolWidth / schoolScene.offsetWidth - 1);
     const schoolOffset = progress * schoolTravel;
-    scene.style.setProperty('--sky-offset', `${(progress * Math.min(56, height * .08)).toFixed(1)}px`);
-    copy.style.setProperty('--copy-offset', `${(progress * Math.min(32, height * .05)).toFixed(1)}px`);
-    schoolScene.style.setProperty('--school-glow-offset', `${(schoolOffset * .45).toFixed(1)}px`);
+    scene.style.setProperty('--sky-offset', `${(progress * Math.min(44, height * .065)).toFixed(1)}px`);
+    copy.style.setProperty('--copy-offset', `${(progress * Math.min(25, height * .04)).toFixed(1)}px`);
+    schoolScene.style.setProperty('--school-glow-offset', `${(schoolOffset * .38).toFixed(1)}px`);
     school.style.setProperty('--school-offset', `${schoolOffset.toFixed(1)}px`);
-    school.style.setProperty('--school-tilt', `${(3 + progress * 5).toFixed(1)}deg`);
-    school.style.setProperty('--school-depth', `${(compact.matches ? 0 : progress * 50).toFixed(1)}px`);
+    school.style.setProperty('--school-tilt', `${(3 + progress * 4).toFixed(1)}deg`);
+    school.style.setProperty('--school-depth', `${(compact.matches ? 0 : progress * 38).toFixed(1)}px`);
     school.style.setProperty('--school-scale', (1 + zoomProgress * zoomAmount).toFixed(3));
   };
   const request = () => {
