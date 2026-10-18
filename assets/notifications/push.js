@@ -42,7 +42,7 @@
     if (isEmbeddedBrowser) { button.textContent = isAppleMobile ? 'apri in Safari' : 'apri in Chrome'; return; }
     if (needsInstall) { button.textContent = 'attiva le notifiche'; return; }
     if (permissionDenied()) { button.textContent = 'verifica il permesso'; return; }
-    button.textContent = subscribed() ? 'notifiche attive' : 'attiva le notifiche';
+    button.textContent = subscribed() ? 'disattiva le notifiche' : 'attiva le notifiche';
   };
   const withTimeout = (promise, milliseconds, message) => {
     let timer;
@@ -58,6 +58,18 @@
       const check = () => {
         if (subscribed()) return resolve();
         if (Date.now() >= deadline) return reject(new Error('Iscrizione OneSignal non confermata'));
+        setTimeout(check, 200);
+      };
+      check();
+    });
+  };
+  const waitForUnsubscription = () => {
+    if (!oneSignal?.User.PushSubscription.optedIn) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const deadline = Date.now() + 15000;
+      const check = () => {
+        if (!oneSignal.User.PushSubscription.optedIn) return resolve();
+        if (Date.now() >= deadline) return reject(new Error('Disattivazione OneSignal non confermata'));
         setTimeout(check, 200);
       };
       check();
@@ -121,7 +133,27 @@
       return;
     }
     if (!oneSignal) { start().catch(() => {}); return; }
-    if (subscribed()) { say('Sei già iscritto: riceverai un avviso per le nuove circolari.'); return; }
+    if (subscribed()) {
+      activating = true;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      say('Disattivazione delle notifiche in corso…');
+      try {
+        await withTimeout(Promise.resolve(oneSignal.User.PushSubscription.optOut()), 15000,
+          'Disattivazione delle notifiche non confermata');
+        await waitForUnsubscription();
+        say('Notifiche disattivate su questo dispositivo. Puoi riattivarle quando vuoi.');
+      } catch (error) {
+        console.error('Disattivazione notifiche non riuscita.', error);
+        say('Disattivazione non completata. Controlla la connessione e riprova.');
+      } finally {
+        activating = false;
+        button.disabled = false;
+        button.setAttribute('aria-busy', 'false');
+        syncButton();
+      }
+      return;
+    }
     if (!oneSignal.Notifications.isPushSupported()) {
       say('Questo browser non supporta le notifiche. Usa un browser aggiornato; su iPhone apri eureka! dalla Home.');
       return;
