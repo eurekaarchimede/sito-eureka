@@ -203,12 +203,6 @@ nav .right {
   align-items: center;
   gap: 1rem;
 }
-.motion-toggle {
-  display: grid; place-items: center; flex: none;
-  width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%;
-  background: var(--bg); color: var(--cream); font: inherit; font-size: 1rem; cursor: pointer;
-}
-.motion-toggle[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
 nav .ig {
   color: var(--cream);
   text-decoration: none;
@@ -384,8 +378,9 @@ nav .ig:hover {
   .hero-depth__swirl {
     background-image: url("assets/hero/starry-swirls-mobile.webp");
     background-position: center 42%;
-    opacity: .46;
+    opacity: .50;
   }
+  .scroll-stars { opacity: .70; }
   .school-scene { width: min(84vw, 520px); }
 }
 @media (max-width: 600px) and (orientation: portrait) {
@@ -1472,10 +1467,6 @@ footer a { display: inline-flex; align-items: center; }
   .member:hover .photo img { transform: none; filter: none; }
   .scuola-card:hover, .scuola-circolare:hover { padding-left: 0; }
 }
-html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after {
-  animation: none !important; transition: none !important;
-}
-
 /* ===== SHOP ===== */
 .shop { scroll-margin-top: 8rem; border-top: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 48%, transparent), color-mix(in srgb, var(--bg) 72%, transparent)); }
 .shop .head { max-width: 820px; margin: 0 auto 2.5rem; text-align: center; }
@@ -1537,7 +1528,6 @@ html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after 
     <li><a href="#storia">storia</a></li>
   </ul>
   <div class="right">
-    <button class="motion-toggle" id="motion-toggle" type="button" aria-label="metti in pausa le animazioni" aria-pressed="false" title="metti in pausa le animazioni" hidden><span aria-hidden="true">Ⅱ</span></button>
     <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="ig">@eureka.archimede</a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-label="apri menu" aria-expanded="false" aria-controls="mobile-menu" hidden>
       <span></span><span></span><span></span>
@@ -2082,45 +2072,9 @@ if (navigationType === 'reload') {
   window.addEventListener('pageshow', scrollToTop, { once: true });
 }
 
-// Pausa solo esplicita: il sito mantiene le animazioni anche se il dispositivo
-// segnala la preferenza di sistema "riduci movimento".
-const siteMotion = (() => {
-  const control = document.getElementById('motion-toggle');
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  const listeners = new Set();
-  let paused = false;
-  if (!isAndroid) {
-    try { paused = localStorage.getItem('eureka:motion-paused') === 'true'; } catch { /* storage opzionale */ }
-  }
-  const preference = {
-    get matches() { return paused; },
-    addEventListener(type, listener) { if (type === 'change') listeners.add(listener); },
-    removeEventListener(type, listener) { if (type === 'change') listeners.delete(listener); },
-    addListener(listener) { listeners.add(listener); },
-    removeListener(listener) { listeners.delete(listener); }
-  };
-  const update = () => {
-    document.documentElement.classList.toggle('motion-paused', preference.matches);
-    control.hidden = isAndroid;
-    control.disabled = isAndroid;
-    control.setAttribute('aria-pressed', String(preference.matches));
-    const label = paused ? 'riprendi le animazioni' : 'metti in pausa le animazioni';
-    control.setAttribute('aria-label', label);
-    control.title = label;
-    control.firstElementChild.textContent = preference.matches ? '▶' : 'Ⅱ';
-    listeners.forEach(listener => listener({ matches: preference.matches }));
-  };
-  control.addEventListener('click', () => {
-    paused = !paused;
-    try { localStorage.setItem('eureka:motion-paused', String(paused)); } catch { /* storage opzionale */ }
-    update();
-  });
-  update();
-  return preference;
-})();
-
 // ===== FUNZIONI COMUNI =====
-const reducedMotion = siteMotion;
+// Le animazioni restano sempre attive; questo oggetto mantiene compatibili i listener interni.
+const reducedMotion = Object.freeze({ matches: false, addEventListener() {}, addListener() {} });
 // Iperspazio 21st.dev: proiezione prospettica a raggi, accelerata dallo scroll.
 // Canvas 2D per mantenere la resa senza un renderer WebGL permanente.
 (() => {
@@ -2322,8 +2276,8 @@ else reducedMotion.addListener(stopReveals);
   let top = hero.getBoundingClientRect().top + window.scrollY;
   const compact = matchMedia('(max-width: 600px)');
   const getSchoolTravel = () => compact.matches
-    ? Math.min(165, Math.max(100, school.offsetHeight * 1.1))
-    : Math.min(120, Math.max(56, school.offsetHeight * .58));
+    ? Math.min(125, Math.max(76, school.offsetHeight * .82))
+    : Math.min(92, Math.max(44, school.offsetHeight * .46));
   let schoolTravel = getSchoolTravel();
   const reset = () => {
     if (frame) cancelAnimationFrame(frame);
@@ -2340,19 +2294,19 @@ else reducedMotion.addListener(stopReveals);
     frame = 0;
     if (!visible || document.hidden || reducedMotion.matches) return;
     const progress = Math.max(0, Math.min(1, (window.scrollY - top) / height));
-    // Crescita progressiva fino ai margini dello schermo.
-    const zoomDistance = Math.min(1, progress / (compact.matches ? .18 : .31));
+    // Zoom distribuito quasi lungo tutto lo scorrimento dell'hero.
+    const zoomDistance = Math.min(1, progress / (compact.matches ? .85 : .9));
     const zoomProgress = zoomDistance * zoomDistance * (3 - 2 * zoomDistance);
-    const screenGutter = compact.matches ? 24 : 64;
+    const screenGutter = compact.matches ? -16 : 32;
     const maxSchoolWidth = Math.max(0, window.innerWidth - screenGutter);
     const zoomAmount = Math.max(0, maxSchoolWidth / schoolScene.offsetWidth - 1);
     const schoolOffset = progress * schoolTravel;
-    scene.style.setProperty('--sky-offset', `${(progress * Math.min(44, height * .065)).toFixed(1)}px`);
-    copy.style.setProperty('--copy-offset', `${(progress * Math.min(25, height * .04)).toFixed(1)}px`);
+    scene.style.setProperty('--sky-offset', `${(progress * Math.min(32, height * .05)).toFixed(1)}px`);
+    copy.style.setProperty('--copy-offset', `${(progress * Math.min(18, height * .03)).toFixed(1)}px`);
     schoolScene.style.setProperty('--school-glow-offset', `${(schoolOffset * .38).toFixed(1)}px`);
     school.style.setProperty('--school-offset', `${schoolOffset.toFixed(1)}px`);
-    school.style.setProperty('--school-tilt', `${(3 + progress * 4).toFixed(1)}deg`);
-    school.style.setProperty('--school-depth', `${(compact.matches ? 0 : progress * 38).toFixed(1)}px`);
+    school.style.setProperty('--school-tilt', `${(3 + progress * 2.5).toFixed(1)}deg`);
+    school.style.setProperty('--school-depth', `${(compact.matches ? 0 : progress * 24).toFixed(1)}px`);
     school.style.setProperty('--school-scale', (1 + zoomProgress * zoomAmount).toFixed(3));
   };
   const request = () => {
