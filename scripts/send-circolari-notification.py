@@ -97,7 +97,7 @@ def main():
         contents = f"{number}: {title}" if number else title
     else:
         title = 'eureka! · nuove circolari'
-        contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la bacheca eureka!.'
+        contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la più recente.'
 
     payload = {
         'app_id': app_id,
@@ -108,7 +108,9 @@ def main():
         # OneSignal richiede il fallback en; il testo resta italiano su ogni dispositivo.
         'headings': {'en': title[:100], 'it': title[:100]},
         'contents': {'en': contents[:200], 'it': contents[:200]},
-        'url': SITE_URL,
+        # Anche quando il feed raggruppa più circolari in una sola push,
+        # il tap apre direttamente la circolare più recente.
+        'url': SITE_URL if args.test else pending[-1]['url'],
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
