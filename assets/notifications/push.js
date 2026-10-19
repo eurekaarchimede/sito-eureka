@@ -225,6 +225,18 @@
                 notifyButton: { enable: false }
               });
               oneSignal = OneSignal;
+              OneSignal.Notifications.addEventListener('click', event => {
+                const candidate = event?.notification?.additionalData?.eureka_circular_url
+                  || event?.result?.url
+                  || event?.notification?.launchURL;
+                if (typeof candidate !== 'string') return;
+                try {
+                  const destination = new URL(candidate, window.location.href);
+                  if (destination.origin !== 'https://www.liceoarchimedeme.edu.it'
+                    || !destination.pathname.startsWith('/circolare/')) return;
+                  if (destination.href !== window.location.href) window.location.assign(destination.href);
+                } catch { /* Ignora destinazioni non valide. */ }
+              });
               OneSignal.User.PushSubscription.addEventListener('change', () => {
                 if (!activating) syncButton();
               });

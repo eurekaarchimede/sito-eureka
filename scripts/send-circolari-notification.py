@@ -109,6 +109,7 @@ def main():
         title = 'eureka! · nuove circolari'
         contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la più recente.'
 
+    target_url = test_circular['url'] if test_circular else (SITE_URL if args.test else pending[-1]['url'])
     payload = {
         'app_id': app_id,
         'target_channel': 'push',
@@ -120,10 +121,12 @@ def main():
         'contents': {'en': contents[:200], 'it': contents[:200]},
         # Il canale è sempre web push: dichiariamo la destinazione esplicitamente
         # così il tap apre la circolare anche su Android/PWA.
-        'web_url': test_circular['url'] if test_circular else (SITE_URL if args.test else pending[-1]['url']),
+        'web_url': target_url,
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
+    if target_url.startswith('https://www.liceoarchimedeme.edu.it/circolare/'):
+        payload['data'] = {'eureka_circular_url': target_url}
     if args.test_subscription:
         del payload['included_segments']
         payload['include_subscription_ids'] = [args.test_subscription]
