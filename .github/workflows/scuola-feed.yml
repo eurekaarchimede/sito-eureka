@@ -11,6 +11,10 @@ on:
         description: "Subscription ID del dispositivo da provare (opzionale, usato solo con test_push)"
         type: string
         default: ""
+      push_circular_url:
+        description: "Invia una sola circolare agli iscritti push (lascia vuoto per il controllo normale)"
+        type: string
+        default: ""
   schedule:
     # Backup del trigger esterno: controlli dalle 08:00 alle 22:55, ora italiana.
     # Il scheduler GitHub può subire ritardi; non garantisce un limite di cinque minuti.
@@ -35,15 +39,17 @@ jobs:
         id: window
         env:
           TEST_PUSH: ${{ inputs.test_push }}
+          PUSH_CIRCULAR_URL: ${{ inputs.push_circular_url }}
         run: |
           python3 - <<'PY'
           import os
           from datetime import datetime
           from zoneinfo import ZoneInfo
-          active = 8 <= datetime.now(ZoneInfo('Europe/Rome')).hour < 23
+          force_push = bool(os.environ.get('PUSH_CIRCULAR_URL', '').strip())
+          active = force_push or 8 <= datetime.now(ZoneInfo('Europe/Rome')).hour < 23
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write(f"active={str(active).lower()}\n")
-          print('fascia 08:00–22:55 attiva' if active else 'pausa notturna: nessuna richiesta alla scuola')
+          print('invio manuale richiesto' if force_push else ('fascia 08:00–22:55 attiva' if active else 'pausa notturna: nessuna richiesta alla scuola'))
           PY
       - uses: actions/setup-python@v5
         if: steps.window.outputs.active == 'true' && inputs.test_push != true
@@ -76,14 +82,17 @@ jobs:
           fi
       - name: notifica le nuove circolari
         id: push_notification
-        if: (steps.window.outputs.active == 'true' && steps.school_feed.outputs.available == 'true') || inputs.test_push == true
+        if: (steps.window.outputs.active == 'true' && steps.school_feed.outputs.available == 'true') || inputs.test_push == true || inputs.push_circular_url != ''
         continue-on-error: true
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
           TEST_PUSH: ${{ inputs.test_push }}
           TEST_SUBSCRIPTION: ${{ inputs.test_subscription_id }}
+          PUSH_CIRCULAR_URL: ${{ inputs.push_circular_url }}
         run: |
-          if [ "$TEST_PUSH" = "true" ]; then
+          if [ -n "$PUSH_CIRCULAR_URL" ]; then
+            python3 scripts/send-circolari-notification.py --only-url "$PUSH_CIRCULAR_URL"
+          elif [ "$TEST_PUSH" = "true" ]; then
             if [ -n "$TEST_SUBSCRIPTION" ]; then
               python3 scripts/send-circolari-notification.py --test --test-subscription "$TEST_SUBSCRIPTION"
             else
@@ -98,7 +107,7 @@ jobs:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
         run: python3 scripts/send-circolari-email.py
       - name: salva i registri delle notifiche
-        if: always() && steps.window.outputs.active == 'true' && inputs.test_push != true && steps.school_feed.outputs.available == 'true'
+        if: always() && inputs.test_push != true && ((steps.window.outputs.active == 'true' && steps.school_feed.outputs.available == 'true') || inputs.push_circular_url != '')
         run: |
           git config user.name "scuola-feed-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"

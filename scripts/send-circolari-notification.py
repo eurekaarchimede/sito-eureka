@@ -28,6 +28,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', action='store_true', help='invia solo al segmento OneSignal Test Users')
     parser.add_argument('--test-subscription', help='Subscription ID del solo dispositivo di prova')
+    parser.add_argument('--only-url', help='invia una sola circolare, anche se era stata marcata come saltata')
     parser.add_argument('--inspect-user', help='legge le sole iscrizioni push di un OneSignal ID, senza inviare')
     parser.add_argument('--dry-run', action='store_true', help='mostra il messaggio senza inviare o aggiornare il registro')
     args = parser.parse_args()
@@ -45,9 +46,19 @@ def main():
     circulars = [item for item in feed.get('circolari', [])
                  if isinstance(item, dict) and isinstance(item.get('url'), str)
                  and item['url'].startswith('https://www.liceoarchimedeme.edu.it/circolare/')]
-    pending = [item for item in circulars
-               if digest(item['url']) not in sent
-               and digest(item['url']) not in skipped_no_subscribers]
+    if args.only_url:
+        if args.test or args.inspect_user:
+            raise ValueError('--only-url non può essere combinato con --test o --inspect-user')
+        pending = [item for item in circulars if item['url'] == args.only_url]
+        if not pending:
+            raise ValueError('La circolare richiesta non è presente nel feed corrente')
+        if digest(args.only_url) in sent:
+            print('circolare già inviata')
+            return 0
+    else:
+        pending = [item for item in circulars
+                   if digest(item['url']) not in sent
+                   and digest(item['url']) not in skipped_no_subscribers]
     if not pending and not args.test and not args.inspect_user:
         print('nessuna nuova circolare')
         return 0
@@ -143,8 +154,10 @@ def main():
 
     # Il registro si aggiorna solo dopo la conferma API: un errore lascia le notifiche in coda.
     sent.update(digest(item['url']) for item in pending)
+    skipped_no_subscribers.difference_update(digest(item['url']) for item in pending)
     ledger['version'] = 1
     ledger['urls'] = sorted(sent)
+    ledger['skipped_no_subscribers'] = sorted(skipped_no_subscribers)
     with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=LEDGER_PATH.parent,
                                      delete=False) as temp:
         json.dump(ledger, temp, ensure_ascii=False, separators=(',', ':'))
