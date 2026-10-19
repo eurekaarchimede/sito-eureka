@@ -8,6 +8,7 @@ import sys
 import tempfile
 import uuid
 from pathlib import Path
+from urllib.parse import quote
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -109,7 +110,12 @@ def main():
         title = 'eureka! · nuove circolari'
         contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la più recente.'
 
-    target_url = test_circular['url'] if test_circular else (SITE_URL if args.test else pending[-1]['url'])
+    circular_url = test_circular['url'] if test_circular else (None if args.test else pending[-1]['url'])
+    # Le PWA Android possono riaprire la start_url quando una push punta a un
+    # dominio esterno. Passiamo prima da una pagina interna che inoltra alla
+    # circolare, così il tap conserva una destinazione nello scope della PWA.
+    target_url = (f"https://eurekaarchimede.it/apri-circolare.html?url={quote(circular_url, safe='')}"
+                  if circular_url else SITE_URL)
     payload = {
         'app_id': app_id,
         'target_channel': 'push',
@@ -125,8 +131,8 @@ def main():
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
-    if target_url.startswith('https://www.liceoarchimedeme.edu.it/circolare/'):
-        payload['data'] = {'eureka_circular_url': target_url}
+    if circular_url:
+        payload['data'] = {'eureka_circular_url': circular_url}
     if args.test_subscription:
         del payload['included_segments']
         payload['include_subscription_ids'] = [args.test_subscription]

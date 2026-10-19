@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1632">
+  <meta name="robots" content="noindex, nofollow">
+  <title>apertura circolare · eureka!</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0a1632; color: #f7eed5; }
+    body { min-height: 100svh; margin: 0; display: grid; place-items: center; text-align: center; }
+    main { padding: 2rem; }
+    p { color: #c9beae; }
+    a { color: #f5cd47; }
+  </style>
+</head>
+<body>
+  <main>
+    <strong>eureka!</strong>
+    <p id="status">apro la circolare…</p>
+    <a id="link" hidden>apri la circolare</a>
+  </main>
+  <script>
+    const status = document.getElementById('status');
+    const link = document.getElementById('link');
+    const raw = new URLSearchParams(location.search).get('url');
+    try {
+      const destination = new URL(raw);
+      if (destination.origin !== 'https://www.liceoarchimedeme.edu.it'
+        || !destination.pathname.startsWith('/circolare/')) throw new Error('destinazione non valida');
+      link.href = destination.href;
+      location.replace(destination.href);
+      window.setTimeout(() => { status.textContent = 'se non si è aperta automaticamente:'; link.hidden = false; }, 1200);
+    } catch {
+      status.textContent = 'link della circolare non valido.';
+    }
+  </script>
+</body>
+</html>
