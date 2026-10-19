@@ -105,9 +105,9 @@ def main():
         # OneSignal richiede il fallback en; il testo resta italiano su ogni dispositivo.
         'headings': {'en': title[:100], 'it': title[:100]},
         'contents': {'en': contents[:200], 'it': contents[:200]},
-        # Anche quando il feed raggruppa più circolari in una sola push,
-        # il tap apre direttamente la circolare più recente.
-        'url': SITE_URL if args.test else pending[-1]['url'],
+        # Il canale è sempre web push: dichiariamo la destinazione esplicitamente
+        # così il tap apre la circolare anche su Android/PWA.
+        'web_url': SITE_URL if args.test else pending[-1]['url'],
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
