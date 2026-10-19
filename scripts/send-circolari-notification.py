@@ -125,9 +125,9 @@ def main():
         # OneSignal richiede il fallback en; il testo resta italiano su ogni dispositivo.
         'headings': {'en': title[:100], 'it': title[:100]},
         'contents': {'en': contents[:200], 'it': contents[:200]},
-        # Il canale è sempre web push: dichiariamo la destinazione esplicitamente
-        # così il tap apre la circolare anche su Android/PWA.
-        'web_url': target_url,
+        # `url` è la destinazione HTTPS aperta dal tap della notifica nel browser.
+        # `web_url` si usa insieme ad `app_url` quando i due target differiscono.
+        'url': target_url,
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
@@ -171,7 +171,7 @@ def main():
                            f"Dettagli API: {json.dumps(result.get('errors', []), ensure_ascii=False)[:500]}")
     if args.test:
         destination = 'il dispositivo indicato' if args.test_subscription else 'il segmento Test Users'
-        print(f'Push di prova accettata da OneSignal per {destination}; registro circolari invariato')
+        print(f'Push di prova accettata da OneSignal per {destination}; destinazione: {target_url}; registro circolari invariato')
         return 0
 
     # Il registro si aggiorna solo dopo la conferma API: un errore lascia le notifiche in coda.
