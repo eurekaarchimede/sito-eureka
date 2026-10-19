@@ -52,9 +52,6 @@ def main():
         pending = [item for item in circulars if item['url'] == args.only_url]
         if not pending:
             raise ValueError('La circolare richiesta non è presente nel feed corrente')
-        if digest(args.only_url) in sent:
-            print('circolare già inviata')
-            return 0
     else:
         pending = [item for item in circulars
                    if digest(item['url']) not in sent
@@ -117,8 +114,9 @@ def main():
     if args.test_subscription:
         del payload['included_segments']
         payload['include_subscription_ids'] = [args.test_subscription]
-    # Un retry dello stesso gruppo usa la stessa chiave: niente doppioni se il salvataggio fallisce.
-    payload['idempotency_key'] = str(uuid.uuid4()) if args.test else str(uuid.uuid5(
+    # Gli invii automatici sono idempotenti; un URL esplicito da workflow_dispatch
+    # è invece un reinvio richiesto e deve avere una nuova chiave OneSignal.
+    payload['idempotency_key'] = str(uuid.uuid4()) if args.test or args.only_url else str(uuid.uuid5(
         uuid.NAMESPACE_URL, app_id + ':push:' + '|'.join(sorted(item['url'] for item in pending))))
     if args.dry_run:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
