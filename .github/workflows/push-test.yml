@@ -14,6 +14,11 @@ on:
         description: "OneSignal ID per inspect; Subscription ID per send"
         type: string
         required: true
+      circular_url:
+        description: "URL della circolare da aprire nella push di prova (solo con send)"
+        type: string
+        required: false
+        default: "https://www.liceoarchimedeme.edu.it/circolare/monitoraggio-programma-eco-schools-26-27/"
 
 permissions:
   contents: read
@@ -29,9 +34,12 @@ jobs:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
           OPERATION: ${{ inputs.operation }}
           DEVICE_ID: ${{ inputs.device_id }}
+          CIRCULAR_URL: ${{ inputs.circular_url }}
         run: |
           if [ "$OPERATION" = "inspect" ]; then
             python3 scripts/send-circolari-notification.py --inspect-user "$DEVICE_ID"
+          elif [ -n "$CIRCULAR_URL" ]; then
+            python3 scripts/send-circolari-notification.py --test --test-subscription "$DEVICE_ID" --test-url "$CIRCULAR_URL"
           else
             python3 scripts/send-circolari-notification.py --test --test-subscription "$DEVICE_ID"
           fi

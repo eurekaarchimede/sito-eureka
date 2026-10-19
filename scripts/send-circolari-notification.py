@@ -28,6 +28,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', action='store_true', help='invia solo al segmento OneSignal Test Users')
     parser.add_argument('--test-subscription', help='Subscription ID del solo dispositivo di prova')
+    parser.add_argument('--test-url', help='URL di una circolare da aprire nella push di prova mirata')
     parser.add_argument('--only-url', help='invia una sola circolare, anche se era stata marcata come saltata')
     parser.add_argument('--inspect-user', help='legge le sole iscrizioni push di un OneSignal ID, senza inviare')
     parser.add_argument('--dry-run', action='store_true', help='mostra il messaggio senza inviare o aggiornare il registro')
@@ -36,6 +37,8 @@ def main():
         if not args.test:
             raise ValueError('--test-subscription richiede --test')
         args.test_subscription = str(uuid.UUID(args.test_subscription))
+    if args.test_url and (not args.test or not args.test_subscription):
+        raise ValueError('--test-url richiede --test e --test-subscription')
     if args.inspect_user:
         args.inspect_user = str(uuid.UUID(args.inspect_user))
     feed = json.loads(FEED_PATH.read_text(encoding='utf-8'))
@@ -46,6 +49,11 @@ def main():
     circulars = [item for item in feed.get('circolari', [])
                  if isinstance(item, dict) and isinstance(item.get('url'), str)
                  and item['url'].startswith('https://www.liceoarchimedeme.edu.it/circolare/')]
+    test_circular = None
+    if args.test_url:
+        test_circular = next((item for item in circulars if item['url'] == args.test_url), None)
+        if not test_circular:
+            raise ValueError('La circolare di prova non è presente nel feed corrente')
     if args.only_url:
         if args.test or args.inspect_user:
             raise ValueError('--only-url non può essere combinato con --test o --inspect-user')
@@ -85,8 +93,13 @@ def main():
 
     pending.sort(key=lambda item: (item.get('date', ''), item.get('number', '')))
     if args.test:
-        title = 'eureka! · prova notifiche'
-        contents = 'Le notifiche delle circolari sono attive su questo dispositivo.'
+        if test_circular:
+            title = test_circular.get('title') or 'Prova apertura circolare'
+            number = test_circular.get('number')
+            contents = f"Prova link · {number}: {title}" if number else f'Prova link · {title}'
+        else:
+            title = 'eureka! · prova notifiche'
+            contents = 'Le notifiche delle circolari sono attive su questo dispositivo.'
     elif len(pending) == 1:
         item = pending[0]
         title = item.get('title') or 'Nuova circolare'
@@ -107,7 +120,7 @@ def main():
         'contents': {'en': contents[:200], 'it': contents[:200]},
         # Il canale è sempre web push: dichiariamo la destinazione esplicitamente
         # così il tap apre la circolare anche su Android/PWA.
-        'web_url': SITE_URL if args.test else pending[-1]['url'],
+        'web_url': test_circular['url'] if test_circular else (SITE_URL if args.test else pending[-1]['url']),
         'chrome_web_icon': ICON_URL,
         'firefox_icon': ICON_URL,
     }
