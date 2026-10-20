@@ -101,7 +101,9 @@ def main():
     payload = {
         'app_id': app_id,
         'target_channel': 'email',
-        'included_segments': ['Subscribed Users'],
+        # Il segmento predefinito mostrato dall'app OneSignal è "Total Subscriptions".
+        # target_channel limita i destinatari alle sole iscrizioni email attive.
+        'included_segments': ['Total Subscriptions'],
         'email_subject': subject[:150],
         'email_preheader': 'Nuovi avvisi pubblicati dal Liceo Archimede.',
         'email_body': render_email(pending),
