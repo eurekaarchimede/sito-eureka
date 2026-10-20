@@ -379,6 +379,9 @@ nav .ig:hover {
     background-image: url("assets/hero/starry-swirls-mobile.webp");
     background-position: center 42%;
     opacity: .50;
+    /* Raccorda il bordo dell'immagine durante l'overscroll elastico di iOS. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 170px);
+    mask-image: linear-gradient(to bottom, transparent, #000 170px);
   }
   .scroll-stars { opacity: .82; }
   .school-scene { width: min(84vw, 520px); }
