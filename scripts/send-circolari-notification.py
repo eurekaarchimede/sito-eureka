@@ -8,7 +8,6 @@ import sys
 import tempfile
 import uuid
 from pathlib import Path
-from urllib.parse import quote
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -111,11 +110,9 @@ def main():
         contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la più recente.'
 
     circular_url = test_circular['url'] if test_circular else (None if args.test else pending[-1]['url'])
-    # Le PWA Android possono riaprire la start_url quando una push punta a un
-    # dominio esterno. Passiamo prima da una pagina interna che inoltra alla
-    # circolare, così il tap conserva una destinazione nello scope della PWA.
-    target_url = (f"https://eurekaarchimede.it/apri-circolare.html?url={quote(circular_url, safe='')}"
-                  if circular_url else SITE_URL)
+    # Usa direttamente l'URL della circolare come Launch URL: la pagina ponte
+    # sul dominio eureka può essere sostituita dalla start_url della PWA su iOS.
+    target_url = circular_url or SITE_URL
     payload = {
         'app_id': app_id,
         'target_channel': 'push',
