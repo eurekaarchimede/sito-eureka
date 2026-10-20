@@ -26,7 +26,7 @@
 <meta name="theme-color" content="#0a1632">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="eureka!">
-<link rel="manifest" href="site.webmanifest?v=4">
+<link rel="manifest" href="site.webmanifest?v=5">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/notifications/icon-eureka-v2-180.png?v=4">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/notifications/icon-eureka-v2-512.png">
@@ -1513,7 +1513,7 @@ footer a { display: inline-flex; align-items: center; }
   .scuola-card:hover, .scuola-circolare:hover { padding-left: 0; }
 }
 /* ===== SHOP ===== */
-.shop { scroll-margin-top: 8rem; border-top: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 48%, transparent), color-mix(in srgb, var(--bg) 72%, transparent)); }
+.shop { border-top: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 48%, transparent), color-mix(in srgb, var(--bg) 72%, transparent)); }
 .shop .head { max-width: 820px; margin: 0 auto 2.5rem; text-align: center; }
 .shop .head > p { max-width: 620px; margin-inline: auto; color: var(--beige-dim); }
 .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: stretch; }
@@ -2199,13 +2199,27 @@ footer .footer-credit {
 // Dopo un ricaricamento riparti dall'inizio; conserva il normale ripristino
 // della cronologia per navigazione indietro e avanti.
 const navigationType = performance.getEntriesByType?.('navigation')?.[0]?.type;
+// Le installazioni precedenti avviavano la PWA da #scuola: aggiorna anche quel
+// collegamento salvato sulla schermata Home senza alterare i tocchi del menu.
+const installedApp = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const legacyHomeLaunch = installedApp && navigationType === 'navigate' && location.hash === '#scuola';
+if (legacyHomeLaunch) {
+  history.replaceState(null, '', location.pathname + location.search);
+}
 if ('scrollRestoration' in history) {
   history.scrollRestoration = navigationType === 'reload' ? 'manual' : 'auto';
 }
-if (navigationType === 'reload') {
+if (navigationType === 'reload' || legacyHomeLaunch) {
   const scrollToTop = () => window.scrollTo(0, 0);
   scrollToTop();
   window.addEventListener('pageshow', scrollToTop, { once: true });
+}
+if (installedApp) {
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+  });
 }
 
 // ===== FUNZIONI COMUNI =====
@@ -2945,26 +2959,48 @@ const IG_PROFILE = 'https://instagram.com/eureka.archimede';
   };
   onApproach(gallery, load);
 
-  // Il feed viene inserito dopo il caricamento iniziale e può spostare #shop
-  // mentre il browser sta raggiungendo l'ancora. Correggi la posizione a feed pronto.
-  const shopTarget = document.getElementById('shop');
-  let shopNavigationPending = false;
-  document.querySelectorAll('a[href="#shop"]').forEach(link => {
-    link.addEventListener('click', () => {
-      const feedReady = grid.getAttribute('aria-busy') === 'false' && grid.children.length > 0;
-      shopNavigationPending = !feedReady;
+})();
+
+// Salti affidabili anche quando si richiude il menu mobile o il feed cresce.
+(() => {
+  const nav = document.querySelector('body > nav');
+  const feed = document.getElementById('proj-gallery-grid');
+  let pending = null;
+  const align = target => {
+    const navHeight = nav?.getBoundingClientRect().height || 0;
+    const top = window.scrollY + target.getBoundingClientRect().top - navHeight - 12;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+  };
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    if (link.classList.contains('skip-link')) return;
+    const hash = link.getAttribute('href');
+    const target = hash && document.getElementById(hash.slice(1));
+    if (!target) return;
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      if (location.hash !== hash) history.pushState(null, '', hash);
+      requestAnimationFrame(() => align(target));
+      pending = feed && target.compareDocumentPosition(feed) & Node.DOCUMENT_POSITION_PRECEDING
+        ? { target, until: Date.now() + 3000 }
+        : null;
     });
   });
-  const correctShopAnchor = () => {
-    if (!shopNavigationPending || grid.getAttribute('aria-busy') !== 'false' || !grid.children.length) return;
-    shopNavigationPending = false;
-    requestAnimationFrame(() => shopTarget.scrollIntoView({ block: 'start', behavior: 'auto' }));
+  if (!feed) return;
+  const correctAfterFeed = () => {
+    if (!pending || Date.now() > pending.until) { pending = null; return; }
+    if (feed.getAttribute('aria-busy') === 'true' || !feed.children.length) return;
+    const { target } = pending;
+    pending = null;
+    requestAnimationFrame(() => align(target));
   };
-  new MutationObserver(correctShopAnchor).observe(grid, {
+  new MutationObserver(correctAfterFeed).observe(feed, {
     attributes: true,
     attributeFilter: ['aria-busy'],
     childList: true
   });
+  for (const type of ['wheel', 'touchstart', 'keydown']) {
+    window.addEventListener(type, () => { pending = null; }, { passive: true });
+  }
 })();
 
 </script>
