@@ -1085,6 +1085,13 @@ a.proj-card {
   box-shadow: 0 0 0 1px rgba(234, 255, 0, 0.18), 0 0 16px rgba(234, 255, 0, 0.2);
 }
 .member.current-rep:hover { border-color: var(--neon-yellow); }
+.member.candidate-featured {
+  border: 2px solid var(--neon-yellow);
+  box-shadow: 0 0 0 1px rgba(234, 255, 0, 0.18), 0 0 16px rgba(234, 255, 0, 0.2);
+}
+.member.candidate-featured:hover { border-color: var(--neon-yellow); }
+.candidate-card .photo img { object-fit: contain; object-position: center; }
+.candidate-card:hover .photo img { transform: none; filter: brightness(1.04); }
 .member[href]:focus-visible {
   outline: 2px solid var(--cream);
   outline-offset: 4px;
@@ -1982,7 +1989,29 @@ footer .footer-credit {
         <div class="section-label">03 / candidati</div>
         <h2 class="h2" id="candidati-2026-title">candidati <em>2026</em>.</h2>
       </div>
-      <p class="candidati-soon-status">coming soon…</p>
+    </div>
+
+    <div class="organo candidati-2026-organo reveal">
+      <div class="organo-head">
+        <h3 class="organo-name">organo di <em>garanzia</em>.</h3>
+        <div class="organo-count">2 candidati</div>
+      </div>
+      <div class="roster cols-2">
+        <a class="member reveal candidate-card candidate-featured" href="https://www.instagram.com/giacomo_warm/" target="_blank" rel="noopener noreferrer" aria-label="Giacomo Warm, candidato numero 1 all'organo di garanzia, classe 5E. Apri Instagram in una nuova scheda">
+          <div class="photo"><img src="assets/candidati/2026/giacomo-warm-garanzia.webp" width="1080" height="1350" alt="Santino di Giacomo Warm, candidato numero 1, classe 5E" loading="lazy" decoding="async"></div>
+          <div class="info">
+            <h4 class="name">Giacomo Warm</h4>
+            <div class="role"><span>n. 1 · classe 5E</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
+          </div>
+        </a>
+        <a class="member reveal candidate-card" href="https://www.instagram.com/manganaroalessia_/" target="_blank" rel="noopener noreferrer" aria-label="Alessia Manganaro, candidata numero 2 all'organo di garanzia, classe 4BL. Apri Instagram in una nuova scheda">
+          <div class="photo"><img src="assets/candidati/2026/alessia-manganaro-garanzia.webp" width="1080" height="1350" alt="Santino di Alessia Manganaro, candidata numero 2, classe 4BL" loading="lazy" decoding="async"></div>
+          <div class="info">
+            <h4 class="name">Alessia Manganaro</h4>
+            <div class="role"><span>n. 2 · classe 4BL</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
+          </div>
+        </a>
+      </div>
     </div>
 
     <div class="head reveal" id="rappresentanti">
