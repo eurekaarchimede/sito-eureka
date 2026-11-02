@@ -974,19 +974,19 @@ a.proj-card {
 @media (max-width: 600px) { .mobile-only-break { display: block; } }
 @media (max-width: 800px) { .scuola-grid { grid-template-columns: 1fr; } }
 
-/* ===== CANDIDATI ===== */
-.candidati {
+/* ===== RAPPRESENTANTI ===== */
+.rappresentanti {
   border-top: 1px solid var(--line);
   background: rgba(17, 32, 69, 0.55);
 }
-.candidati .head { margin-bottom: 3rem; max-width: 800px; }
-.candidati .head p {
+.rappresentanti .head { margin-bottom: 3rem; max-width: 800px; }
+.rappresentanti .head p {
   color: var(--beige-dim);
   margin-top: 0.8rem;
   font-size: 1.05rem;
   max-width: 620px;
 }
-.candidati #rappresentanti .h2 {
+.rappresentanti .head .h2 {
   font-size: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
@@ -1056,6 +1056,7 @@ a.proj-card {
   box-shadow: 0 0 0 1px rgba(234, 255, 0, 0.18), 0 0 16px rgba(234, 255, 0, 0.2);
 }
 .member.current-rep:hover { border-color: var(--neon-yellow); }
+.member.santino-card:hover .photo img { transform: none; filter: brightness(1.03); }
 .member[href]:focus-visible {
   outline: 2px solid var(--cream);
   outline-offset: 4px;
@@ -1667,7 +1668,7 @@ footer .footer-credit {
     <li><a href="#scuola">circolari</a></li>
     <li><a href="#progetti">progetti</a></li>
     <li><a href="#shop">merchandising</a></li>
-    <li><a href="#candidati">candidati</a></li>
+    <li><a href="#rappresentanti">rappresentanti</a></li>
     <li><a href="#storia">storia</a></li>
   </ul>
   <div class="right">
@@ -1677,14 +1678,14 @@ footer .footer-credit {
     </button>
   </div>
 </nav>
-<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#scuola">circolari</a><a href="#progetti">progetti</a><a href="#shop">merchandising</a><a href="#candidati">candidati</a><a href="#storia">storia</a></div></noscript>
+<noscript><div class="nojs-nav" aria-label="navigazione"><a href="#scuola">circolari</a><a href="#progetti">progetti</a><a href="#shop">merchandising</a><a href="#rappresentanti">rappresentanti</a><a href="#storia">storia</a></div></noscript>
 
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="menu di navigazione" hidden>
   <button class="menu-close" id="menu-close" type="button" aria-label="chiudi menu">chiudi ×</button>
   <a href="#scuola">circolari</a>
   <a href="#progetti">progetti</a>
   <a href="#shop">merchandising</a>
-  <a href="#candidati">candidati</a>
+  <a href="#rappresentanti">rappresentanti</a>
   <a href="#storia">storia</a>
   <a href="https://instagram.com/eureka.archimede" target="_blank" rel="noopener" class="mobile-ig">@eureka.archimede</a>
 </div>
@@ -1946,9 +1947,9 @@ footer .footer-credit {
 </section>
 
 <!-- ============ CANDIDATI ============ -->
-<section class="candidati" id="candidati">
+<section class="rappresentanti" id="rappresentanti">
   <div class="container">
-    <div class="head reveal" id="rappresentanti">
+    <div class="head reveal">
       <div class="section-label">03 / rappresentanti</div>
       <h2 class="h2">rappresentanti <em>in carica</em>.</h2>
       <p>gli studenti di eureka! in carica nei tre organi di rappresentanza.</p>
@@ -1961,15 +1962,15 @@ footer .footer-credit {
         <div class="organo-count">2 rappresentanti in carica</div>
       </div>
       <div class="roster cols-2">
-        <a class="member reveal current-rep" href="https://www.instagram.com/giuliaperri__/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Giulia Perri, rappresentante d'istituto in carica, si apre in una nuova scheda">
-          <div class="photo"><img src="assets/optimized/foto/giulia-perri.jpg" width="600" height="750" alt="Giulia Perri" loading="lazy" decoding="async" onerror="this.remove()">g</div>
+        <a class="member reveal current-rep santino-card" href="https://www.instagram.com/giuliaperri__/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Giulia Perri, rappresentante d'istituto in carica, si apre in una nuova scheda">
+          <div class="photo"><img src="assets/rappresentanti/2026/giulia-perri.webp" width="1080" height="1350" alt="Santino di Giulia Perri, rappresentante d’istituto, classe 5B" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giulia perri</h4>
             <div class="role"><span>in carica · 5B</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
           </div>
         </a>
-        <a class="member reveal current-rep" href="https://www.instagram.com/fede_dez/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Federico De Salvo, rappresentante d'istituto in carica, si apre in una nuova scheda">
-          <div class="photo"><img src="assets/optimized/foto/federico-de-salvo.jpg" width="600" height="750" alt="Federico De Salvo" loading="lazy" decoding="async" onerror="this.remove()">f</div>
+        <a class="member reveal current-rep santino-card" href="https://www.instagram.com/fede_dez/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Federico De Salvo, rappresentante d'istituto in carica, si apre in una nuova scheda">
+          <div class="photo"><img src="assets/rappresentanti/2026/federico-de-salvo.webp" width="1080" height="1350" alt="Santino di Federico De Salvo, rappresentante d’istituto, classe 3C" loading="lazy" decoding="async" onerror="this.remove()">f</div>
           <div class="info">
             <h4 class="name">federico de salvo</h4>
             <div class="role"><span>in carica · 3C</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
@@ -1985,14 +1986,14 @@ footer .footer-credit {
         <div class="organo-count">2 rappresentanti in carica</div>
       </div>
       <div class="roster cols-2">
-        <a class="member reveal current-rep" href="https://www.instagram.com/paolo_arigo/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di paolo arigo, si apre in una nuova scheda">
+        <a class="member reveal current-rep santino-card" href="https://www.instagram.com/paolo_arigo/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di paolo arigo, si apre in una nuova scheda">
           <div class="photo"><img src="assets/optimized/foto/paolo-arigo.jpg" width="600" height="750" alt="paolo arigo" loading="lazy" decoding="async" onerror="this.remove()">p</div>
           <div class="info">
             <h4 class="name">paolo arigo</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
           </div>
         </a>
-        <a class="member reveal current-rep" href="https://www.instagram.com/giorgiobensaiaofficial_/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di giorgio bensaia, si apre in una nuova scheda">
+        <a class="member reveal current-rep santino-card" href="https://www.instagram.com/giorgiobensaiaofficial_/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di giorgio bensaia, si apre in una nuova scheda">
           <div class="photo"><img src="assets/optimized/foto/giorgio-bensaia.jpg" width="600" height="750" alt="giorgio bensaia" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giorgio bensaia</h4>
@@ -2009,8 +2010,8 @@ footer .footer-credit {
         <div class="organo-count">1 rappresentante in carica</div>
       </div>
       <div class="roster cols-2">
-        <a class="member reveal current-rep" href="https://www.instagram.com/giacomo_warm/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Giacomo Warm, rappresentante in carica nell’organo di garanzia, si apre in una nuova scheda">
-          <div class="photo"><img src="assets/optimized/foto/giacomo-warm.jpg" width="600" height="750" alt="Giacomo Warm" loading="lazy" decoding="async" onerror="this.remove()">g</div>
+        <a class="member reveal current-rep santino-card" href="https://www.instagram.com/giacomo_warm/" target="_blank" rel="noopener noreferrer" aria-label="Profilo Instagram di Giacomo Warm, rappresentante in carica nell’organo di garanzia, si apre in una nuova scheda">
+          <div class="photo"><img src="assets/rappresentanti/2026/giacomo-warm.webp" width="1080" height="1350" alt="Santino di Giacomo Warm, rappresentante dell’organo di garanzia, classe 5E" loading="lazy" decoding="async" onerror="this.remove()">g</div>
           <div class="info">
             <h4 class="name">giacomo warm</h4>
             <div class="role"><span>in carica</span><span class="member-instagram" aria-hidden="true">instagram ↗</span></div>
@@ -2138,7 +2139,7 @@ footer .footer-credit {
         <a href="#shop">merchandising</a>
       </div>
       <div class="footer-navigation-row">
-        <a href="#candidati">candidati</a>
+        <a href="#rappresentanti">rappresentanti</a>
         <a href="#storia">storia</a>
       </div>
     </nav>
