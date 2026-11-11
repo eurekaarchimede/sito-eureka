@@ -92,98 +92,124 @@ def main():
         return 0
 
     pending.sort(key=lambda item: (item.get('date', ''), item.get('number', '')))
-    if args.test:
-        if test_circular:
-            title = test_circular.get('title') or 'Prova apertura circolare'
-            number = test_circular.get('number')
-            contents = f"Prova link · {number}: {title}" if number else f'Prova link · {title}'
+    def save_ledger():
+        ledger['version'] = 1
+        ledger['urls'] = sorted(sent)
+        ledger['skipped_no_subscribers'] = sorted(skipped_no_subscribers)
+        with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=LEDGER_PATH.parent,
+                                         delete=False) as temp:
+            json.dump(ledger, temp, ensure_ascii=False, separators=(',', ':'))
+            temp.write('\n')
+            temp_path = Path(temp.name)
+        temp_path.replace(LEDGER_PATH)
+
+    def send_one(item=None):
+        if args.test:
+            if item:
+                number = item.get('number')
+                title = item.get('title') or 'Prova apertura circolare'
+                heading = f'Prova link · {number}' if number else 'Prova apertura circolare'
+                contents = title
+                circular_url = item['url']
+            else:
+                heading = 'eureka! · prova notifiche'
+                contents = 'Le notifiche delle circolari sono attive su questo dispositivo.'
+                circular_url = None
+            segment = TEST_SEGMENT_NAME
         else:
-            title = 'eureka! · prova notifiche'
-            contents = 'Le notifiche delle circolari sono attive su questo dispositivo.'
-    elif len(pending) == 1:
-        item = pending[0]
-        title = item.get('title') or 'Nuova circolare'
-        number = item.get('number')
-        contents = f"{number}: {title}" if number else title
-    else:
-        title = 'eureka! · nuove circolari'
-        contents = f'Sono state pubblicate {len(pending)} nuove circolari. Apri la più recente.'
+            number = item.get('number')
+            heading = number or 'Nuova circolare'
+            contents = item.get('title') or 'Apri la nuova circolare.'
+            circular_url = item['url']
+            segment = 'All'
 
-    circular_url = test_circular['url'] if test_circular else (None if args.test else pending[-1]['url'])
-    # Usa direttamente l'URL della circolare come Launch URL: la pagina ponte
-    # sul dominio eureka può essere sostituita dalla start_url della PWA su iOS.
-    target_url = circular_url or SITE_URL
-    payload = {
-        'app_id': app_id,
-        'target_channel': 'push',
-        # "All" is OneSignal's API shorthand for every subscribed recipient;
-        # target_channel limits delivery to push subscriptions.
-        'included_segments': [TEST_SEGMENT_NAME if args.test else 'All'],
-        # OneSignal richiede il fallback en; il testo resta italiano su ogni dispositivo.
-        'headings': {'en': title[:100], 'it': title[:100]},
-        'contents': {'en': contents[:200], 'it': contents[:200]},
-        # `url` è la destinazione HTTPS aperta dal tap della notifica nel browser.
-        # `web_url` si usa insieme ad `app_url` quando i due target differiscono.
-        'url': target_url,
-        'chrome_web_icon': ICON_URL,
-        'firefox_icon': ICON_URL,
-    }
-    if circular_url:
-        payload['data'] = {'eureka_circular_url': circular_url}
-    if args.test_subscription:
-        del payload['included_segments']
-        payload['include_subscription_ids'] = [args.test_subscription]
-    # Gli invii automatici sono idempotenti; un URL esplicito da workflow_dispatch
-    # è invece un reinvio richiesto e deve avere una nuova chiave OneSignal.
-    payload['idempotency_key'] = str(uuid.uuid4()) if args.test or args.only_url else str(uuid.uuid5(
-        uuid.NAMESPACE_URL, app_id + ':push:' + '|'.join(sorted(item['url'] for item in pending))))
-    if args.dry_run:
-        print(json.dumps(payload, ensure_ascii=False, indent=2))
-        return 0
-    request = Request(
-        'https://api.onesignal.com/notifications',
-        data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
-        headers={
-            'Authorization': f'Key {api_key}',
-            'Content-Type': 'application/json; charset=utf-8',
-            'Accept': 'application/json',
-        },
-        method='POST',
-    )
-    try:
-        with urlopen(request, timeout=30) as response:
-            body = response.read().decode('utf-8', errors='replace')
-            if not 200 <= response.status < 300:
-                raise RuntimeError(f'OneSignal ha risposto HTTP {response.status}: {body[:500]}')
-            result = json.loads(body) if body else {}
-    except HTTPError as error:
-        detail = error.read().decode('utf-8', errors='replace')
-        raise RuntimeError(f'OneSignal ha risposto HTTP {error.code}: {detail[:500]}') from error
-    except URLError as error:
-        raise RuntimeError(f'Connessione a OneSignal non riuscita: {error.reason}') from error
+        # Ogni circolare ha il proprio titolo, messaggio e URL di destinazione.
+        payload = {
+            'app_id': app_id,
+            'target_channel': 'push',
+            # "All" è lo shorthand OneSignal per tutti gli iscritti alle push.
+            'included_segments': [segment],
+            'headings': {'en': heading[:100], 'it': heading[:100]},
+            'contents': {'en': contents[:200], 'it': contents[:200]},
+            'url': circular_url or SITE_URL,
+            'chrome_web_icon': ICON_URL,
+            'firefox_icon': ICON_URL,
+        }
+        if circular_url:
+            payload['data'] = {'eureka_circular_url': circular_url}
+        if args.test_subscription:
+            del payload['included_segments']
+            payload['include_subscription_ids'] = [args.test_subscription]
+        # Le notifiche automatiche sono idempotenti per singola circolare.
+        # Un reinvio esplicito o una prova deve invece poter essere ripetuto.
+        if args.test or args.only_url:
+            payload['idempotency_key'] = str(uuid.uuid4())
+        else:
+            payload['idempotency_key'] = str(uuid.uuid5(
+                uuid.NAMESPACE_URL, app_id + ':push:' + item['url']))
+        if args.dry_run:
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+            return {'id': 'dry-run'}
 
-    if not result.get('id'):
-        raise RuntimeError('OneSignal non ha creato la notifica (nessun destinatario iscritto o raggiungibile). '
-                           'Il registro non viene aggiornato; riproveremo al prossimo controllo. '
-                           f"Dettagli API: {json.dumps(result.get('errors', []), ensure_ascii=False)[:500]}")
+        request = Request(
+            'https://api.onesignal.com/notifications',
+            data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
+            headers={
+                'Authorization': f'Key {api_key}',
+                'Content-Type': 'application/json; charset=utf-8',
+                'Accept': 'application/json',
+            },
+            method='POST',
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                body = response.read().decode('utf-8', errors='replace')
+                if not 200 <= response.status < 300:
+                    raise RuntimeError(f'OneSignal ha risposto HTTP {response.status}: {body[:500]}')
+                result = json.loads(body) if body else {}
+        except HTTPError as error:
+            detail = error.read().decode('utf-8', errors='replace')
+            raise RuntimeError(f'OneSignal ha risposto HTTP {error.code}: {detail[:500]}') from error
+        except URLError as error:
+            raise RuntimeError(f'Connessione a OneSignal non riuscita: {error.reason}') from error
+        if not result.get('id'):
+            raise RuntimeError('OneSignal non ha creato la notifica (nessun destinatario iscritto o raggiungibile). '
+                               f"Dettagli API: {json.dumps(result.get('errors', []), ensure_ascii=False)[:500]}")
+        return result
+
     if args.test:
         destination = 'il dispositivo indicato' if args.test_subscription else 'il segmento Test Users'
-        print(f'Push di prova accettata da OneSignal per {destination}; destinazione: {target_url}; registro circolari invariato')
+        target = test_circular['url'] if test_circular else SITE_URL
+        if args.dry_run:
+            send_one(test_circular)
+            return 0
+        send_one(test_circular)
+        print(f'Push di prova accettata da OneSignal per {destination}; destinazione: {target}; registro circolari invariato')
         return 0
 
-    # Il registro si aggiorna solo dopo la conferma API: un errore lascia le notifiche in coda.
-    sent.update(digest(item['url']) for item in pending)
-    skipped_no_subscribers.difference_update(digest(item['url']) for item in pending)
-    ledger['version'] = 1
-    ledger['urls'] = sorted(sent)
-    ledger['skipped_no_subscribers'] = sorted(skipped_no_subscribers)
-    with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=LEDGER_PATH.parent,
-                                     delete=False) as temp:
-        json.dump(ledger, temp, ensure_ascii=False, separators=(',', ':'))
-        temp.write('\n')
-        temp_path = Path(temp.name)
-    temp_path.replace(LEDGER_PATH)
-    print(f"notifica inviata per {len(pending)} circolare/i (id: {result.get('id', 'n/d')})")
+    failures = []
+    sent_count = 0
+    for item in pending:
+        try:
+            result = send_one(item)
+        except Exception as error:
+            failures.append(item)
+            print(f"push non inviata per {item.get('number', 'circolare')}: {error}", file=sys.stderr)
+            continue
+
+        if args.dry_run:
+            sent_count += 1
+            continue
+        sent.add(digest(item['url']))
+        skipped_no_subscribers.discard(digest(item['url']))
+        save_ledger()
+        sent_count += 1
+        print(f"push inviata per {item.get('number', 'circolare')} · {item.get('title', 'Nuova circolare')} (id: {result.get('id', 'n/d')})")
+
+    if failures:
+        raise RuntimeError(f'{len(failures)} push non riuscite; le circolari restano in coda per il prossimo controllo')
+    if args.dry_run:
+        print(f'anteprima: {sent_count} notifiche separate, senza invio né aggiornamento del registro')
     return 0
 
 
