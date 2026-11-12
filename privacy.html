@@ -27,6 +27,14 @@
     p, li { color:var(--muted); }
     .pending { font-weight:700; }
     .panel { border:1px solid var(--line); border-radius:14px; padding:1rem 1.25rem; background:rgba(17,32,69,.72); margin-top:1rem; }
+    .analytics-consent[hidden] { display:none; }
+    .analytics-consent { position:fixed; z-index:10000; inset:auto 1rem max(1rem,env(safe-area-inset-bottom)); width:min(680px,calc(100% - 2rem)); margin-inline:auto; padding:1.1rem 1.2rem; color:var(--cream); background:rgba(10,22,50,.98); border:1px solid rgba(245,205,71,.48); border-radius:16px; box-shadow:0 16px 60px rgba(0,0,0,.42); backdrop-filter:blur(16px); }
+    .analytics-consent p { margin:.45rem 0 .9rem; color:var(--muted); font-size:.9rem; line-height:1.5; }
+    .analytics-consent a { color:var(--gold); text-decoration:underline; text-underline-offset:.18em; }
+    .analytics-consent-title { font-weight:750; letter-spacing:-.02em; }
+    .analytics-consent-actions { display:flex; gap:.65rem; }
+    .analytics-consent-actions button { flex:1; min-height:44px; border:1px solid rgba(247,238,213,.42); border-radius:999px; color:var(--cream); background:transparent; font:inherit; font-weight:700; cursor:pointer; }
+    .analytics-consent-actions button:hover,.analytics-consent-actions button:focus-visible { border-color:var(--gold); color:var(--gold); outline:none; }
     ul { padding-left:1.25rem; }
     footer { padding:1.5rem 0 2.5rem; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
     @media (max-width:480px) { body { font-size:15px; } .panel { padding:1rem; } }
@@ -49,6 +57,7 @@
       <ul>
         <li><strong>Avvisi via email:</strong> indirizzo email, registrato in OneSignal per inviare gli avvisi sulle nuove circolari. Per inviare la richiesta è necessario inserire il codice condiviso con i docenti; il codice viene verificato dal servizio e non viene conservato come dato dell’iscrizione. L’iscrizione è facoltativa e resta attiva fino alla disiscrizione; puoi revocarla dal link presente in ogni email.</li>
         <li><strong>Notifiche sul dispositivo:</strong> identificativo tecnico dell’iscrizione del browser/dispositivo e preferenza di ricezione, gestiti tramite OneSignal per inviare avvisi sulle nuove circolari. L’iscrizione resta attiva fino a quando disattivi le notifiche o revochi il permesso dal browser o dal dispositivo.</li>
+        <li><strong>Statistiche di accesso (facoltative):</strong> se acconsenti, Google Analytics registra visite e pagine consultate e informazioni tecniche come dispositivo, browser e provenienza. Il tag di Analytics viene caricato solo dopo aver premuto “Accetta statistiche”; se rifiuti, nessun dato viene inviato a Google Analytics. Le preferenze vengono salvate nel browser per 180 giorni e puoi modificarle dal link “preferenze cookie”.</li>
         <li><strong>Presentazione pubblica della lista:</strong> nomi, classi, ruoli e fotografie dei candidati pubblicati nelle sezioni dedicate per presentare la lista e i suoi componenti. Il titolare dichiara di avere le autorizzazioni necessarie per le fotografie pubblicate.</li>
         <li><strong>Piattaforma interna del collettivo:</strong> email, credenziali dell’account, nome, cognome e classe; possono essere registrate le risposte a sondaggi, mozioni e proposte interne. La password è gestita da Supabase Auth e non è leggibile dal sito. La piattaforma serve a organizzare il lavoro del collettivo e a raccogliere opinioni. Non è uno strumento ufficiale della scuola e le sue votazioni non hanno valore deliberativo né legale. Le risposte identificabili possono essere consultate dagli amministratori della piattaforma. L’accesso resta attivo finché la persona partecipa al collettivo e ne ha bisogno; la permanenza degli account e delle risposte identificabili viene riesaminata alla fine di ogni mandato. Quando una persona non partecipa più, il suo account viene rimosso; le risposte non più necessarie vengono cancellate o rese anonime.</li>
       </ul>
@@ -58,13 +67,13 @@
 
     <section class="panel">
       <h2>Servizi esterni coinvolti</h2>
-      <p>Il sito è ospitato tramite GitHub Pages. OneSignal gestisce gli avvisi email e push; Supabase gestisce l’autenticazione e la piattaforma interna; Behold fornisce il feed Instagram incorporato nella homepage; il browser scarica la libreria Supabase da esm.sh e l’SDK OneSignal dal CDN OneSignal. Quando il browser contatta questi servizi, i fornitori possono ricevere dati tecnici della richiesta, come l’indirizzo IP e informazioni sul browser. Instagram e il sito della scuola si aprono come servizi esterni quando scegli i relativi collegamenti.</p>
+      <p>Il sito è ospitato tramite GitHub Pages. OneSignal gestisce gli avvisi email e push; Supabase gestisce l’autenticazione e la piattaforma interna; Behold fornisce il feed Instagram incorporato nella homepage; Google Analytics fornisce statistiche facoltative solo dopo il consenso; il browser scarica la libreria Supabase da esm.sh e l’SDK OneSignal dal CDN OneSignal. Quando il browser contatta questi servizi, i fornitori possono ricevere dati tecnici della richiesta, come l’indirizzo IP e informazioni sul browser. Instagram e il sito della scuola si aprono come servizi esterni quando scegli i relativi collegamenti.</p>
       <p>Il database e l’autenticazione Supabase del progetto sono ospitati nella regione AWS eu-west-3 (Francia); il fornitore dichiara che assistenza, operazioni e alcuni subfornitori possono comportare trattamenti in altri paesi. OneSignal e Supabase pubblicano accordi sul trattamento e garanzie per i trasferimenti internazionali: consulta i rispettivi <a href="https://onesignal.com/dpa" rel="noopener">accordi OneSignal</a> e <a href="https://supabase.com/legal/customer-resources/data-processing-addendum" rel="noopener">accordi Supabase</a>. Il titolare deve controllare che gli accordi applicabili siano attivi per gli account usati dal sito e consultare le liste aggiornate dei subfornitori. GitHub tratta inoltre i dati secondo la propria informativa quando usi i suoi servizi.</p>
     </section>
 
     <section class="panel">
       <h2>Per quanto tempo conserviamo i dati</h2>
-      <p>Le iscrizioni email restano attive fino alla disiscrizione; dopo, l’indirizzo viene rimosso dalla lista attiva. Le iscrizioni push restano attive fino alla revoca o disattivazione. Il codice docenti non viene conservato come dato dell’iscrizione. Per la piattaforma interna, gli account vengono mantenuti finché servono alla partecipazione attiva e riesaminati alla fine di ogni mandato; quando non servono più, vengono rimossi. Le risposte identificabili vengono cancellate o rese anonime quando non sono più utili a organizzare il lavoro del collettivo. I log tecnici seguono le politiche dei fornitori, consultabili nei loro accordi e informative.</p>
+      <p>Le iscrizioni email restano attive fino alla disiscrizione; dopo, l’indirizzo viene rimosso dalla lista attiva. Le iscrizioni push restano attive fino alla revoca o disattivazione. Il codice docenti non viene conservato come dato dell’iscrizione. La scelta sui cookie analitici viene conservata nel browser per 180 giorni; i dati di Analytics seguono il periodo di conservazione configurato nella relativa proprietà Google Analytics. Per la piattaforma interna, gli account vengono mantenuti finché servono alla partecipazione attiva e riesaminati alla fine di ogni mandato; quando non servono più, vengono rimossi. Le risposte identificabili vengono cancellate o rese anonime quando non sono più utili a organizzare il lavoro del collettivo. I log tecnici seguono le politiche dei fornitori, consultabili nei loro accordi e informative.</p>
     </section>
 
     <section class="panel">
@@ -74,9 +83,40 @@
 
     <section class="panel">
       <h2>Aggiornamenti</h2>
-      <p>Informativa aggiornata il 18 ottobre 2026. Le modifiche successive saranno riportate in questa pagina.</p>
+      <p>Informativa aggiornata il 12 novembre 2026. Le modifiche successive saranno riportate in questa pagina.</p>
     </section>
   </main>
-  <footer><a href="index.html">torna a eureka!</a></footer>
+  <footer><a href="index.html">torna a eureka!</a> · <a href="#preferenze-statistiche" data-analytics-preferences>preferenze cookie</a></footer>
+  <aside class="analytics-consent" id="analytics-consent" role="dialog" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-copy" hidden>
+    <div class="analytics-consent-title" id="analytics-consent-title">Statistiche di accesso</div>
+    <p id="analytics-consent-copy">Possiamo usare Google Analytics per contare visite e pagine consultate. Le statistiche partono solo se scegli “Accetta”; puoi rifiutare o cambiare idea dalle <a href="privacy.html">informazioni privacy</a> e dal link “preferenze cookie”.</p>
+    <div class="analytics-consent-actions"><button type="button" data-analytics-choice="deny">Rifiuta</button><button type="button" data-analytics-choice="grant">Accetta statistiche</button></div>
+  </aside>
+  <script>
+  (() => {
+    const MEASUREMENT_ID = 'G-RCHP0550S4';
+    const CONSENT_KEY = 'eureka-analytics-consent-v1';
+    const CONSENT_MAX_AGE = 180 * 24 * 60 * 60 * 1000;
+    const banner = document.getElementById('analytics-consent');
+    let choice = null;
+    try { const saved = JSON.parse(localStorage.getItem(CONSENT_KEY) || 'null'); if (saved && ['grant','deny'].includes(saved.choice) && Date.now() - saved.savedAt < CONSENT_MAX_AGE) choice = saved.choice; } catch {}
+    const setConsent = value => {
+      if (typeof window.gtag === 'function') window.gtag('consent','update',{analytics_storage:value === 'grant' ? 'granted' : 'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+      if (value === 'grant') {
+        if (typeof window.gtag !== 'function') {
+          window.dataLayer = window.dataLayer || []; window.gtag = function(){window.dataLayer.push(arguments);};
+          window.gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+          window.gtag('consent','update',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+          window.gtag('js',new Date()); window.gtag('config',MEASUREMENT_ID,{allow_google_signals:false,allow_ad_personalization_signals:false});
+          const script=document.createElement('script'); script.async=true; script.src=`https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`; document.head.appendChild(script);
+        } else window.gtag('event','page_view');
+      } else document.cookie.split(';').forEach(part=>{const name=part.split('=')[0].trim();if(name==='_ga'||name.startsWith('_ga_')){document.cookie=`${name}=; Max-Age=0; path=/; SameSite=Lax`;if(location.hostname.endsWith('eurekaarchimede.it'))document.cookie=`${name}=; Max-Age=0; path=/; domain=.eurekaarchimede.it; SameSite=Lax`;}});
+      choice=value; try {localStorage.setItem(CONSENT_KEY,JSON.stringify({choice:value,savedAt:Date.now()}));} catch {} banner.hidden=true;
+    };
+    if (!choice) banner.hidden=false;
+    banner.querySelectorAll('[data-analytics-choice]').forEach(button=>button.addEventListener('click',()=>setConsent(button.dataset.analyticsChoice)));
+    document.querySelectorAll('[data-analytics-preferences]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();banner.hidden=false;banner.querySelector('[data-analytics-choice="grant"]')?.focus();}));
+  })();
+  </script>
 </body>
 </html>

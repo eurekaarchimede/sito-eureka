@@ -1646,6 +1646,20 @@ footer .footer-credit {
 }
 .footer-legal a { min-height: 44px; display: inline-flex; align-items: center; color: var(--muted); }
 .footer-navigation a:hover, .footer-meta a:hover, .footer-legal a:hover { color: var(--gold); }
+.analytics-consent[hidden] { display: none; }
+.analytics-consent {
+  position: fixed; z-index: 10000; inset: auto 1rem max(1rem, env(safe-area-inset-bottom));
+  width: min(680px, calc(100% - 2rem)); margin-inline: auto; padding: 1.1rem 1.2rem;
+  color: var(--cream); background: rgba(10, 22, 50, .98); border: 1px solid rgba(245,205,71,.48);
+  border-radius: 16px; box-shadow: 0 16px 60px rgba(0,0,0,.42); backdrop-filter: blur(16px);
+}
+.analytics-consent p { margin: .45rem 0 .9rem; color: var(--cream-dim); font-size: .9rem; line-height: 1.5; }
+.analytics-consent a { color: var(--gold); text-decoration: underline; text-underline-offset: .18em; }
+.analytics-consent-title { font-weight: 750; letter-spacing: -.02em; }
+.analytics-consent-actions { display: flex; gap: .65rem; }
+.analytics-consent-actions button { flex: 1; min-height: 44px; border: 1px solid rgba(247,238,213,.42); border-radius: 999px; color: var(--cream); background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+.analytics-consent-actions button:hover, .analytics-consent-actions button:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
+@media (max-width: 520px) { .analytics-consent { inset-inline: .65rem; width: auto; padding: 1rem; } .analytics-consent-actions { flex-direction: column; gap: .5rem; } }
 @media (min-width: 700px) {
   .footer-navigation { max-width: none; }
   .footer-refined { gap: .75rem; }
@@ -2151,12 +2165,87 @@ footer .footer-credit {
     <div class="footer-legal">
       <span>© <span id="year"></span> eureka!</span>
       <a href="privacy.html">privacy</a>
+      <a href="#preferenze-statistiche" data-analytics-preferences>preferenze cookie</a>
     </div>
   </div>
 </footer>
 
+<aside class="analytics-consent" id="analytics-consent" role="dialog" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-copy" hidden>
+  <div class="analytics-consent-title" id="analytics-consent-title">Statistiche di accesso</div>
+  <p id="analytics-consent-copy">Possiamo usare Google Analytics per contare visite e pagine consultate. Le statistiche partono solo se scegli “Accetta”; puoi rifiutare o cambiare idea dalle <a href="privacy.html">informazioni privacy</a> e dal link “preferenze cookie”.</p>
+  <div class="analytics-consent-actions">
+    <button type="button" data-analytics-choice="deny">Rifiuta</button>
+    <button type="button" data-analytics-choice="grant">Accetta statistiche</button>
+  </div>
+</aside>
 
 <script>
+// Google Analytics is blocked until the visitor opts in (basic consent mode).
+(() => {
+  const MEASUREMENT_ID = 'G-RCHP0550S4';
+  const CONSENT_KEY = 'eureka-analytics-consent-v1';
+  const CONSENT_MAX_AGE = 180 * 24 * 60 * 60 * 1000;
+  const banner = document.getElementById('analytics-consent');
+  if (!banner) return;
+  let choice = null;
+  try {
+    const saved = JSON.parse(localStorage.getItem(CONSENT_KEY) || 'null');
+    if (saved && ['grant', 'deny'].includes(saved.choice) && Date.now() - saved.savedAt < CONSENT_MAX_AGE) choice = saved.choice;
+  } catch {}
+
+  const setConsent = value => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        analytics_storage: value === 'grant' ? 'granted' : 'denied',
+        ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'
+      });
+    }
+    if (value === 'grant') {
+      if (typeof window.gtag !== 'function') {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function(){ window.dataLayer.push(arguments); };
+        window.gtag('consent', 'default', {
+          analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'
+        });
+        window.gtag('consent', 'update', {
+          analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'
+        });
+        window.gtag('js', new Date());
+        window.gtag('config', MEASUREMENT_ID, { allow_google_signals: false, allow_ad_personalization_signals: false });
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+        document.head.appendChild(script);
+      } else {
+        window.gtag('event', 'page_view');
+      }
+    } else {
+      document.cookie.split(';').forEach(part => {
+        const name = part.split('=')[0].trim();
+        if (name === '_ga' || name.startsWith('_ga_')) {
+          document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+          if (location.hostname.endsWith('eurekaarchimede.it')) document.cookie = `${name}=; Max-Age=0; path=/; domain=.eurekaarchimede.it; SameSite=Lax`;
+        }
+      });
+    }
+    choice = value;
+    try { localStorage.setItem(CONSENT_KEY, JSON.stringify({ choice: value, savedAt: Date.now() })); } catch {}
+    banner.hidden = true;
+  };
+
+  if (!choice) banner.hidden = false;
+  banner.querySelectorAll('[data-analytics-choice]').forEach(button => {
+    button.addEventListener('click', () => setConsent(button.dataset.analyticsChoice));
+  });
+  document.querySelectorAll('[data-analytics-preferences]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      banner.hidden = false;
+      banner.querySelector('[data-analytics-choice="grant"]')?.focus();
+    });
+  });
+})();
+
 // Dopo un ricaricamento riparti dall'inizio; conserva il normale ripristino
 // della cronologia per navigazione indietro e avanti.
 const navigationType = performance.getEntriesByType?.('navigation')?.[0]?.type;
